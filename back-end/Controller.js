@@ -2,14 +2,11 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 
-
 const app = express();
 
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
-
-
 
 //Criando conexão com BD MySQL
 const db = mysql.createConnection({
@@ -20,8 +17,6 @@ const db = mysql.createConnection({
 });
   console.log('conectado');
 
-
-//Rota de criação de cadastrado de usuário
 app.post("/SingUp", (req, res) => {
   const sql ="INSERT INTO user (`name`, `email`, `senha`) VALUES (?)";
     const values = [
@@ -33,8 +28,7 @@ app.post("/SingUp", (req, res) => {
       if(err) return res.json({Error: "Inserting data Error in Server"});
       return res.json({Status: "Success"});
     })
-  });
-//Rota de Login
+});
 app.post('/SingIn', async (req, res)=>{
   const sql = "SELECT * FROM user WHERE email = ? AND senha =?";
   db.query(sql, [req.body.email, req.body.senha], (err, data) =>{
@@ -45,6 +39,17 @@ app.post('/SingIn', async (req, res)=>{
       return res.json("no record")
     }
   })
+});
+
+app.get('/listBarbearia', async(req, res)=>{
+  try {
+    db.query('SELECT * FROM barbearia', (err, rows) => {
+      if (err) throw err;
+      res.json(rows);
+    });
+    } catch (error) {
+      console.error('Erro ao obter os registros:', error);
+    }
 });
 
 app.listen(8000, () => {
