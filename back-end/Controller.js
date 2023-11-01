@@ -52,6 +52,17 @@ app.get('/listBarbearia', async(req, res)=>{
     }
 });
 
+app.get('/listServico', async(req, res)=>{
+  try {
+    db.query('SELECT * FROM servico', (err, rows) => {
+      if (err) throw err;
+      res.json(rows);
+    });
+    } catch (error) {
+      console.error('Erro ao obter os registros:', error);
+    }
+});
+
 app.listen(8000, () => {
   console.log("Listening...");
 });
