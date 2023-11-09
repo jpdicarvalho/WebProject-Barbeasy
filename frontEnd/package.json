@@ -13,9 +13,11 @@
     "@mercadopago/sdk-react": "^0.0.15",
     "axios": "^1.5.1",
     "mercadopago": "^2.0.3",
+    "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-calendar": "^4.6.1",
     "react-dom": "^18.2.0",
+    "react-modal": "^3.16.1",
     "react-router-dom": "^6.17.0"
   },
   "devDependencies": {

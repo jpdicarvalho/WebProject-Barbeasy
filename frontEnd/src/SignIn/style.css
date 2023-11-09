@@ -1,0 +1,104 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.container{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: #c9d5e0;
+    border-radius: 30px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 20px 20px 20px -10px rgba(0,0,0,0.15),
+    inset 15px 15px 10px rgba(255,255,255,0.5),
+    -15px -15px 35px rgba(255,255,255,0.35),
+    inset -1px -1px 10px rgba(0,0,0,0.2);
+}
+.imgBox{
+    position: relative;
+}
+.imgBox img{
+    width: 100px;
+    height: 100px;
+}
+#HeaderSignIn{
+    position: relative;
+    color: blue;
+    text-align: center;
+    font-size: 2em;
+    line-height: 0.9em;
+    margin-bottom: 5px;
+}
+#Bemvindo{
+    position: relative;
+    margin-bottom: 15px;
+}
+.inputBox{
+    position: relative;
+    margin-bottom: 20px;
+}
+.inputBox input{
+    border: none;
+    outline: none;
+    background: transparent;
+    border-radius: 20px;
+    font-size: 1em;
+}
+.inputBox input[type="text"],
+.inputBox input[type="password"]{
+   width: 100%;
+   padding: 15px 20px;
+   padding-left: 40px;
+   margin-bottom: 20px;
+   box-shadow: inset 5px 5px 10px rgba(0,0,0,0.1),
+   inset -5px -5px 10px #fff;
+}
+.inputBox i{
+    position: absolute;
+    left: 20px;
+    top: 25%;
+}
+.inputBox input[type="submit"] {
+    margin-bottom: 10px;
+    box-shadow: 5px 5px 10px rgba(0,0,0,0.1),
+    -5px -5px 10px #fff;
+    width: 100%;
+    padding: 15px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    border: none;
+    border-radius: 70px;
+    color: #fff;
+    background: #16E073;
+    letter-spacing: 1px;
+    transition: 0.5s;
+   
+}
+.inputBox input[type="submit"]:hover{
+    letter-spacing: 3px;
+    transition: 0.5s; 
+}
+form .link{
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}   
+/*
+green #04fc43
+pink #ff2972
+yelow #fee800
+
+ box-shadow: inset 5px 5px 10px rgba(0,0,0,0.1),
+   inset -5px -5px 10px #fff;
+*/
