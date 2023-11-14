@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import './style.css'
 import barberLogo from './barber-logo.png';
 
+
 function SignIn() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    
 
     const navigate = useNavigate();
 
@@ -27,7 +29,6 @@ function SignIn() {
         response = await response.json();
 
         if (response.success) {
-            alert('Sucesso', 'Login realizado com sucesso!');
             navigate('/');
         } else {
             alert('Error', 'Erro ao fazer login !');

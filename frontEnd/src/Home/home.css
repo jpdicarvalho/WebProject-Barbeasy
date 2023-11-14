@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@300&family=Fira+Sans:ital@1&family=Noto+Serif+Gujarati:wght@100&family=Open+Sans:ital,wght@1,300&family=Oswald:wght@600&family=Poppins:wght@200;300;400;500;700&family=Roboto+Condensed:ital,wght@0,100;0,500;0,700;0,800;0,900;1,200&family=Roboto+Slab:wght@300&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100&display=swap');
 .containerHome{
   position: relative;
   display: flex;
@@ -5,8 +6,10 @@
   flex-direction: column ;
   width: 400px;
   padding: 15px;
-  padding-top: 220px;
+  padding-top: 340px;
   padding-bottom: 70px;
+  font-family: 'Roboto', sans-serif;
+  background: #100d2a;
 }
 .header{
   position: fixed;
@@ -14,90 +17,140 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: 205px;
+  height: auto;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1;
   width: 100%;
-  border-radius: 50px;
+  padding: 10px;
+  padding-top: 15px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .imgBoxSectionUser{
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  top: 15px;
-  width: 80px;
-  height: 80px;
+  position: relative;
+  width: 100%;
+  padding: 5px;
+  height: auto;
   border-radius: 30px;
-  margin-bottom: 10px;
-  background:#acbaca;
-  box-shadow: 20px 20px 20px -10px rgba(0,0,0,0.15),
-    inset 15px 15px 10px rgba(255,255,255,0.5),
-    -15px -15px 35px rgba(255,255,255,0.35),
-    inset -1px -1px 10px rgba(0,0,0,0.2);
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  background: transparent;
+  margin-bottom: 15px;
 }
 .imgBoxSectionUser img{
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
+  overflow: hidden;
+  background: transparent;
+  margin-right: 10px;
 }
-.containerHome span{
-  position: absolute;
+.spanUser{
   font-size: 14px;
-  top: 100px;
   color: white;
-  font-weight: bold;
- 
+  padding: 2px;
+  background: transparent;
+}
+.spanUser span{
+  background: transparent;
+}
+.spanUser p{
+  background: transparent;
+  font-size: 12px;
+}
+.Barbeasy{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: transparent;
+  width: 100%;
+  margin-bottom: 15px;
+}
+#logoBarbeasy{
+  width: 100px;
+  height: 100px;
+  background: transparent;
+}
+.Barbeasy h1{
+ background: transparent;
+ color: #f6f6fc;
+ font-size: 40px;
+}
+.containerSearch{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #6D48D6;
+  width: 100%;
+  height: 70px;
+  padding: 5px;
+  background: transparent;
+}
+.lupa{
+  position: absolute;
+  font-size: 20px;
+  color: #f6f6fc;
+  background: transparent;
+  top: 20px;
+  left: 15px;
 }
 .inputBoxSearch{
   position: relative;
-  color: #6D48D6;
-  width: 370px;
-  top: 65px;
-}
-
-#inputSearch{
-  position: relative;
-  width: 225px;
-  border: none;
-  outline: none;
-  height: 40px;
-  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: auto;
   text-align: left;
-  padding-left: 35px;
-  background: #4a17d5;
-  color: white;
+  background: transparent;
+  padding: 5px;
 }
-#inputSearch::placeholder{
-  color: #fff;
+input[type="search"]{
+  padding-left: 40px;
+  outline: none;
+  border: none;
+  border-radius: 30px;
+  width: 100%;
+  height: 50px;
+  margin-right: 5px;
+  background: #100d2a;
+  color: #f6f6fc;
+  padding-right: 10px;
+}
+.inputBoxSearch input[type="search"]::placeholder{
+  color: #f6f6fc;
   font-weight: bolder;
 }
+.location{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #f6f6fc;
+  width: 50px;
+  height: 50px;
+  border-radius: 30px;
+  text-align: center;
+  background: #100d2a;
+}
+/*#4a17d5*/
 #Search{
-  background: #4a17d5;
   color: white;
   border: none;
   height: 40px;
   border-radius: 10px;
-  width: 80px;
+  width: 800px;
   margin-left: 5px;
   font-weight: bold;
   transition: 0.5s;
-}
-
-#Search:hover{
-  background: #6D48D6;
-  transition: 0.5s;
-  letter-spacing: 1px;
-}
-#lupa{
-  position: absolute;
-  z-index: 1;
-  color: #fff;
-  top: 7px;
-  margin-left: 10px;
 }
 #filtro{
   position: absolute;
@@ -128,57 +181,85 @@
   position: relative;
   width: 100%;
   height: 80px;
-  border-radius: 20px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   flex-direction: row;
-  padding: 5px;
   margin: 5px;
-  box-shadow: 20px 20px 20px -10px rgba(0,0,0,0.15),
-    inset 15px 15px 10px rgba(255,255,255,0.5),
-    -15px -15px 35px rgba(255,255,255,0.35),
-    inset -1px -1px 10px rgba(0,0,0,0.2);
+  background: rgba(255, 255, 255, 0.1);
 }
 .imgBoxSection{
-  position: relative;
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 70px;
-  height: 70px;
+  height: 100%;
   left: 0;
   margin-right: 5px;
-
+  background: transparent;
+  overflow: hidden;
+  border-radius: 5px;
 }
 .imgBoxSection img{
   position: relative;
   width: 70px;
-  height: 70px;
-  border-radius: 20px;
+  height: 100%;
+  border-radius: 5px;
+  overflow: hidden;
 }
 .Barbearias{
+  position: absolute;
+  top: 5px;
+  left: 75px;
   border: none;
-  height: 70px;
-  width: 90%;
+  height: 20px;
+  width: auto;
   font-size: 12px;
   color: black;
 }
-.agendar{
-  position: relative;
-  width: 150px;
-  height: 30px;
-  border-radius: 10px;
-  margin-right: 10px;
-  color: #fff;
-  border: none;
-  background: linear-gradient(to right, #4a17d5, #6D48D6);
+.Barbearias h2{
+  color: #f6f6fc;
+  font-weight: 200;
+  background: transparent;
 }
-.agendar:hover{
-  background: #6D48D6;
+.avaliation{
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  letter-spacing: 1px;
+  flex-direction: row;
+  background: transparent;
+  width: auto;
+  left: 75px;
+  top: 30px;
+}
+.avaliation p{
+  background: transparent;
+  color: #f6f6fc;
+  font-size: 10px;
+  margin-right: 3px;
+}
+.avaliation i{
+  color: gold;
+  background: transparent;
+  font-size: 13px;
+  margin: 3px;
+}
+.agendar{
+  position: absolute;
+  width: 100px;
+  height: 30px;
+  right: 5px;
+  top: 45px;
+  border-radius: 20px;
+  color: white;
+  border: none;
+  background:#100d2a
 }
 .glassmorphism {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -196,9 +277,11 @@
   transition: 0.5s;
   transition-delay: 0.5s;
   border-radius: 60px;
+  background: transparent;
 }
 .Navigation.active{
   width: 250px;
+  background: transparent;
 }
 .Navigation .toggleMenu{
   position: absolute;
@@ -244,53 +327,64 @@
 }
 .Navigation.active .toggleMenu::before{
   transition-delay: 0s;
-  background: #4a17d5;
+  color: #f6f6fc;
   transform: translateY(0px) rotate(45deg) scale(0.6);
 }
 .Navigation.active .toggleMenu::after{
   transition-delay: 0s;
-  background: #4a17d5;
+  color: #f6f6fc;
   transform: translateY(0px) rotate(315deg) scale(0.6);
 }
 .Navigation li{
   list-style: none;
   transition: 0.5s;
   transform: scale(0);
+  background: transparent;
 }
 .Navigation.active li{
   transition-delay: 0.75s;
   display: flex;
   transform: scale(1);
   color: #4a17d5;
+  background: transparent;
 }
-
 .Navigation li a{
   text-decoration: none;
-  color: #4a17d5;
+  color: #f6f6fc;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   padding: 5px 15px;
   border-radius: 20px;
   transition: 0.5s;
+  background: transparent;
 }
 .Navigation li a:hover{
   color: #6D48D6;
+  background: transparent;
+}
+.fa-solid, .fas{
+  background: transparent;
 }
 .aberto {
-  color: white;
-  background: #16E073;
-  border-radius: 10px;
-  padding: 3px;
-  width: 60px;
+  position: absolute;
+  bottom: 0;
+  color: rgb(32, 229, 32);
+  left: 75px;
+  padding: 1px;
+  width: auto;
+  height: 20px;
   text-align: center;
-  font-weight: bold;
+  font-size: 12px;
+  overflow: hidden;
 }
 .fechado {
-  color: white;
-  background: #ff0534;
-  border-radius: 10px;
-  padding: 3px;
-  width: 60px;
+  position: absolute;
+  bottom: 0;
+  left: 75px;
+  color: rgb(203, 59, 59);
+  padding: 1px;
+  width: auto;
   text-align: center;
-  font-weight: bold;
+  font-size: 12px;
+  overflow: hidden;
 }

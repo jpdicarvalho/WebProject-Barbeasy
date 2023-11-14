@@ -39,7 +39,6 @@ app.post("/SingUp", (req, res) => {
       return res.json({Status: "Success"});
     })
   })
-
   app.post('/SignIn', async (req, res) => {
     const { email, password } = req.body;
 
@@ -57,28 +56,6 @@ app.post("/SingUp", (req, res) => {
         }
     });
 });
-/*Buscando uma barbearia em específico
-app.post('/BarbeariaSearch', async (req, res) => {
-  const { name } = req.body;
-  db.query('SELECT * FROM barbearia WHERE LOWER(name) LIKE ?', `%${name.toLowerCase()}%`, (err, results) => {
-    try {
-      if(err){
-        console.error('Erro ao buscar barbearia:', err);
-        res.status(500).json({ success: false, message: 'Erro ao buscar barbearia' });
-      }else if (results.length > 0) {
-        res.status(200).json({ success: true, message: 'Barbearia encontrada!' });
-        console.log(results);
-      } else {
-        res.status(404).json({ success: false, message: 'Barbearia não encontrada' });
-      }
-    } catch (err) {
-      console.error('Erro ao buscar barbearia:', err);
-      res.status(500).json({ success: false, message: 'Erro ao encontrar barbearia' });
-    }
-  });
-
-});*/
-
 //listando as barbearias cadastradas
 app.get('/listBarbearia', async(req, res)=>{
   try {
@@ -90,7 +67,6 @@ app.get('/listBarbearia', async(req, res)=>{
       console.error('Erro ao obter os registros:', error);
     }
 });
-
 /*
 =-=-= listando os Serviços cadastrados pelas barbearias =-=-=
 Aqui está sendo puxado todos os registros, porém, no Front-End, 
@@ -99,6 +75,35 @@ um filtro é aplicado para que apareça apenas os serviços das barbearias selec
 app.get('/listServico', async(req, res)=>{
   try {
     db.query('SELECT * FROM servico', (err, rows) => {
+      if (err) throw err;
+      res.json(rows);
+    });
+    } catch (error) {
+      console.error('Erro ao obter os registros:', error);
+    }
+});
+//cadastrando a avaliação do usuário
+app.post("/avaliacao", (req, res) => {
+  const sql = "INSERT INTO avaliacoes (`barbearia_id`, `estrelas`, `comentarios`, `data_avaliacao`) VALUES (?)";
+  const values = [
+    req.body.barbeariaId,
+    req.body.avaliacao,
+    req.body.comentario,
+    req.body.data_avaliacao
+  ]
+  db.query(sql, [values], (err, result) => {
+    if (err) {
+      res.status(500).json({ success: false, message: 'Erro ao registrar avaliação' });
+    } else {
+      res.status(201).json({ success: true, message: 'Avaliação registrada com sucesso' });
+    }
+  });
+});
+
+//Buscando a avaliação da barbearia em especifico
+app.get('/SearchAvaliation', async(req, res)=>{
+  try {
+    db.query('SELECT * FROM avaliacoes', (err, rows) => {
       if (err) throw err;
       res.json(rows);
     });

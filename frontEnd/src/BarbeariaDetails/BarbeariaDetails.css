@@ -8,34 +8,35 @@
     padding-bottom: 200px;
     overflow: hidden;
     font-family: 'Poppins', sans-serif;
+    background: #100d2a;
 }
 .Header{
     display: flex;
     justify-content: space-around;
     align-items: center;
+    flex-direction: row;
     width: 100%;
 }
 #barbDetails{
-    color: black;
+    color: white;
     font-weight: bold;
-    width: 70%;
+    width: auto;
 }
-.userProfile{
+#logo-Barbeasy{
+    width: 50px;
+    height: 50px;
+}
+.userProfile img{
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     right: 5px;
     margin-bottom: 10px;
-    color: black;
     width: 50px;
     height: 50px;
-    border-radius: 20px;
-    background:#acbaca;
-    box-shadow: 20px 20px 20px -10px rgba(0,0,0,0.15),
-    inset 15px 15px 10px rgba(255,255,255,0.5),
-    -15px -15px 35px rgba(255,255,255,0.35),
-    inset -1px -1px 10px rgba(0,0,0,0.2);
+    border-radius: 30px;
+    overflow: hidden;
 
 }
 .Outdoor{
@@ -70,7 +71,7 @@
     z-index: 2;
     width: 100%;
     padding: 10px;
-    color: #acacac;
+    color: #f6f6fc;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
     background: rgba(255, 255, 255, 0.1);
@@ -80,7 +81,7 @@
    
 }
 #BarbeariaName{
-    color: #acacac;
+    color: #f6f6fc;
 }
 .glassmorphism {
   background: rgba(255, 255, 255, 0.1);
@@ -95,7 +96,7 @@
     margin-bottom: 10px;
 }
 .EscolhaDia h3{
-    color: #000;
+    color: #f6f6fc;
     margin-bottom: 10px;
     font-weight: bold;
 }
@@ -109,11 +110,10 @@
     min-height: 220px;
     min-width: 370px;
     border-radius: 10px;
-    background:#acbaca;
-    box-shadow: 20px 20px 20px -10px rgba(0,0,0,0.15),
-    inset 15px 15px 10px rgba(255,255,255,0.5),
-    -15px -15px 35px rgba(255,255,255,0.35),
-    inset -1px -1px 10px rgba(0,0,0,0.2);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
 .react-calendar__navigation{
@@ -129,12 +129,9 @@
 }
 /*butão voltar Ano*/
 .react-calendar__navigation__arrow.react-calendar__navigation__prev2-button{
-    background:#acbaca;
+    background: transparent;
     border-radius: 10px;
-    box-shadow: 20px 20px 20px -10px rgba(0,0,0,0.15),
-    inset 15px 15px 10px rgba(255,255,255,0.5),
-    -15px -15px 35px rgba(255,255,255,0.35),
-    inset -1px -1px 10px rgba(0,0,0,0.2);
+    color: #f6f6fc;
     width: 40px;
     height: 30px;
     border: none;
@@ -151,13 +148,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background:#acbaca;
     border: none;
     border-radius: 10px;
-    box-shadow: 20px 20px 20px -10px rgba(0,0,0,0.15),
-    inset 15px 15px 10px rgba(255,255,255,0.5),
-    -15px -15px 35px rgba(255,255,255,0.35),
-    inset -1px -1px 10px rgba(0,0,0,0.2);
+    background: transparent;
+    color: #f6f6fc;
     width: 30px;
     height: 30px;
     font-size: 30px;
@@ -165,11 +159,11 @@
 }
 .react-calendar__navigation__label{
     border: none;
-    background:#acbaca;
+    background: transparent;
 }
 .react-calendar__navigation__label__labelText.react-calendar__navigation__label__labelText--from{
-    color: #000;
-    font-size: 14px;
+    color: #f6f6fc;
+    font-size: 15px;
 }
 /*butão avançar Mês*/
 .react-calendar__navigation__arrow.react-calendar__navigation__next-button{
@@ -177,13 +171,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background:#acbaca;
     border: none;
     border-radius: 10px;
-    box-shadow: 20px 20px 20px -10px rgba(0,0,0,0.15),
-    inset 15px 15px 10px rgba(255,255,255,0.5),
-    -15px -15px 35px rgba(255,255,255,0.35),
-    inset -1px -1px 10px rgba(0,0,0,0.2);
+    background: transparent;
+    color: #f6f6fc;
     width: 30px;
     height: 30px;
     font-size: 30px;
@@ -195,38 +186,35 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background:#acbaca;
     border: none;
     border-radius: 10px;
-    box-shadow: 20px 20px 20px -10px rgba(0,0,0,0.15),
-    inset 15px 15px 10px rgba(255,255,255,0.5),
-    -15px -15px 35px rgba(255,255,255,0.35),
-    inset -1px -1px 10px rgba(0,0,0,0.2);
+    background: transparent;
     width: 40px;
     height: 30px;
     font-size: 30px;
     margin: 5px;
+    color: #f6f6fc;
 }
 /*Container dos dias da semana e mês*/
 .react-calendar__viewContainer{
-    background:#acbaca;
+    background: transparent;
     border-radius: 10px;
 }
 /*Sub-container dos dias da semana e mês*/
 .react-calendar__month-view{
-    background:#acbaca;
+    background: transparent;
     border-radius: 10px;
 }
 /*div dos dias da semana*/
 .react-calendar__month-view__weekdays{
-    background: #acbaca;
+    background: transparent;
     border-radius: 10px;
 }
 /*div especifica de cada dia da semana*/
 .react-calendar__month-view__weekdays__weekday{
-    background: #acbaca;
+    background: transparent;
     border-radius: 10px;
-    color: #000;
+    color: #f6f6fc;
     font-weight: bold;
     font-size: 12px;
     height: 20px;
@@ -236,12 +224,14 @@
 }    
 /*Container dos dias do mês*/
 .react-calendar__month-view__days{
-    background:#acbaca;
+    background: transparent;
     border-radius: 10px;
 }
 /*butão dos dias finais e iniciais dos meses anteriores e posteriores, respectivamente. */
 .react-calendar__tile.react-calendar__month-view__days__day.react-calendar__month-view__days__day--neighboringMonth{
-    background: #f8f8f8;
+    background: transparent;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 5px;
 }
 /*button dia 1 do mês*/
@@ -254,7 +244,7 @@
 }
 /*todos os butões do dia do mês*/
 .react-calendar__tile.react-calendar__month-view__days__day{
-    background: #acbaca;
+    background-color: transparent;
     margin-bottom: 10px;
     padding: 3px;
     border: none;
@@ -268,26 +258,19 @@
     justify-content: center;
     flex-direction: row;
     border-radius: 10px;
-    background:#acbaca;
-    box-shadow: 20px 20px 20px -10px rgba(0,0,0,0.15),
-    inset 15px 15px 10px rgba(255,255,255,0.5),
-    -15px -15px 35px rgba(255,255,255,0.35),
-    inset -1px -1px 10px rgba(0,0,0,0.2);
-    padding: 15px;
-    margin-bottom: 15px;
+    padding: 5px;
+    margin-bottom: 5px;
+    width: 100%;
 }
 .ContainerMain h2{
-    text-align: left;
+    text-align: center;
     position: relative;
-    color: #000;
-    font-size: 15px;
-    font-weight: bold;
+    color: #f6f6fc;
     width: 100%;
     margin: 10px;
 }
-
 .ContainerMain span{
-    color: #212121;
+    color: #4a17d5;
 }
 .horarioDiv {
     position: relative;
@@ -314,14 +297,8 @@
     align-items: center;
     margin-bottom: 20px;
     border-radius: 10px;
-    background:#acbaca;
-    box-shadow: 20px 20px 20px -10px rgba(0,0,0,0.15),
-    inset 15px 15px 10px rgba(255,255,255,0.5),
-    -15px -15px 35px rgba(255,255,255,0.35),
-    inset -1px -1px 10px rgba(0,0,0,0.2);
     padding: 15px;
 }
-  
 .servicoDiv {
     padding: 10px;
     margin: 5px;
@@ -330,7 +307,6 @@
     cursor: pointer;
     transition: 0.5s;
 }
-  
 .servicoDiv.selected {
     background-color: #4a17d5;
     color: white;
@@ -374,20 +350,63 @@
     border-radius: 5px;
 }
 .abertoBarbDetails {
-    color: white;
-    background: #1dc674;
+    color: #0f0;
     border-radius: 5px;
     padding: 3px;
     width: 60px;
-    text-align: center;
+    text-align: left;
     font-weight: bold;
 }
   .fechadoBarbDetails {
-    color: white;
-    background: #ff0534;
+    color: red;
     border-radius: 10px;
     padding: 3px;
     width: 60px;
-    text-align: center;
+    text-align: left;
     font-weight: bold;
 }
+/*componente estrela*/
+/* Adicione este código ao seu arquivo de estilos (BarbeariaDetails.css) */
+/* Adicione este código ao seu arquivo de estilos (BarbeariaDetails.css) */
+
+.AvaliacaoSection {
+    margin-top: 20px;
+  }
+  
+  .Estrelas {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .Estrelas .fa-star {
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .Estrelas .fa-star.selected,
+  .Estrelas .fa-star:hover {
+    color: #fdbc30;
+  }
+  
+  textarea {
+    width: 100%;
+    height: 80px;
+    margin-bottom: 10px;
+    padding: 10px;
+    resize: vertical;
+  }
+  
+  button {
+    background-color: #fdbc30;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  button:hover {
+    background-color: #fda536;
+  }  
+  

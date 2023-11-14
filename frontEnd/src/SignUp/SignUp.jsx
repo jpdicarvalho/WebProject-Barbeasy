@@ -47,7 +47,7 @@ function SignUp() {
         </div>
 
         <div className="inputBox">
-           <input type="text" id="senha" name="senha" onChange={ e => setValues({...values, senha: e.target.value})} placeholder="Password"/>
+           <input type="password" id="senha" name="senha" onChange={ e => setValues({...values, senha: e.target.value})} placeholder="Password"/>
            <i className="fa-solid fa-lock"></i>
         </div>
 
