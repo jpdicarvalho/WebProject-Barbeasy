@@ -353,17 +353,17 @@ input[type="search"]{
   color: #4a17d5;
   background: transparent;
 }
-.Navigation li a{
-  text-decoration: none;
-  color: #f6f6fc;
+.Navigation li button{
+  color: #4a17d5;
+  font-size: 20px;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  padding: 5px 15px;
   border-radius: 20px;
   transition: 0.5s;
   background: transparent;
+  border: none;
+  width: auto;
 }
-.Navigation li a:hover{
+.Navigation li button:hover{
   color: #6D48D6;
   background: transparent;
 }

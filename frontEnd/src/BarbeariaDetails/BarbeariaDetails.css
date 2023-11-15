@@ -357,7 +357,7 @@
     text-align: left;
     font-weight: bold;
 }
-  .fechadoBarbDetails {
+.fechadoBarbDetails {
     color: red;
     border-radius: 10px;
     padding: 3px;
@@ -365,48 +365,38 @@
     text-align: left;
     font-weight: bold;
 }
-/*componente estrela*/
-/* Adicione este código ao seu arquivo de estilos (BarbeariaDetails.css) */
-/* Adicione este código ao seu arquivo de estilos (BarbeariaDetails.css) */
-
 .AvaliacaoSection {
     margin-top: 20px;
-  }
-  
-  .Estrelas {
+} 
+.Estrelas {
     font-size: 24px;
     margin-bottom: 10px;
-  }
-  
-  .Estrelas .fa-star {
+} 
+.Estrelas .fa-star {
     color: #ddd;
     cursor: pointer;
     transition: color 0.3s ease-in-out;
-  }
-  
-  .Estrelas .fa-star.selected,
-  .Estrelas .fa-star:hover {
+}
+.Estrelas .fa-star.selected,
+.Estrelas .fa-star:hover {
     color: #fdbc30;
-  }
-  
-  textarea {
+} 
+textarea {
     width: 100%;
     height: 80px;
     margin-bottom: 10px;
     padding: 10px;
     resize: vertical;
-  }
-  
-  button {
+} 
+#SendAvaliation {
     background-color: #fdbc30;
     color: #fff;
     padding: 10px;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s ease-in-out;
-  }
-  
-  button:hover {
+}
+#SendAvaliation:hover {
     background-color: #fda536;
-  }  
+}  
   

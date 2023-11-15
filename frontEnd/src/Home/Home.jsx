@@ -52,8 +52,8 @@ const combinarDados = (barbearias, distanciaBarbearias) => {
 
     if (distanciaElements) {
       const distanciaElement = distanciaElements[index];
-      const distancia = distanciaElement ? distanciaElement.distance.text : 'Distância não disponível';
-      const duracao = distanciaElement ? distanciaElement.duration.text : 'Duração não disponível';
+      const distancia = distanciaElement ? distanciaElement.distance.text : 'Erro de conexão, atualize a página';
+      const duracao = distanciaElement ? distanciaElement.duration.text : 'Erro de conexão, atualize a página';
 
       return {
         ...barbearia,
@@ -66,8 +66,8 @@ const combinarDados = (barbearias, distanciaBarbearias) => {
     // Se não houver elementos de distância, retorna um objeto com um aviso
     return {
       ...barbearia,
-      distancia: 'Distância não disponível',
-      duracao: 'Duração não disponível',
+      distancia: 'Erro de conexão, atualize a página',
+      duracao: 'Erro de conexão, atualize a página',
     };
   });
 };
@@ -81,9 +81,17 @@ const handleBarbeariaClick = (barbearia) => {
 
 //verificando se o menu está ativado
 const handleMenuClick = () => {
-        setMenuActive(!isMenuActive);
+  setMenuActive(!isMenuActive);
 }
-
+//Função Home Page
+const homePageClick = () => {
+  navigate("/");
+}
+//Função LogOut
+const logoutClick = () => {
+  localStorage.removeItem('token');
+  navigate("/SignIn");
+};
 //pegando a hora para saudar o usuário
 useEffect(() => {
   const obterSaudacao = () => {
@@ -241,8 +249,8 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
               ))}
             <ul className={`Navigation glassmorphism ${isMenuActive ? 'active' : ''}`}>
               <li><a href="#"><i className="fa-solid fa-user"></i></a></li>
-              <li><a href="http://localhost:5173/"><i className="fa-solid fa-house"></i></a></li>
-              <li><a href="http://localhost:5173/SignIn"><i className="fa-solid fa-right-from-bracket"></i></a></li>
+              <li><button onClick={homePageClick}><i className="fa-solid fa-house"></i></button></li>
+              <li><button onClick={logoutClick}><i className="fa-solid fa-right-from-bracket"></i></button></li>
               <button onClick={handleMenuClick} className="toggleMenu glassmorphism"></button>
             </ul>
             </div>

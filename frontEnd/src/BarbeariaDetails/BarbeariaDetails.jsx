@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Calendar from 'react-calendar';
 import logoMercadoPago from './logoMercadoPago.png'
@@ -14,6 +14,7 @@ function BarbeariaDetails() {
   
 const location = useLocation();
 const barbearia = location.state;
+const navigate = useNavigate();
 
 const [selectedDate, setSelectedDate] = useState(new Date());
 const [selectedTime, setSelectedTime] = useState("");
@@ -26,19 +27,32 @@ const [avaliacao, setAvaliacao] = useState(0.5);
 const [comentario, setComentario] = useState("");
 const [AllAvaliation, setAllAvaliation] = useState([]);
 
-  
+//Função para selecionar a data escolhida pelo usuário
 const handleDateChange = (date) => {
     setSelectedDate(date);
-};  
+};
+
+//Função para selecionar a hora escolhida pelo usuário
 const handleTimeChange = (horario) => {
     setSelectedTime(horario);
 };
+
+//Função para selecionar o serviço escolhida pelo usuário
 const handleServiceChange = (servicoId) => {
     setSelectedService(servicoId);
 };
+
+//Ativação do menu principal
 const handleMenuClick = () => {
       setMenuActive(!isMenuActive);
 }
+
+//Função LogOut
+const logoutClick = () => {
+  localStorage.removeItem('token');
+  navigate("/SignIn");
+};
+
 //buscando o serviço cadastrado pela barbearia
 useEffect(() => {  
   const fetchData = async () => {
@@ -51,7 +65,8 @@ useEffect(() => {
           }
   };
 fetchData();
-  }, []);
+}, []);
+
 /*const handleSubmit = async () => {
     try {
       const response = await fetch('http://localhost:8000/agendamento', {
@@ -75,6 +90,8 @@ fetchData();
       console.error('Erro ao enviar os dados:', error);
     }
   };*/
+
+//Mandan a requisição para a rota de Pagamento
 const handleSubmit = async () => {
     try {
       // Encontrar o serviço selecionado no array de serviços
@@ -102,10 +119,12 @@ const handleSubmit = async () => {
       console.error('Erro ao enviar os dados:', error);
     }
 };
+
 //passando a url do mercado pago para abrir em outra aba
 const handleClick = () => {
     window.open(url, 'modal');
 };
+
 // Cadastrando a avaliação/comentário do usuário do usuário
   const enviarAvaliacao = async () => {
     try {
@@ -127,6 +146,7 @@ const handleClick = () => {
       console.error('Erro ao enviar a avaliação:', error);
     }
 };
+
 //Buscar as avaliações da barbearia em especifico
 useEffect(() => {
     const SearchAvaliation = async () => {
@@ -140,11 +160,13 @@ useEffect(() => {
     };
     SearchAvaliation();
 }, []);
-//Numero de avaliações no total
-const totalAvaliacoes = () =>{
-  const totalAvaliacoes = AllAvaliation.length;
-  return totalAvaliacoes;
+
+//Numero de avaliações no total de cada Barbearia
+const totalAvaliacoes = (barbeariaId) =>{
+  const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbearia_id === barbeariaId);
+  return avaliacoesDaBarbearia.length;
 }
+
 // Calcula a média das avaliações apenas para a barbearia selecionada
 const calcularMediaAvaliacoes = () => {
   // Filtra as avaliações apenas para a barbearia selecionada
@@ -238,9 +260,9 @@ const calcularMediaAvaliacoes = () => {
         <ul className={`Navigation glassmorphism ${isMenuActive ? 'active' : ''}`}>
               <li><a href="#"><i className="fa-solid fa-user"></i></a></li>
               <li><a href="http://localhost:5173/"><i className="fa-solid fa-house"></i></a></li>
-              <li><a href="http://localhost:5173/SignIn"><i className="fa-solid fa-right-from-bracket"></i></a></li>
+              <li><button onClick={logoutClick}><i className="fa-solid fa-right-from-bracket"></i></button></li>
               <button onClick={handleMenuClick} className="toggleMenu glassmorphism"></button>
-            </ul>
+        </ul>
             <div className="AvaliacaoSection">
               <h2>Avalie esta barbearia</h2>
               <div className="Estrelas">
@@ -257,12 +279,13 @@ const calcularMediaAvaliacoes = () => {
                 value={comentario}
                 onChange={(e) => setComentario(e.target.value)}
               ></textarea>
-              <button onClick={enviarAvaliacao}>Enviar Avaliação</button>
+              <button id="SendAvaliation" onClick={enviarAvaliacao}>Enviar Avaliação</button>
             </div>
 
             <h2>Classificação e Avaliações</h2>
             <div className="classificacao">
               <h2>{calcularMediaAvaliacoes()}</h2>
+              <p>({totalAvaliacoes(barbearia.id)})</p>
             <h2>comentários</h2>
             {AllAvaliation
             .filter(avaliacoes => avaliacoes.barbearia_id === barbearia.id)
