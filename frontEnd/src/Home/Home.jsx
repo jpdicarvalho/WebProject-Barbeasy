@@ -23,7 +23,6 @@ const [search, setSearch] = useState('');
 const [UserLocation, setUserLocation] = useState([]);
 const [DistanciaBarbearias, setDistanciaBarbearias] = useState([]);
 
-
 //listando as barbearias cadastradas
 useEffect(() => {
   const fetchData = async () => {

@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const client = new MercadoPago.MercadoPagoConfig({
-  accessToken: 'YOUR_ACCESSTOKEN',
+  accessToken: '',
 });
 const preference = new MercadoPago.Preference(client);
 
@@ -47,7 +47,7 @@ const verifyToken = (req, res, next) => {
 //Mandando a requisição para a Api-Distance-Matrix-Google
 app.post('/reqApiGoogle', async (req, res) => {
     try {
-      const apiKey = 'YOUR_ACCESSTOKEN';
+      const apiKey = '';
       const {latUser, lonUser, coordenadasBarbearias } = req.body;
       // Criar um array de strings formatadas para as coordenadas das barbearias
       const destinations = coordenadasBarbearias.map(coord => `${coord.latitude}%2C${coord.longitude}`).join('%7C');
