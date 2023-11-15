@@ -177,86 +177,91 @@ input[type="search"]{
   top: 4px;
   z-index: 1;
 }
-.section{
+.containerBarbearia{
   position: relative;
-  width: 100%;
-  height: 80px;
-  border-radius: 5px;
+  width: 300px;
+  height: 300px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
-  flex-direction: row;
-  margin: 5px;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 10px;
   background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.section{
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 5px;
 }
 .imgBoxSection{
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 70px;
+  width: 100%;
   height: 100%;
-  left: 0;
-  margin-right: 5px;
-  background: transparent;
-  overflow: hidden;
-  border-radius: 5px;
+  border-radius: 20px;
 }
 .imgBoxSection img{
   position: relative;
-  width: 70px;
+  width: 100%;
   height: 100%;
-  border-radius: 5px;
   overflow: hidden;
 }
 .Barbearias{
-  position: absolute;
-  top: 5px;
-  left: 75px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
   border: none;
-  height: 20px;
-  width: auto;
-  font-size: 12px;
+  height: auto;
+  width: 100%;
+  padding: 5px;
+  font-size: 10px;
   color: black;
+  padding: 5px;
 }
 .Barbearias h2{
   color: #f6f6fc;
-  font-weight: 200;
-  background: transparent;
+  font-weight: 300;
+  overflow: hidden;
 }
-.avaliation{
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  letter-spacing: 1px;
-  flex-direction: row;
-  background: transparent;
-  width: auto;
-  left: 75px;
-  top: 30px;
-}
-.avaliation p{
-  background: transparent;
-  color: #f6f6fc;
-  font-size: 10px;
-  margin-right: 3px;
-}
-.avaliation i{
+.fa-solid.fa-star{
   color: gold;
   background: transparent;
-  font-size: 13px;
-  margin: 3px;
+  font-size: 12px;
+  margin-left: 3px;
+  margin-right: 3px;
+  overflow: hidden;
+}
+.distancia-duracao{
+  display: flex;
+  flex-direction: row;
+  letter-spacing: 1px;
+  width: 100%;
+  padding-left: 5px;
+  font-size: 11px;
+  border-radius: 20px;
+  padding-bottom: 3px;
+}
+.fa-solid.fa-person{
+  color: #f6f6fc;
+  margin-left: 3px;
 }
 .agendar{
-  position: absolute;
-  width: 100px;
-  height: 30px;
-  right: 5px;
-  top: 45px;
-  border-radius: 20px;
+  position: relative;
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
   color: white;
   border: none;
-  background:#100d2a
+  background:#100d2a;
 }
 .glassmorphism {
   background: rgba(255, 255, 255, 0.1);
@@ -366,25 +371,19 @@ input[type="search"]{
   background: transparent;
 }
 .aberto {
-  position: absolute;
-  bottom: 0;
+  position: relative;
   color: rgb(32, 229, 32);
-  left: 75px;
-  padding: 1px;
+  padding: 5px;
   width: auto;
-  height: 20px;
   text-align: center;
   font-size: 12px;
-  overflow: hidden;
 }
 .fechado {
-  position: absolute;
-  bottom: 0;
-  left: 75px;
-  color: rgb(203, 59, 59);
-  padding: 1px;
+  position: relative;
+  color: rgb(141, 5, 5);
+  padding: 5px;
   width: auto;
   text-align: center;
   font-size: 12px;
-  overflow: hidden;
+  font-weight: bold;
 }

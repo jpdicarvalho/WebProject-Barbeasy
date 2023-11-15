@@ -84,7 +84,15 @@ form .link{
     color: white;
     font-size: 14px;
     font-weight: bold;
-}   
+}
+.sucess{
+    color: #0f0;
+    margin-bottom: 10px;
+}
+.error{
+    color: rgb(255, 0, 0);
+    margin-bottom: 10px;
+}
 /*
 green #04fc43
 pink #ff2972

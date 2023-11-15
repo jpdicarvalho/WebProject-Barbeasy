@@ -11,20 +11,36 @@ function SignUp() {
         email:'',
         senha:''
     })
+    const [message, setMessage] = useState(null);
+
     const navigate = useNavigate()
-    const handleSubmit = (event) =>{
+    const handleSubmit = (event) => {
         event.preventDefault();
         axios.post('http://localhost:8000/SingUp', values)
-        .then(res => {
-            if(res.data.Status === "Success") {
-                navigate('/SignIn')
-            }else{
-                alert(res.data.Error);
+          .then(res => {
+            if (res.status === 201) {
+              setMessage('Cadastro realizado!');
+              setTimeout(() => {
+                setMessage(null);
+                navigate('/SignIn');
+              }, 3000);
+              
+            } else{
+                setMessage('Erro ao realizar o cadastro!');
+                setTimeout(() => {
+                    setMessage(null);
+                  }, 3000);
+                console.log(res.data.Error);
             }
-                
-            })
-        .then(err =>console.log(err));
-    }
+          })
+          .catch(err => {
+            setMessage('Erro ao realizar o cadastro!');
+            setTimeout(() => {
+                setMessage(null);
+              }, 3000);
+            console.error(err);
+          });
+      };
 
     return (
     <>
@@ -35,19 +51,23 @@ function SignUp() {
 
         <h2 id="HeaderSignUp">Barbeasy</h2>
         <span>Cadastro de Usuário</span>
-
+        {message === "Cadastro realizado!" ? (
+            <p className="sucess">{message}</p>
+            ) : (
+            <p className="error">{message}</p>
+        )}
         <div className="inputBox">
-            <input type="text" id="name" name="name" onChange={ e => setValues({...values, name: e.target.value})} placeholder="Nome"/>
+            <input type="text" id="name" name="name" onChange={ e => setValues({...values, name: e.target.value})} placeholder="Nome" required/>
             <i className="fa-regular fa-user"></i>
         </div>
 
         <div className="inputBox">
-          <input type="text" id="email" name="email" onChange={ e => setValues({...values, email: e.target.value})} placeholder="Email"/>
+          <input type="text" id="email" name="email" onChange={ e => setValues({...values, email: e.target.value})} placeholder="Email" required/>
           <i className="fa-solid fa-envelope"></i> 
         </div>
 
         <div className="inputBox">
-           <input type="password" id="senha" name="senha" onChange={ e => setValues({...values, senha: e.target.value})} placeholder="Password"/>
+           <input type="password" id="senha" name="senha" onChange={ e => setValues({...values, senha: e.target.value})} placeholder="Password" required/>
            <i className="fa-solid fa-lock"></i>
         </div>
 

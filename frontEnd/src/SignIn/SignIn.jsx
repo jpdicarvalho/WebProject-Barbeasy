@@ -7,7 +7,7 @@ import barberLogo from './barber-logo.png';
 function SignIn() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    
+    const [message, setMessage] = useState(null);
 
     const navigate = useNavigate();
 
@@ -25,13 +25,22 @@ function SignIn() {
                 email: email
             })
         });
-
+        
         response = await response.json();
 
         if (response.success) {
-            navigate('/');
+            // Armazene o token no localStorage
+            localStorage.setItem('token', response.token);
+            setMessage('Seja Bem Vindo!');
+              setTimeout(() => {
+                setMessage(null);
+                navigate('/');
+              }, 2000);
         } else {
-            alert('Error', 'Erro ao fazer login !');
+            setMessage('Erro ao realizar o Login!');
+                setTimeout(() => {
+                    setMessage(null);
+                  }, 2000);
         }
     }
 
@@ -41,7 +50,11 @@ function SignIn() {
                 <img src={barberLogo} alt="" />
             </div>
             <h2 id='HeaderSignIn'>Barbeasy</h2>
-            <span id='Bemvindo'>Bem Vindo!</span>
+            {message === "Seja Bem Vindo!" ? (
+                <p className="sucess">{message}</p>
+                ) : (
+                <p className="error">{message}</p>
+            )}
                 <div className="inputBox">
                     <input type="text" id="email" name="email" onChange={e => setEmail(e.target.value)} placeholder='Email'/>
                     <i className="fa-regular fa-user"></i>

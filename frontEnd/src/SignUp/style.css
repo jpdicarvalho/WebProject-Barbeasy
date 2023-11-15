@@ -81,3 +81,11 @@ form .link{
     font-weight: bold;
     letter-spacing: 2px;
 }
+.sucess{
+    color: #0f0;
+    margin-bottom: 10px;
+}
+.error{
+    color: rgb(255, 0, 0);
+    margin-bottom: 10px;
+}

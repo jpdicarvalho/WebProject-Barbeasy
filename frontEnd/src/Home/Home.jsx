@@ -6,18 +6,22 @@ import './home.css'
 //imagens estáticas
 import barberLogo from './barber-logo.png';
 import imgUserDefault from './img-user-default.jpg'
-import frenteBarbearia from './frente-barbearia.jpeg'
+//import frenteBarbearia from './frente-barbearia.jpeg'
+import InteriorBarbearia from './interior-barbearia.avif'
+//import axios from "axios";
 
 function Home() {
 
 const navigate = useNavigate();
 
 const [barbearias, setBarbearias] = useState([]);
-const [distanciaParaBarbearias, setDistanciaParaBarbearias] = useState([]);
 const [isMenuActive, setMenuActive] = useState(false);
 const [saudacao, setSaudacao] = useState('');
 const [AllAvaliation, setAllAvaliation] = useState([]);
 const [search, setSearch] = useState('');
+//componente API GOOGLE
+const [UserLocation, setUserLocation] = useState([]);
+const [DistanciaBarbearias, setDistanciaBarbearias] = useState([]);
 
 
 //listando as barbearias cadastradas
@@ -38,10 +42,38 @@ fetchData();
 const searchLowerCase = search.toLowerCase();
 
 //Buscando Barbearia pelo input Search
-const barbeariaSearch = distanciaParaBarbearias.filter((barbearia) =>
+const barbeariaSearch = barbearias.filter((barbearia) =>
   barbearia.name.toLowerCase().includes(searchLowerCase) ||
   barbearia.status.toLowerCase().includes(searchLowerCase)
 );
+
+const combinarDados = (barbearias, distanciaBarbearias) => {
+  return barbearias.map((barbearia, index) => {
+    const distanciaElements = distanciaBarbearias.rows?.[0]?.elements;
+
+    if (distanciaElements) {
+      const distanciaElement = distanciaElements[index];
+      const distancia = distanciaElement ? distanciaElement.distance.text : 'Distância não disponível';
+      const duracao = distanciaElement ? distanciaElement.duration.text : 'Duração não disponível';
+
+      return {
+        ...barbearia,
+        distancia,
+        duracao,
+        // Adicione outras propriedades necessárias de barbeariaSearch
+      };
+    }
+
+    // Se não houver elementos de distância, retorna um objeto com um aviso
+    return {
+      ...barbearia,
+      distancia: 'Distância não disponível',
+      duracao: 'Duração não disponível',
+    };
+  });
+};
+// Uso da função para obter o novo array combinado
+const barbeariasCompletas = combinarDados(barbeariaSearch, DistanciaBarbearias);
 
 //passando os dados da barbearia selecionada
 const handleBarbeariaClick = (barbearia) => {
@@ -68,76 +100,56 @@ useEffect(() => {
 obterSaudacao();
 }, []);
 
-//pegando as cordenadas do usuário e calculando a distância entre ele e as barbearias cadastradas
+//pegando as cordenadas do usuário
 useEffect(() => {
-        const obterLocalizacao = () => {
-          if ('geolocation' in navigator) {
-            navigator.geolocation.getCurrentPosition(
-              (position) => {
-                const userLocation = {
-                  latitude: position.coords.latitude,
-                  longitude: position.coords.longitude,
-                };
-                // Calcular a distância entre a localização do usuário e as coordenadas da barbearia
-                const distanciaParaBarbearias = barbearias.map(barbearia => {
-                  // Verificar se as coordenadas da barbearia são válidas
-                  if (barbearia.latitude !== null && barbearia.longitude !== null) {
-                    const distancia = calcularDistancia(
-                      userLocation.latitude,
-                      userLocation.longitude,
-                      barbearia.latitude,
-                      barbearia.longitude
-                    );
-                    // Adicionando a distância formatada ao objeto da barbearia
-                    return { ...barbearia, distancia: formatarDistancia(distancia) };
-                  } else {
-                    // Se as coordenadas não estão presentes, definir "Distância não calculada"
-                    return { ...barbearia, distancia: 'Distância não calculada' };
-                  }
-                });
-      
-                setDistanciaParaBarbearias(distanciaParaBarbearias);
-              },
-              (error) => {
-                console.error('Erro ao obter a localização do usuário:', error);
-              }
-            );
-          } else {
-            console.error('Geolocalização não suportada pelo navegador.');
-          }
-        };
-        obterLocalizacao();
-}, [barbearias]);
-// Função para calcular a distância usando a fórmula de Haversine
-const calcularDistancia = (lat1, lon1, lat2, lon2) => {
-        // Verificar se as coordenadas são válidas
-        if (lat1 === null || lon1 === null || lat2 === null || lon2 === null) {
-          return null;
-        }
-      
-        const R = 6371; // Raio médio da Terra em quilômetros
-      
-        const dLat = (lat2 - lat1) * (Math.PI / 180);
-        const dLon = (lon2 - lon1) * (Math.PI / 180);
-      
-        const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      
-        const distancia = R * c;
-        return distancia;
+const obterLocalizacao = async () => {
+  try {
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+    setUserLocation({
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    });
+  } catch (error) {
+    console.error('Erro ao obter a localização do usuário:', error);
+  }
 };
 
-// Função para formatar a distância
-const formatarDistancia = (distancia) => {
-        if (distancia === 'null') {
-          return 'Distância não calculada';
-        }
-        // Arredondar para uma casas decimais e adicionar a unidade de medida
-        return `${distancia.toFixed(1)} km`;
-};
+  obterLocalizacao();
+}, []);
+
+// Modificando o trecho abaixo para incluir as latitudes e longitudes das barbearias na URL da API do Google
+useEffect(() => {
+  const sendUrlToServer = async () => {
+    const coordenadasBarbearias = barbearias.map((barbearia) => ({
+      latitude: barbearia.latitude,
+      longitude: barbearia.longitude,
+    }));
+    //
+    try {
+      const response = await fetch('http://localhost:8000/reqApiGoogle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          latUser: UserLocation.latitude,
+          lonUser: UserLocation.longitude,
+          coordenadasBarbearias
+        }),
+        
+      });
+      
+      const data = await response.json();
+      //console.log(data)
+      setDistanciaBarbearias(data);
+    } catch (error) {
+      console.error('Erro ao enviar os dados:', error);
+    }
+}
+sendUrlToServer();
+}, [barbearias, UserLocation]);
 
 //Buscar as avaliações da barbearia em especifico
 useEffect(() => {
@@ -170,16 +182,17 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
   const media = somaNotas / avaliacoesDaBarbearia.length;
   return media.toFixed(1).replace('.', ',');
 };
+
     return (
           <div className="containerHome">
             <div className="header">
-
                 <div className="imgBoxSectionUser">
                   <img src={imgUserDefault} alt="foto de perfil do usuário" />
                   <div className="spanUser">
                     <span>Olá, João Pedro! </span>
                     <p>{saudacao}</p>
                   </div>
+                  
                 </div>
                 <div className="Barbeasy">
                   <img id="logoBarbeasy" src={barberLogo} alt="lodo-Barbeasy"/>
@@ -196,26 +209,37 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
                 </div> 
               </div>
 
-            {barbeariaSearch.map((barbearia) => (
-            <div key={barbearia.id} className="section">
-              <div className="imgBoxSection">
-                <img src={frenteBarbearia} alt="frente da barbearia" />
+              {barbeariasCompletas.map((barbearia) => (
+                <div key={barbearia.id} className="containerBarbearia">
+                      <div className="imgBoxSection">
+                        <img src={InteriorBarbearia} alt="frente da barbearia" />
+                      </div>
+                  <div className="section">
+                  {barbearia.status === "Aberta" ? (
+                        <p className="aberto">{barbearia.status}</p>
+                      ) : (
+                        <p className="fechado">{barbearia.status}</p>
+                      )}
+                      
+                      <div className="Barbearias">
+                        <h2>{barbearia.name} • {calcularMediaAvaliacoesBarbearia(barbearia.id)}
+                        <i className="fa-solid fa-star"></i>
+                        ({totalAvaliacoes(barbearia.id)})
+                        </h2>
+                      </div>
+                      
+                      <div className="distancia-duracao">
+                        <p>{barbearia.distancia} • {barbearia.duracao}</p>
+                        <i className="fa-solid fa-person"></i>
+                      </div>
+                      <button className="agendar"
+                        onClick={() => handleBarbeariaClick(barbearia)}>
+                        Agendar
+                      </button>
+                  </div>
+                  
                 </div>
-                <div className="Barbearias">
-                 <h2>{barbearia.name}</h2>
-                </div>
-                {barbearia.status === "Aberta" ? <p className="aberto">{barbearia.status}</p> : <p className="fechado">{barbearia.status}</p>}
-                <div className="avaliation">
-                <p>{calcularMediaAvaliacoesBarbearia(barbearia.id)}</p>
-                  <i className="fa-solid fa-star"></i>
-                <p>({totalAvaliacoes(barbearia.id)})</p>
-                <p>{barbearia.distancia.length > 6 ? <p>Localização não info...</p>: <p>≅ {barbearia.distancia}</p>}</p>
-                </div>
-                <button className="agendar" onClick={() => handleBarbeariaClick(barbearia)}>Agendar</button>
-                
-            </div>
-            
-            ))}
+              ))}
             <ul className={`Navigation glassmorphism ${isMenuActive ? 'active' : ''}`}>
               <li><a href="#"><i className="fa-solid fa-user"></i></a></li>
               <li><a href="http://localhost:5173/"><i className="fa-solid fa-house"></i></a></li>

@@ -2,6 +2,9 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mysql from "mysql";
+import bcrypt from 'bcrypt';
+import jwt  from 'jsonwebtoken';
+
 import MercadoPago from "mercadopago";
 
 const app = express();
@@ -11,7 +14,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const client = new MercadoPago.MercadoPagoConfig({
-  accessToken: 'APP_USR-7433076748534689-103020-f2ad6b84165928b9b0d4732a99d73ce6-752130654',
+  accessToken: 'YOUR_ACCESSTOKEN',
 });
 const preference = new MercadoPago.Preference(client);
 
@@ -22,24 +25,72 @@ const db = mysql.createConnection({
   password: "",
   database: "barbeasy_two"
 });
-  console.log('conectado');
 
+//Middleware para verificar o token antes de permitir o acesso às rotas protegidas.
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization;
 
-//implementar aqui a rota de existência do token
+  if (!token) {
+      return res.status(401).json({ success: false, message: 'Token não fornecido' });
+  }
 
-app.post("/SingUp", (req, res) => {
-  const sql ="INSERT INTO user (`name`, `email`, `senha`) VALUES (?)";
-    const values = [
-      req.body.name,
-      req.body.email,
-      req.body.senha
-    ]
-    db.query(sql, [values], (err, result) => {
-      if(err) return res.json({Error: "Inserting data Error in Server"});
-      return res.json({Status: "Success"});
-    })
-  })
-  app.post('/SignIn', async (req, res) => {
+  jwt.verify(token, 'abaporujucaiba', (err, decoded) => {
+      if (err) {
+          return res.status(403).json({ success: false, message: 'Token inválido' });
+      }
+
+      req.user = decoded;
+      next();
+  });
+};
+
+//Mandando a requisição para a Api-Distance-Matrix-Google
+app.post('/reqApiGoogle', async (req, res) => {
+    try {
+      const apiKey = 'YOUR_ACCESSTOKEN';
+      const {latUser, lonUser, coordenadasBarbearias } = req.body;
+      // Criar um array de strings formatadas para as coordenadas das barbearias
+      const destinations = coordenadasBarbearias.map(coord => `${coord.latitude}%2C${coord.longitude}`).join('%7C');
+
+      const apiUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destinations}&origins=${latUser}%2C${lonUser}&mode=walking&key=${apiKey}`;
+    
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+
+      res.json(data);
+      //res.send(JSON.stringify(data.rows));
+    } catch (error) {
+      console.error('Erro na solicitação à API Distance Matrix:', error);
+      res.status(500).json({ error: 'Erro na solicitação à API Distance Matrix' });
+    }
+    
+});
+
+//Cadastro de ususário com senha criptografada
+app.post("/SingUp", async (req, res) => {
+  const {name, email, senha} = req.body;
+
+  // Hash da senha antes de salvar no banco de dados
+  const hashedPassword = await bcrypt.hash(senha, 10);
+
+  const user = {
+    name,
+    email,
+    senha: hashedPassword,
+  };
+
+  db.query('INSERT INTO user SET ?', user, (error, results) => {
+    if (results) {
+      res.status(201).send('Usuário registrado com sucesso');
+    } else {
+      console.error(error);
+      res.status(500).send('Erro ao registrar usuário');
+    }
+  });
+});
+
+//Realizando Login e Gerando Token de autenticação
+app.post('/SignIn', async (req, res) => {
     const { email, password } = req.body;
 
     // Verificar se o email e senha estão corretos
@@ -48,14 +99,17 @@ app.post("/SingUp", (req, res) => {
             console.error('Erro ao buscar usuário:', err);
             res.status(500).json({ success: false, message: 'Erro ao fazer login' });
         } else if (results.length > 0) {
-            // Usuário encontrado
-            res.status(200).json({ success: true, message: 'Login realizado com sucesso!' });
-        } else {
+            // Usuário encontrado, criar e enviar o token JWT
+            const user = results[0];
+            const token = jwt.sign({ userId: user.id, email: user.email }, 'abaporujucaiba', { expiresIn: '1h' });
+            res.status(200).json({ success: true, message: 'Login realizado com sucesso!', token });
+          } else {
             // Usuário não encontrado
             res.status(404).json({ success: false, message: 'Usuário não encontrado' });
         }
     });
 });
+
 //listando as barbearias cadastradas
 app.get('/listBarbearia', async(req, res)=>{
   try {
@@ -67,6 +121,7 @@ app.get('/listBarbearia', async(req, res)=>{
       console.error('Erro ao obter os registros:', error);
     }
 });
+
 /*
 =-=-= listando os Serviços cadastrados pelas barbearias =-=-=
 Aqui está sendo puxado todos os registros, porém, no Front-End, 
@@ -82,6 +137,7 @@ app.get('/listServico', async(req, res)=>{
       console.error('Erro ao obter os registros:', error);
     }
 });
+
 //cadastrando a avaliação do usuário
 app.post("/avaliacao", (req, res) => {
   const sql = "INSERT INTO avaliacoes (`barbearia_id`, `estrelas`, `comentarios`, `data_avaliacao`) VALUES (?)";
@@ -111,10 +167,10 @@ app.get('/SearchAvaliation', async(req, res)=>{
       console.error('Erro ao obter os registros:', error);
     }
 });
+
 //Salvando o agendamento feito pelo cliente
 app.post('/agendamento', (req, res) => {
   const { selectedDate, selectedTime, selectedService, barbeariaId} = req.body;
-
   db.query('INSERT INTO agendamentos (data_agendamento, horario, servico_id, barbearia_id) VALUES (?, ?, ?, ?)', 
     [selectedDate, selectedTime, selectedService, barbeariaId], 
     (err, results) => {
