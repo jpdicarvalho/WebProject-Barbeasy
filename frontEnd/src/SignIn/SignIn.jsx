@@ -5,11 +5,10 @@ import barberLogo from './barber-logo.png';
 
 
 function SignIn() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState(null);
-
-    const navigate = useNavigate();
 
     async function sendForm(e) {
         e.preventDefault();
@@ -27,14 +26,16 @@ function SignIn() {
         });
         
         response = await response.json();
-
+        console.log(response)
         if (response.success) {
             // Armazene o token no localStorage
             localStorage.setItem('token', response.token);
+            console.log(response.user)
             setMessage('Seja Bem Vindo!');
               setTimeout(() => {
                 setMessage(null);
-                navigate('/');
+                //mandando dados do usuáriopara a Home Page
+                navigate('/', { state: response.user });
               }, 2000);
         } else {
             setMessage('Erro ao realizar o Login!');

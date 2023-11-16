@@ -26,24 +26,6 @@ const db = mysql.createConnection({
   database: "barbeasy_two"
 });
 
-//Middleware para verificar o token antes de permitir o acesso às rotas protegidas.
-const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization;
-
-  if (!token) {
-      return res.status(401).json({ success: false, message: 'Token não fornecido' });
-  }
-
-  jwt.verify(token, 'abaporujucaiba', (err, decoded) => {
-      if (err) {
-          return res.status(403).json({ success: false, message: 'Token inválido' });
-      }
-
-      req.user = decoded;
-      next();
-  });
-};
-
 //Mandando a requisição para a Api-Distance-Matrix-Google
 app.post('/reqApiGoogle', async (req, res) => {
     try {
@@ -71,12 +53,10 @@ app.post("/SingUp", async (req, res) => {
   const {name, email, senha} = req.body;
 
   // Hash da senha antes de salvar no banco de dados
-  const hashedPassword = await bcrypt.hash(senha, 10);
-
   const user = {
     name,
     email,
-    senha: hashedPassword,
+    senha
   };
 
   db.query('INSERT INTO user SET ?', user, (error, results) => {
@@ -91,35 +71,40 @@ app.post("/SingUp", async (req, res) => {
 
 //Realizando Login e Gerando Token de autenticação
 app.post('/SignIn', async (req, res) => {
-    const { email, password } = req.body;
+  const email = req.body.email;
+  const password = req.body.password;
 
-    // Verificar se o email e senha estão corretos
-    db.query('SELECT * FROM user WHERE email = ? AND senha = ?', [email, password], (err, results) => {
-        if (err) {
-            console.error('Erro ao buscar usuário:', err);
-            res.status(500).json({ success: false, message: 'Erro ao fazer login' });
-        } else if (results.length > 0) {
-            // Usuário encontrado, criar e enviar o token JWT
-            const user = results[0];
-            const token = jwt.sign({ userId: user.id, email: user.email }, 'abaporujucaiba', { expiresIn: '1h' });
-            res.status(200).json({ success: true, message: 'Login realizado com sucesso!', token });
-          } else {
-            // Usuário não encontrado
-            res.status(404).json({ success: false, message: 'Usuário não encontrado' });
-        }
-    });
+  // Buscar usuário pelo email
+  db.query('SELECT * FROM user WHERE email = ? AND senha = ?', [email, password],
+  (err, result) => {
+    if(err){
+      res.send({err: err});
+    }
+    if (result.length > 0) {
+      const user = result[0];
+      // Criação do token
+      const token = jwt.sign({ userId: user.id, userEmail: user.email }, 'abaporujucaiba', { expiresIn: '1h' });
+      // Envie o token no corpo da resposta
+      res.status(200).json({ success: true, token: token, user: result });
+      
+    } else {
+      // Usuário não encontrado
+      res.status(404).json({success: false, message: 'Usuário não encontrado'});
+    }
+  });
 });
 
 //listando as barbearias cadastradas
-app.get('/listBarbearia', async(req, res)=>{
+app.get('/listBarbearia', async (req, res) => {
   try {
     db.query('SELECT * FROM barbearia', (err, rows) => {
       if (err) throw err;
       res.json(rows);
     });
-    } catch (error) {
-      console.error('Erro ao obter os registros:', error);
-    }
+  } catch (error) {
+    console.error('Erro ao obter os registros:', error);
+    res.status(500).json({ success: false, message: 'Erro ao obter os registros' });
+  }
 });
 
 /*

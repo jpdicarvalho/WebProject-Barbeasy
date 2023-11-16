@@ -1,6 +1,6 @@
 //Libary necessárias
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 //Arq. de Estilização da página
 import './home.css'
 //imagens estáticas
@@ -13,6 +13,9 @@ import InteriorBarbearia from './interior-barbearia.avif'
 function Home() {
 
 const navigate = useNavigate();
+const location = useLocation();
+const user = location.state;
+
 
 const [barbearias, setBarbearias] = useState([]);
 const [isMenuActive, setMenuActive] = useState(false);
@@ -27,15 +30,21 @@ const [DistanciaBarbearias, setDistanciaBarbearias] = useState([]);
 useEffect(() => {
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:8000/listBarbearia');
-      const data = await response.json();
+        const response = await fetch('http://localhost:8000/listBarbearia', {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        //Armazenando a resposta da requisição
+        const data = await response.json();
         setBarbearias(data);
     } catch (error) {
       console.error('Erro ao obter os registros:', error);
     }
-  }
-fetchData();
-}, []);
+  };
+
+  fetchData();
+},[]);
 
 //Convertendo o value do search para minusculo
 const searchLowerCase = search.toLowerCase();
@@ -196,7 +205,11 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
                 <div className="imgBoxSectionUser">
                   <img src={imgUserDefault} alt="foto de perfil do usuário" />
                   <div className="spanUser">
-                    <span>Olá, João Pedro! </span>
+                    {user.map((user) =>
+                    <div key={user.id}>
+                      <span>Olá, {user.name} </span>
+                    </div>
+                    )}
                     <p>{saudacao}</p>
                   </div>
                   

@@ -26,7 +26,7 @@ const PrivateRoute = ({ element, ...props }) => {
 // Definindo propTypes para o componente PrivateRoute para validar as propriedades necessárias
 PrivateRoute.propTypes = {
   element: PropTypes.node.isRequired,
-  location: PropTypes.object.isRequired,
+  location: PropTypes.object,
   // ... outras propriedades que você pode ter
 };
 
