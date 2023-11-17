@@ -88,10 +88,14 @@ form .link{
 .sucess{
     color: #0f0;
     margin-bottom: 10px;
+    font-size: 13px;
+    text-align: center;
 }
 .error{
     color: rgb(255, 0, 0);
     margin-bottom: 10px;
+    font-size: 13px;
+    text-align: center;
 }
 /*
 green #04fc43

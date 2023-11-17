@@ -1,19 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './style.css'
 import barberLogo from './barber-logo.png';
-
 
 function SignIn() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState(null);
-
+    const [messageLocationPermition, setMessageLocationPermition] = useState(null);
+    const [UserLotion, setUserLocation] = useState([]);
+    
+    useEffect(() => {
+        const obterLocalizacao = async () => {
+          try {
+            const position = await new Promise((resolve, reject) => {
+              navigator.geolocation.getCurrentPosition(resolve, reject);
+            });
+            setUserLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+            setMessageLocationPermition("Obrigado! Confira as Barbearias próximas a você.");
+            setTimeout(() => {
+                setMessageLocationPermition(null);
+            }, 3000);
+          } catch (error) {
+            console.error('Erro ao obter a localização do usuário:', error);
+            setMessageLocationPermition("Para mostrar Barbearias próximas, precisamos da sua localização.");
+            setTimeout(() => {
+                setMessageLocationPermition(null);
+            }, 3000);
+          }
+        };
+          obterLocalizacao();
+        }, []);
     async function sendForm(e) {
         e.preventDefault();
 
-        let response = await fetch('http://localhost:8000/SignIn', {
+        let dataUser = await fetch('http://localhost:8000/SignIn', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -25,17 +50,16 @@ function SignIn() {
             })
         });
         
-        response = await response.json();
-        console.log(response)
-        if (response.success) {
+        dataUser = await dataUser.json();
+        console.log(dataUser)
+        if (dataUser.success) {
             // Armazene o token no localStorage
-            localStorage.setItem('token', response.token);
-            console.log(response.user)
+            localStorage.setItem('token', dataUser.token);
             setMessage('Seja Bem Vindo!');
               setTimeout(() => {
                 setMessage(null);
                 //mandando dados do usuáriopara a Home Page
-                navigate('/', { state: response.user });
+               navigate('/Home', { state: dataUser.user, UserLotion });
               }, 2000);
         } else {
             setMessage('Erro ao realizar o Login!');
@@ -55,6 +79,11 @@ function SignIn() {
                 <p className="sucess">{message}</p>
                 ) : (
                 <p className="error">{message}</p>
+            )}
+            {messageLocationPermition === "Obrigado! Confira as Barbearias próximas a você." ? (
+                <p className="sucess">{messageLocationPermition}</p>
+                ) : (
+                <p className="error">{messageLocationPermition}</p>
             )}
                 <div className="inputBox">
                     <input type="text" id="email" name="email" onChange={e => setEmail(e.target.value)} placeholder='Email'/>

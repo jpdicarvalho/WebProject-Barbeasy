@@ -23,7 +23,7 @@ function SignUp() {
               setTimeout(() => {
                 setMessage(null);
                 navigate('/SignIn');
-              }, 3000);
+              }, 2000);
               
             } else{
                 setMessage('Erro ao realizar o cadastro!');

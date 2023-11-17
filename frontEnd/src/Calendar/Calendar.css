@@ -1,0 +1,91 @@
+.container__Calendar{
+    display: flex;
+    justify-content: baseline;
+    align-items: center;
+    flex-direction: column;
+}
+.month{
+    text-align: center;
+    font-size: 25px;
+    letter-spacing: 1px;
+}
+.year{
+    font-size: 15px;
+    letter-spacing: 2px;
+}
+.sectionCalendar {
+    width: 300px;
+    height: 80px;
+    overflow-x: auto; 
+    overflow-y: hidden; 
+    display: flex;
+    flex-direction: column;
+}
+/* Personaliza a barra de rolagem horizontal */
+.sectionCalendar::-webkit-scrollbar {
+    height: 3
+    0; /* Altura da barra de rolagem */
+}
+.sectionCalendar::-webkit-scrollbar-thumb {
+    background-color: #4CAF50; /* Cor da barra de rolagem */
+    border-radius: 6px; /* Raio das bordas da barra de rolagem */
+}
+.sectionCalendar::-webkit-scrollbar-track {
+    background-color: #eee; /* Cor do fundo da barra de rolagem */
+}
+
+.listNamesWeek{
+    position: relative;
+    width: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    z-index: 1001;
+}
+.listDayWeek{
+    position: relative;
+    width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    z-index: 1000
+}
+.list__name__Week{
+    position: relative;
+   text-align: center;
+   margin: 5px;
+   width: 40px;
+   z-index: 1000
+
+}
+.list__name__day{
+    position: relative;
+   text-align: center;
+   width: 40px;
+   margin: 5px;
+   z-index: 1000;
+}
+.dayWeekCurrent{
+    z-index: 3;
+}
+.activeCalendar {
+    position: relative;
+    background-color: #0f0; /* Ou qualquer cor desejada para indicar o dia atual */
+    color: white; /* Cor do texto no dia atual */
+    border-radius: 20px;
+    z-index: 0; /* Garante que o elemento pseudo-elemento (::before) fique acima dos outros elementos */
+}
+/* Adicione um pseudo-elemento ::before para cobrir o conteúdo da div */
+.activeCalendar::before {
+    content: '';
+    position: absolute;
+    top: -35px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #283032; /* Mesma cor usada acima */
+    border-radius: 5px; /* Mesmo raio de borda usado acima */
+    z-index: -1; /* Coloca o pseudo-elemento abaixo do conteúdo da div */
+}

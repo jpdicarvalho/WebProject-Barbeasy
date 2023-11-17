@@ -14,8 +14,8 @@ function Home() {
 
 const navigate = useNavigate();
 const location = useLocation();
-const user = location.state;
-
+//parei aqui...
+const userData = location.state;
 
 const [barbearias, setBarbearias] = useState([]);
 const [isMenuActive, setMenuActive] = useState(false);
@@ -85,16 +85,15 @@ const barbeariasCompletas = combinarDados(barbeariaSearch, DistanciaBarbearias);
 
 //passando os dados da barbearia selecionada
 const handleBarbeariaClick = (barbearia) => {
-  navigate("/BarbeariaDetails", { state: barbearia });
+  navigate("/BarbeariaDetails", { state: { barbearia } });
 };
-
 //verificando se o menu está ativado
 const handleMenuClick = () => {
   setMenuActive(!isMenuActive);
 }
 //Função Home Page
-const homePageClick = () => {
-  navigate("/");
+const homePageClick = (user) => {
+  navigate('/Home', { state: user });
 }
 //Função LogOut
 const logoutClick = () => {
@@ -205,9 +204,9 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
                 <div className="imgBoxSectionUser">
                   <img src={imgUserDefault} alt="foto de perfil do usuário" />
                   <div className="spanUser">
-                    {user.map((user) =>
-                    <div key={user.id}>
-                      <span>Olá, {user.name} </span>
+                    {userData.map((userData) =>
+                    <div key={userData.id}>
+                      <span>Olá, {userData.name} </span>
                     </div>
                     )}
                     <p>{saudacao}</p>

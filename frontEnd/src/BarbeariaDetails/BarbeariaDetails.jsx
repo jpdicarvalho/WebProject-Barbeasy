@@ -1,19 +1,16 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Calendar from 'react-calendar';
+//import Calendar from 'react-calendar';
 import logoMercadoPago from './logoMercadoPago.png'
-import imgUserDefault from './img-user-default.jpg'
-import barberLogo from './barber-logo.png';
-
-//import Modal from 'react-modal';
-
+import { Calendar } from '../Calendar/Calendar';
 import './BarbeariaDetails.css'
 import imgBarbearia from './img-barbearia.jpg'
+import barbeLogo from './barber-logo.png'
 
 function BarbeariaDetails() {
   
 const location = useLocation();
-const barbearia = location.state;
+const { barbearia } = location.state;
 const navigate = useNavigate();
 
 const [selectedDate, setSelectedDate] = useState(new Date());
@@ -46,6 +43,10 @@ const handleServiceChange = (servicoId) => {
 const handleMenuClick = () => {
       setMenuActive(!isMenuActive);
 }
+// Função para navegar de volta à página inicial com dados do usuário
+const navigateBackToHome = () => {
+  navigate('/Home');
+};
 
 //Função LogOut
 const logoutClick = () => {
@@ -126,7 +127,7 @@ const handleClick = () => {
 };
 
 // Cadastrando a avaliação/comentário do usuário do usuário
-  const enviarAvaliacao = async () => {
+const enviarAvaliacao = async () => {
     try {
       const response = await fetch('http://localhost:8000/avaliacao', {
         method: 'POST',
@@ -184,34 +185,52 @@ const calcularMediaAvaliacoes = () => {
   return (
     <div className="ContainerMain">
 
-      <div className="Header">
-        <img src={barberLogo} alt="" id="logo-Barbeasy"/>
-      <h3 id="barbDetails">Agendar Serviço</h3>
-        <div className="userProfile">
-          <img src={imgUserDefault} alt="foto de perfil do usuário" />
-        </div>
-      </div>
-
       <div className="Outdoor">
-      <div className="BarbeariaInformation">
-          {barbearia.status === "Aberto" ? <p className="abertoBarbDetails">{barbearia.status}</p> : <p className="fechadoBarbDetails">{barbearia.status}</p>}
-          <h3 id="BarbeariaName">{barbearia.name}</h3>
-         <p>{barbearia.endereco}</p>
-        </div>
         <div className="imgOutdoor">
             <img src={imgBarbearia } alt="foto-barbearia" id="imgBarbearia" />
         </div>
+        <div className="BarbeariaInformation">
+        <div className="imgBarbeariaProfile">
+          <img src={barbeLogo} alt="foto-barbearia" id="barbeLogo" />
+        </div>
+            {barbearia.status === "Aberta" ? <p className="abertoBarbDetails">{barbearia.status}</p> : <p className="fechadoBarbDetails">{barbearia.status}</p>}
+            <h3 id="BarbeariaName">{barbearia.name} • {calcularMediaAvaliacoes()} <i className="fa-solid fa-star"/> ({totalAvaliacoes(barbearia.id)})</h3>
+            <span className="material-symbols-outlined location">location_on</span>
+        </div>
+        <p></p>
       </div>
       
+      <hr />
+
+      <div className="title__service">
+        <p>Serviços</p>
+      </div>
+        <div className="Servicos">
+          {servicos
+            .filter(servico => servico.barbearia_id === barbearia.id)
+            .map(servico => (
+              <div key={servico.id} onClick={() => handleServiceChange(servico.id)} className={`servicoDiv ${selectedService === servico.id ? 'selected' : ''}`}>
+                {servico.name}
+              </div>
+          ))}
+        </div>
+
+        <hr />
+
+      <div className="tittle__Calendar">
+        Escolha um dia de sua preferência
+      </div>
       <div className="EscolhaDia">
-        <h3>Escolha um dia de sua preferência</h3>
         <Calendar id="Calendario"
           onChange={handleDateChange}
           value={selectedDate}
         />
       </div>
 
-      <h2>Horários Disponíveis</h2>
+      <hr />
+      <div className="tittle__Horarios">
+        Horários Disponíveis
+      </div>
       <span>Manhã</span>
       <div className="Horarios">
           {["08:00", "09:00", "10:00", "11:00", "12:00"].map(horario => (
@@ -226,17 +245,6 @@ const calcularMediaAvaliacoes = () => {
             <div key={horario} onClick={() => handleTimeChange(horario)} className={`horarioDiv ${selectedTime === horario ? 'selected' : ''}`}>
               {horario}
             </div>
-          ))}
-        </div>
-        
-        <h2>Serviços Disponíveis</h2>
-        <div className="Servicos">
-          {servicos
-            .filter(servico => servico.barbearia_id === barbearia.id)
-            .map(servico => (
-              <div key={servico.id} onClick={() => handleServiceChange(servico.id)} className={`servicoDiv ${selectedService === servico.id ? 'selected' : ''}`}>
-                {servico.name}
-              </div>
           ))}
         </div>
 
@@ -259,7 +267,7 @@ const calcularMediaAvaliacoes = () => {
         
         <ul className={`Navigation glassmorphism ${isMenuActive ? 'active' : ''}`}>
               <li><a href="#"><i className="fa-solid fa-user"></i></a></li>
-              <li><a href="http://localhost:5173/"><i className="fa-solid fa-house"></i></a></li>
+              <li><button onClick={navigateBackToHome}><i className="fa-solid fa-house"></i></button></li>
               <li><button onClick={logoutClick}><i className="fa-solid fa-right-from-bracket"></i></button></li>
               <button onClick={handleMenuClick} className="toggleMenu glassmorphism"></button>
         </ul>

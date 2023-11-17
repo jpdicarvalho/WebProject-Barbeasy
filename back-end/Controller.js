@@ -2,7 +2,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mysql from "mysql";
-import bcrypt from 'bcrypt';
 import jwt  from 'jsonwebtoken';
 
 import MercadoPago from "mercadopago";
@@ -83,7 +82,7 @@ app.post('/SignIn', async (req, res) => {
     if (result.length > 0) {
       const user = result[0];
       // Criação do token
-      const token = jwt.sign({ userId: user.id, userEmail: user.email }, 'abaporujucaiba', { expiresIn: '1h' });
+      const token = jwt.sign({ userId: user.id, userEmail: user.email }, 'abaporujucaiba', { expiresIn: "1mins" });
       // Envie o token no corpo da resposta
       res.status(200).json({ success: true, token: token, user: result });
       
