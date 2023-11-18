@@ -9,7 +9,6 @@ function SignIn() {
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState(null);
     const [messageLocationPermition, setMessageLocationPermition] = useState(null);
-    const [UserLotion, setUserLocation] = useState([]);
     
     useEffect(() => {
         const obterLocalizacao = async () => {
@@ -17,14 +16,15 @@ function SignIn() {
             const position = await new Promise((resolve, reject) => {
               navigator.geolocation.getCurrentPosition(resolve, reject);
             });
-            setUserLocation({
+            const UserLocation = {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
-            });
-            setMessageLocationPermition("Obrigado! Confira as Barbearias próximas a você.");
+            };
+            setMessageLocationPermition("Faça login e descubra as melhores barbearias ao seu redor.");
             setTimeout(() => {
                 setMessageLocationPermition(null);
             }, 3000);
+            return UserLocation
           } catch (error) {
             console.error('Erro ao obter a localização do usuário:', error);
             setMessageLocationPermition("Para mostrar Barbearias próximas, precisamos da sua localização.");
@@ -55,11 +55,13 @@ function SignIn() {
         if (dataUser.success) {
             // Armazene o token no localStorage
             localStorage.setItem('token', dataUser.token);
+
+            localStorage.setItem('userData', JSON.stringify(dataUser));
             setMessage('Seja Bem Vindo!');
               setTimeout(() => {
                 setMessage(null);
                 //mandando dados do usuáriopara a Home Page
-               navigate('/Home', { state: dataUser.user, UserLotion });
+               navigate('/Home');
               }, 2000);
         } else {
             setMessage('Erro ao realizar o Login!');
@@ -80,7 +82,7 @@ function SignIn() {
                 ) : (
                 <p className="error">{message}</p>
             )}
-            {messageLocationPermition === "Obrigado! Confira as Barbearias próximas a você." ? (
+            {messageLocationPermition === "Faça login e descubra as melhores barbearias ao seu redor." ? (
                 <p className="sucess">{messageLocationPermition}</p>
                 ) : (
                 <p className="error">{messageLocationPermition}</p>

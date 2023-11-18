@@ -8,10 +8,10 @@ import imgBarbearia from './img-barbearia.jpg'
 import barbeLogo from './barber-logo.png'
 
 function BarbeariaDetails() {
-  
+
+const navigate = useNavigate();
 const location = useLocation();
 const { barbearia } = location.state;
-const navigate = useNavigate();
 
 const [selectedDate, setSelectedDate] = useState(new Date());
 const [selectedTime, setSelectedTime] = useState("");
@@ -43,14 +43,14 @@ const handleServiceChange = (servicoId) => {
 const handleMenuClick = () => {
       setMenuActive(!isMenuActive);
 }
-// Função para navegar de volta à página inicial com dados do usuário
-const navigateBackToHome = () => {
-  navigate('/Home');
-};
 
+//
+const navigateToHome = () =>{
+  navigate("/Home");
+}
 //Função LogOut
 const logoutClick = () => {
-  localStorage.removeItem('token');
+  ['token', 'userData'].forEach(key => localStorage.removeItem(key));
   navigate("/SignIn");
 };
 
@@ -267,7 +267,7 @@ const calcularMediaAvaliacoes = () => {
         
         <ul className={`Navigation glassmorphism ${isMenuActive ? 'active' : ''}`}>
               <li><a href="#"><i className="fa-solid fa-user"></i></a></li>
-              <li><button onClick={navigateBackToHome}><i className="fa-solid fa-house"></i></button></li>
+              <li><button onClick={navigateToHome}><i className="fa-solid fa-house"></i></button></li>
               <li><button onClick={logoutClick}><i className="fa-solid fa-right-from-bracket"></i></button></li>
               <button onClick={handleMenuClick} className="toggleMenu glassmorphism"></button>
         </ul>

@@ -82,7 +82,7 @@ app.post('/SignIn', async (req, res) => {
     if (result.length > 0) {
       const user = result[0];
       // Criação do token
-      const token = jwt.sign({ userId: user.id, userEmail: user.email }, 'abaporujucaiba', { expiresIn: "1mins" });
+      const token = jwt.sign({ userId: user.id, userEmail: user.email }, 'abaporujucaiba', { expiresIn: "1h" });
       // Envie o token no corpo da resposta
       res.status(200).json({ success: true, token: token, user: result });
       

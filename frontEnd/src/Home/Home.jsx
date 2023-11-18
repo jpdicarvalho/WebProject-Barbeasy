@@ -1,6 +1,6 @@
 //Libary necessárias
 import { useEffect, useState } from "react"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 //Arq. de Estilização da página
 import './home.css'
 //imagens estáticas
@@ -13,9 +13,8 @@ import InteriorBarbearia from './interior-barbearia.avif'
 function Home() {
 
 const navigate = useNavigate();
-const location = useLocation();
-//parei aqui...
-const userData = location.state;
+
+//const location = useLocation();
 
 const [barbearias, setBarbearias] = useState([]);
 const [isMenuActive, setMenuActive] = useState(false);
@@ -25,6 +24,16 @@ const [search, setSearch] = useState('');
 //componente API GOOGLE
 const [UserLocation, setUserLocation] = useState([]);
 const [DistanciaBarbearias, setDistanciaBarbearias] = useState([]);
+
+//buscando informações do usuário logado
+const userData = localStorage.getItem('userData');
+//trasnformando os dados para JSON
+const userInformation = JSON.parse(userData);
+//Fromatando cada letra inicial do nome do usuário para caixa-alta
+function capitalizeWords(str) {
+  return str.replace(/\b\w/g, (match) => match.toUpperCase());
+}
+const userName = capitalizeWords(userInformation.user[0].name);
 
 //listando as barbearias cadastradas
 useEffect(() => {
@@ -91,13 +100,10 @@ const handleBarbeariaClick = (barbearia) => {
 const handleMenuClick = () => {
   setMenuActive(!isMenuActive);
 }
-//Função Home Page
-const homePageClick = (user) => {
-  navigate('/Home', { state: user });
-}
+
 //Função LogOut
 const logoutClick = () => {
-  localStorage.removeItem('token');
+  ['token', 'userData'].forEach(key => localStorage.removeItem(key));
   navigate("/SignIn");
 };
 //pegando a hora para saudar o usuário
@@ -200,16 +206,14 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
 
     return (
           <div className="containerHome">
+
             <div className="header">
                 <div className="imgBoxSectionUser">
                   <img src={imgUserDefault} alt="foto de perfil do usuário" />
                   <div className="spanUser">
-                    {userData.map((userData) =>
-                    <div key={userData.id}>
-                      <span>Olá, {userData.name} </span>
-                    </div>
-                    )}
+                    <p>Olá, {userName}</p>
                     <p>{saudacao}</p>
+                    
                   </div>
                   
                 </div>
@@ -261,7 +265,7 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
               ))}
             <ul className={`Navigation glassmorphism ${isMenuActive ? 'active' : ''}`}>
               <li><a href="#"><i className="fa-solid fa-user"></i></a></li>
-              <li><button onClick={homePageClick}><i className="fa-solid fa-house"></i></button></li>
+              <li><button><i className="fa-solid fa-house"></i></button></li>
               <li><button onClick={logoutClick}><i className="fa-solid fa-right-from-bracket"></i></button></li>
               <button onClick={handleMenuClick} className="toggleMenu glassmorphism"></button>
             </ul>
