@@ -1,14 +1,32 @@
-# WebProject-Barbeasy
-Repositório destinado para o desenvolvimento de uma sistema web, responsável por realizar agendamentos e pagamentos online de serviços de corte de cabelo.
+# Barbeasy
 
-# Como inicializar esse projeto?
+Bem-vindo ao Barbeasy, um sistema eficiente e fácil de usar para agendamento de serviços e processamento de pagamentos em barbearias. Esta aplicação foi desenvolvida para simplificar a gestão de agendamentos e transações financeiras, proporcionando uma experiência fluida tanto para os clientes quanto para os profissionais da barbearia.
 
-step 1: baixar o arquivo;
+## Recursos Principais para os Clientes das barbearias
+- [x] **Busca fácil por barbearias:** Encontre barbearias próximas a você, baseado em sua localização. Além disso, é possível buscar por barbearias abertas ou fechadas, por qualquer nome de barbearia em específico e por nota de avalição.
 
-step 2: rodar o comando 'npm install' nas pastas backend e frontend; e
+- [x] **Agendamento Simples:** Realize agendamentos de serviços, diretamente do conforto de seus dispositivos, escolhendo horários convenientes.
 
-step 3: importar o banco de dados MySQL no Xampp, de preferência.
+- [x] **Processamento de Pagamentos Seguro:** Faça pagamentos diretamente para a barbearia escolhida, garantindo assim, seu serviço agendado.
 
-step 4: use o comando 'npm start' para rodar o servidor do backend e o 'npm run dev' para rodar o servidor do frontend
+## Recursos Principais para Barbearias
+
+
+## Como Começar
+
+Siga as instruções abaixo para configurar e implementar o BarberShop Scheduler em seu ambiente local ou servidor.
+
+1. **Pré-requisitos:** Verifique se você atende a todos os requisitos necessários antes de iniciar a instalação.
+
+2. **Configuração:** Personalize as configurações conforme as necessidades específicas de sua barbearia.
+
+3. **Instalação:** Siga o guia passo a passo para instalar a aplicação em seu sistema.
+
+4. **Uso:** Explore os recursos e comece a agendar e processar pagamentos com facilidade.
+
+Dê um passo adiante na modernização da gestão de sua barbearia com o BarberShop Scheduler. Se tiver dúvidas ou precisar de suporte, consulte nossa documentação ou entre em contato conosco.
+
+**Vamos criar uma experiência excepcional para seus clientes e otimizar a administração de sua barbearia com o BarberShop Scheduler!**
+
 
 obs: Para que a API do Google e do Mercado Pago funcionem, é preciso das credências de acesso. Você pode obter suas credências de acesso do google criando uma conta de desenvolvedor em: (https://developers.google.com/) e a do Mercado Pago em: (https://www.mercadopago.com.br/developers/pt)
