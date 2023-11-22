@@ -9,30 +9,27 @@ Bem-vindo ao Barbeasy, um sistema eficiente e fácil de usar para agendamento de
 
 - [x] **Processamento de Pagamentos Seguro:** Faça pagamentos diretamente para a barbearia escolhida, garantindo assim, seu serviço agendado.
 
+
 ## Recursos Principais para Barbearias
 
 - [x] **Processamento de Pagamentos Seguro:** Receba o valor do serviço agendado pelo seu cliente, no ato do agendamento.
 
 - [ ] **Painel de controle:** Use o painel de controle para definir e personalizar os recursos oferecidos pelo seu negócio, como:
-      - [ ] Definição e Gestão de Horários;
--[] 
+- [ ] Definição e Gestão de Horários;
+- [ ] Defição e Gestão de Serviços; e
+- [ ] Definição e Gestão de Profissionais.
 
 - [ ] **Dashboard:** Tenha uma visão geral do desenpenho da sua barbearia, por meio de uma Dashboard detalhada com os dados de agendamentos realizados
+---
+
 ## Como Começar
+### Tanto para os clientes das barbearias quando para as proprias barbearias, basta acessar o site da platafoma [Barbeasy](https://www.barbeasy.com.br) e realize seu cadastro!
 
-Siga as instruções abaixo para configurar e implementar o BarberShop Scheduler em seu ambiente local ou servidor.
+**Vamos criar uma experiência excepcional para seus clientes e otimizar a administração de sua barbearia com o Barbeasy!**
+---
 
-1. **Pré-requisitos:** Verifique se você atende a todos os requisitos necessários antes de iniciar a instalação.
+# Especificações Técnicas
 
-2. **Configuração:** Personalize as configurações conforme as necessidades específicas de sua barbearia.
-
-3. **Instalação:** Siga o guia passo a passo para instalar a aplicação em seu sistema.
-
-4. **Uso:** Explore os recursos e comece a agendar e processar pagamentos com facilidade.
-
-Dê um passo adiante na modernização da gestão de sua barbearia com o BarberShop Scheduler. Se tiver dúvidas ou precisar de suporte, consulte nossa documentação ou entre em contato conosco.
-
-**Vamos criar uma experiência excepcional para seus clientes e otimizar a administração de sua barbearia com o BarberShop Scheduler!**
-
+Para você que é desenvolvedor e deseja implementar o sistema em seu ambiente, iremos te dar as informações necessárias para a implementação. 
 
 obs: Para que a API do Google e do Mercado Pago funcionem, é preciso das credências de acesso. Você pode obter suas credências de acesso do google criando uma conta de desenvolvedor em: (https://developers.google.com/) e a do Mercado Pago em: (https://www.mercadopago.com.br/developers/pt)
