@@ -20,7 +20,6 @@ Bem-vindo ao Barbeasy, um sistema eficiente e fácil de usar para agendamento de
 - [ ] Definição e Gestão de Profissionais.
 
 - [ ] **Dashboard:** Tenha uma visão geral do desenpenho da sua barbearia, por meio de uma Dashboard detalhada com os dados de agendamentos realizados
----
 
 ## Como Começar?
 Tanto para os clientes das barbearias quando para as proprias barbearias, basta acessar o site da platafoma [Barbeasy](https://www.barbeasy.com.br) e realize seu cadastro!
