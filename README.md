@@ -11,7 +11,13 @@ Bem-vindo ao Barbeasy, um sistema eficiente e fácil de usar para agendamento de
 
 ## Recursos Principais para Barbearias
 
+- [x] **Processamento de Pagamentos Seguro:** Receba o valor do serviço agendado pelo seu cliente, no ato do agendamento.
 
+- [ ] **Painel de controle:** Use o painel de controle para definir e personalizar os recursos oferecidos pelo seu negócio, como:
+      - [ ] Definição e Gestão de Horários;
+-[] 
+
+- [ ] **Dashboard:** Tenha uma visão geral do desenpenho da sua barbearia, por meio de uma Dashboard detalhada com os dados de agendamentos realizados
 ## Como Começar
 
 Siga as instruções abaixo para configurar e implementar o BarberShop Scheduler em seu ambiente local ou servidor.
