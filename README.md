@@ -9,7 +9,6 @@ Bem-vindo ao Barbeasy, um sistema eficiente e fácil de usar para agendamento de
 
 - [x] **Processamento de Pagamentos Seguro:** Faça pagamentos diretamente para a barbearia escolhida, garantindo assim, seu serviço agendado.
 
-
 ## Recursos Principais para Barbearias
 
 - [x] **Processamento de Pagamentos Seguro:** Receba o valor do serviço agendado pelo seu cliente, no ato do agendamento.
@@ -24,9 +23,9 @@ Bem-vindo ao Barbeasy, um sistema eficiente e fácil de usar para agendamento de
 ## Como Começar?
 Tanto para os clientes das barbearias quando para as proprias barbearias, basta acessar o site da platafoma [Barbeasy](https://www.barbeasy.com.br) e realize seu cadastro!
 
-**Vamos criar uma experiência excepcional para seus clientes e otimizar a administração de sua barbearia com o Barbeasy!**
----
+### Vamos criar uma experiência excepcional para seus clientes e otimizar a administração de sua barbearia com o Barbeasy!**
 
+---
 # Especificações Técnicas e Implementação
 Nesta sessão, iremos dar algumas especificações técnicas sobre o sistema e seu modo como foi desenvolvido. Além disso, iremos dar um passo a passo de como implementa-lo em seu ambiente de desenvolvimento.
 
