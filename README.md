@@ -23,7 +23,7 @@ Bem-vindo ao Barbeasy, um sistema eficiente e fácil de usar para agendamento de
 ## Como Começar?
 Tanto para os clientes das barbearias quando para as proprias barbearias, basta acessar o site da platafoma [Barbeasy](https://www.barbeasy.com.br) e realize seu cadastro!
 
-### Vamos criar uma experiência excepcional para seus clientes e otimizar a administração de sua barbearia com o Barbeasy!**
+### Vamos criar uma experiência excepcional para seus clientes e otimizar a administração de sua barbearia com o Barbeasy!
 
 ---
 # Especificações Técnicas e Implementação
