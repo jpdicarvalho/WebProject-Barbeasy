@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 16/11/2023 às 20:53
+-- Tempo de geração: 23/11/2023 às 01:00
 -- Versão do servidor: 10.4.28-MariaDB
 -- Versão do PHP: 8.2.4
 
@@ -29,20 +29,12 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `agendamentos` (
   `id` int(11) NOT NULL,
-  `data_agendamento` date DEFAULT NULL,
+  `dia_agendamento` varchar(255) DEFAULT NULL,
   `horario` time DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `barbearia_id` int(11) DEFAULT NULL,
   `servico_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
---
--- Despejando dados para a tabela `agendamentos`
---
-
-INSERT INTO `agendamentos` (`id`, `data_agendamento`, `horario`, `user_id`, `barbearia_id`, `servico_id`) VALUES
-(54, '2023-11-09', '15:00:00', NULL, 1, 6),
-(55, '2023-11-09', '17:00:00', NULL, 1, 10);
 
 -- --------------------------------------------------------
 
@@ -52,6 +44,7 @@ INSERT INTO `agendamentos` (`id`, `data_agendamento`, `horario`, `user_id`, `bar
 
 CREATE TABLE `avaliacoes` (
   `id` int(11) NOT NULL,
+  `user_id` int(255) DEFAULT NULL,
   `barbearia_id` int(255) NOT NULL,
   `estrelas` int(255) NOT NULL,
   `comentarios` varchar(255) NOT NULL,
@@ -62,17 +55,18 @@ CREATE TABLE `avaliacoes` (
 -- Despejando dados para a tabela `avaliacoes`
 --
 
-INSERT INTO `avaliacoes` (`id`, `barbearia_id`, `estrelas`, `comentarios`, `data_avaliacao`) VALUES
-(16, 1, 5, '1º avaliação', '2023-11-13'),
-(17, 1, 5, '2º avaiação', '2023-11-13'),
-(18, 1, 5, '3º Avaliação', '2023-11-13'),
-(19, 1, 3, '4º Avaliação', '2023-11-13'),
-(20, 1, 1, '5º avaliação', '2023-11-13'),
-(21, 18, 5, '1º avaliação', '2023-11-13'),
-(22, 18, 5, '2º Avaliação, nota 5', '2023-11-13'),
-(23, 20, 3, '1º Avaliação, nota 3', '2023-11-13'),
-(24, 20, 5, '2º Avaliação, nota 5', '2023-11-13'),
-(25, 1, 4, '6º avaliação, nota 4', '2023-11-15');
+INSERT INTO `avaliacoes` (`id`, `user_id`, `barbearia_id`, `estrelas`, `comentarios`, `data_avaliacao`) VALUES
+(16, NULL, 1, 5, '1º avaliação', '2023-11-13'),
+(17, NULL, 1, 5, '2º avaiação', '2023-11-13'),
+(18, NULL, 1, 5, '3º Avaliação', '2023-11-13'),
+(19, NULL, 1, 3, '4º Avaliação', '2023-11-13'),
+(20, NULL, 1, 1, '5º avaliação', '2023-11-13'),
+(21, NULL, 18, 5, '1º avaliação', '2023-11-13'),
+(22, NULL, 18, 5, '2º Avaliação, nota 5', '2023-11-13'),
+(23, NULL, 20, 3, '1º Avaliação, nota 3', '2023-11-13'),
+(24, NULL, 20, 5, '2º Avaliação, nota 5', '2023-11-13'),
+(25, NULL, 1, 4, '6º avaliação, nota 4', '2023-11-15'),
+(26, NULL, 1, 4, 'avaliação 7º, nota 4', '2023-11-17');
 
 -- --------------------------------------------------------
 
@@ -149,7 +143,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `name`, `email`, `senha`, `celular`, `img`) VALUES
-(73, 'joão pedro', 'joaopedrobraga.07@gmail.com', '123', '', '');
+(77, 'jpdicarvalho', 'joaopedrobraga.07@gmail.com', '123', '', '');
 
 --
 -- Índices para tabelas despejadas
@@ -196,13 +190,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT de tabela `agendamentos`
 --
 ALTER TABLE `agendamentos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT de tabela `avaliacoes`
 --
 ALTER TABLE `avaliacoes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de tabela `barbearia`
@@ -220,7 +214,7 @@ ALTER TABLE `servico`
 -- AUTO_INCREMENT de tabela `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- Restrições para tabelas despejadas
