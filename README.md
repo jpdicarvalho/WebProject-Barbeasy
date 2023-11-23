@@ -27,10 +27,22 @@ Tanto para os clientes das barbearias quando para as proprias barbearias, basta 
 
 ---
 # Especificações Técnicas e Implementação
-Nesta sessão, iremos dar algumas especificações técnicas sobre o sistema e seu modo como foi desenvolvido. Além disso, iremos dar um passo a passo de como implementa-lo em seu ambiente de desenvolvimento.
-
+Nesta sessão, iremos dar algumas especificações técnicas sobre o sistema e o passo a passo de como implementá-lo em seu ambiente de desenvolvimento.  
+  
 ## Especificações Técnicas
 O sistema Barbeasy é um sistema distribuído, composto por três APIs, sendo duas do Google e uma do MercadoPago.
+
+### Tecnologias usadas:
+- Front-End: React, HTML5 e CSS.
+- Back-End: JavaScript e Node.js.
+- Banco de Dados: MySQL e Xampp como servidor de Banco de Dados.
+
+### APIs usadas
+- Distance Matrix - Google.
+- Gateway de Pagamento do Mercado Pago.
+
+### Modelo Entidade-Relacionamento
+![MER](https://github.com/jpdicarvalho/WebProject-Barbeasy/assets/114435447/e639bbb5-b5d9-494a-98ee-3ec3d0e32bb6)
 
 
 obs: Para que a API do Google e do Mercado Pago funcionem, é preciso das credências de acesso. Você pode obter suas credências de acesso do google criando uma conta de desenvolvedor em: (https://developers.google.com/) e a do Mercado Pago em: (https://www.mercadopago.com.br/developers/pt)
