@@ -14,9 +14,9 @@ Bem-vindo ao Barbeasy, um sistema eficiente e fácil de usar para agendamento de
 - [x] **Processamento de Pagamentos Seguro:** Receba o valor do serviço agendado pelo seu cliente, no ato do agendamento.
 
 - [ ] **Painel de controle:** Use o painel de controle para definir e personalizar os recursos oferecidos pelo seu negócio, como:
-- [ ] Definição e Gestão de Horários;
-- [ ] Defição e Gestão de Serviços; e
-- [ ] Definição e Gestão de Profissionais.
+  - [ ] Definição e Gestão de Horários;
+  - [ ] Defição e Gestão de Serviços; e
+  - [ ] Definição e Gestão de Profissionais.
 
 - [ ] **Dashboard:** Tenha uma visão geral do desenpenho da sua barbearia, por meio de uma Dashboard detalhada com os dados de agendamentos realizados
 
