@@ -5,28 +5,44 @@ import logoMercadoPago from './logoMercadoPago.png'
 import { Calendar } from '../Calendar/Calendar';
 import './BarbeariaDetails.css'
 import imgBarbearia from './img-barbearia.jpg'
-import barbeLogo from './barber-logo.png'
+//import barbeLogo from './barber-logo.png'
+import logoBarbeariaTeste from './logo-barbearia-teste.png'
 
 function BarbeariaDetails() {
 
 const navigate = useNavigate();
 const location = useLocation();
+
 const { barbearia } = location.state;
 
-const [selectedDate, setSelectedDate] = useState(new Date());
+//buscando informações do usuário logado
+const userData = localStorage.getItem('userData');
+//trasnformando os dados para JSON
+const userInformation = JSON.parse(userData);
+//Buscando o id do usuário
+const userId = userInformation.user[0].id;
+//buscando o email do usuário
+const userEmail = userInformation.user[0].email;
+
+const [selectedDate, setSelectedDate] = useState(null);
 const [selectedTime, setSelectedTime] = useState("");
 const [selectedService, setSelectedService] = useState("");
+
 const [servicos, setServicos] = useState([]);
+
 const [isMenuActive, setMenuActive] = useState(false);
 const [isAgendamentoConfirmed, setAgendamentoConfirmed] = useState(false);
+
 const [url, setUrl] = useState(null);
+
 const [avaliacao, setAvaliacao] = useState(0.5);
 const [comentario, setComentario] = useState("");
 const [AllAvaliation, setAllAvaliation] = useState([]);
 
 //Função para selecionar a data escolhida pelo usuário
 const handleDateChange = (date) => {
-    setSelectedDate(date);
+  //console.log('dia do agendamento', date);
+  setSelectedDate(date);
 };
 
 //Função para selecionar a hora escolhida pelo usuário
@@ -44,7 +60,7 @@ const handleMenuClick = () => {
       setMenuActive(!isMenuActive);
 }
 
-//
+//função para navegarpara página home
 const navigateToHome = () =>{
   navigate("/Home");
 }
@@ -68,7 +84,9 @@ useEffect(() => {
 fetchData();
 }, []);
 
-/*const handleSubmit = async () => {
+//Requisição para realizar a gendamento
+/*
+const Agendar = async () => {
     try {
       const response = await fetch('http://localhost:8000/agendamento', {
         method: 'POST',
@@ -79,21 +97,22 @@ fetchData();
           selectedDate,
           selectedTime,
           selectedService,
-          barbeariaId
+          barbeariaId: barbearia.id,
+          userId
         }),
         
       });
       
       const data = await response.json();
       alert(data.message);
-      window.location.href = 'http://localhost:5173/Checkout';
+      //window.location.href = 'http://localhost:5173/Checkout';
     } catch (error) {
       console.error('Erro ao enviar os dados:', error);
     }
   };*/
 
 //Mandan a requisição para a rota de Pagamento
-const handleSubmit = async () => {
+const pagamento = async () => {
     try {
       // Encontrar o serviço selecionado no array de serviços
       const servicoSelecionado = servicos.find(servico => servico.id === selectedService);
@@ -108,7 +127,8 @@ const handleSubmit = async () => {
         body: JSON.stringify({
           DescricaoServico,
           preco: servicoSelecionado.preco,
-          nameServico: servicoSelecionado.name
+          nameServico: servicoSelecionado.name,
+          userEmail
         }),
         
       });
@@ -122,7 +142,7 @@ const handleSubmit = async () => {
 };
 
 //passando a url do mercado pago para abrir em outra aba
-const handleClick = () => {
+const urlMercadoPago = () => {
     window.open(url, 'modal');
 };
 
@@ -138,7 +158,8 @@ const enviarAvaliacao = async () => {
           barbeariaId: barbearia.id,
           avaliacao,
           comentario,
-          data_avaliacao: new Date()
+          data_avaliacao: new Date(),
+          userId
         }),
       });
       const data = await response.json();
@@ -191,11 +212,15 @@ const calcularMediaAvaliacoes = () => {
         </div>
         <div className="BarbeariaInformation">
         <div className="imgBarbeariaProfile">
-          <img src={barbeLogo} alt="foto-barbearia" id="barbeLogo" />
+          <img src={logoBarbeariaTeste} alt="logo-barbearia" id="barbeLogo" />
         </div>
             {barbearia.status === "Aberta" ? <p className="abertoBarbDetails">{barbearia.status}</p> : <p className="fechadoBarbDetails">{barbearia.status}</p>}
             <h3 id="BarbeariaName">{barbearia.name} • {calcularMediaAvaliacoes()} <i className="fa-solid fa-star"/> ({totalAvaliacoes(barbearia.id)})</h3>
-            <span className="material-symbols-outlined location">location_on</span>
+            <div className="location">
+              <p className="material-symbols-outlined location">location_on </p>
+              <p>{barbearia.distancia} {barbearia.duracao} •</p>
+              <i className="fa-solid fa-person"></i>
+            </div>
         </div>
         <p></p>
       </div>
@@ -210,7 +235,7 @@ const calcularMediaAvaliacoes = () => {
             .filter(servico => servico.barbearia_id === barbearia.id)
             .map(servico => (
               <div key={servico.id} onClick={() => handleServiceChange(servico.id)} className={`servicoDiv ${selectedService === servico.id ? 'selected' : ''}`}>
-                {servico.name}
+                <p>{servico.name} - R$ {servico.preco},00</p> 
               </div>
           ))}
         </div>
@@ -221,10 +246,7 @@ const calcularMediaAvaliacoes = () => {
         Escolha um dia de sua preferência
       </div>
       <div className="EscolhaDia">
-        <Calendar id="Calendario"
-          onChange={handleDateChange}
-          value={selectedDate}
-        />
+        <Calendar onDateChange={handleDateChange}/>
       </div>
 
       <hr />
@@ -248,22 +270,21 @@ const calcularMediaAvaliacoes = () => {
           ))}
         </div>
 
-        {!isAgendamentoConfirmed && (
-            <button
+        {selectedService && selectedDate && selectedTime && !isAgendamentoConfirmed && (
+          <button
             id="AgendamentoButton"
-            onClick={handleSubmit}
-            disabled={!selectedDate || !selectedTime || !selectedService}
+            onClick={pagamento}
           >
-            Confirmar meu Agendamento
+            Continuar
           </button>
         )}
        
        {isAgendamentoConfirmed && (
-          <button onClick={handleClick} className="mercadoPagoButton">
+        <button onClick={urlMercadoPago} className="mercadoPagoButton">
           <img src={logoMercadoPago} alt="logo Mercado Pago" className="mercadoPagoLogo" />
           Pagar com Mercado Pago
         </button>
-        )}
+      )}
         
         <ul className={`Navigation glassmorphism ${isMenuActive ? 'active' : ''}`}>
               <li><a href="#"><i className="fa-solid fa-user"></i></a></li>
@@ -271,6 +292,8 @@ const calcularMediaAvaliacoes = () => {
               <li><button onClick={logoutClick}><i className="fa-solid fa-right-from-bracket"></i></button></li>
               <button onClick={handleMenuClick} className="toggleMenu glassmorphism"></button>
         </ul>
+
+        <hr />
             <div className="AvaliacaoSection">
               <h2>Avalie esta barbearia</h2>
               <div className="Estrelas">

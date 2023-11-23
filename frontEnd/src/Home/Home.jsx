@@ -30,10 +30,7 @@ const userData = localStorage.getItem('userData');
 //trasnformando os dados para JSON
 const userInformation = JSON.parse(userData);
 //Fromatando cada letra inicial do nome do usuário para caixa-alta
-function capitalizeWords(str) {
-  return str.replace(/\b\w/g, (match) => match.toUpperCase());
-}
-const userName = capitalizeWords(userInformation.user[0].name);
+const userName = userInformation.user[0].name;
 
 //listando as barbearias cadastradas
 useEffect(() => {
@@ -225,9 +222,6 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
                   <div className="inputBoxSearch">
                     <i className="fa-solid fa-magnifying-glass lupa"></i>
                     <input type="search" id="inputSearch" name="name" value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Encontrar Barbearia'/>
-                    <div className="location">
-                      <i className="fa-solid fa-location-crosshairs fa-xl location"></i>
-                    </div>
                   </div>
                 </div> 
               </div>

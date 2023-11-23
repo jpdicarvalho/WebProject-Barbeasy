@@ -1,5 +1,7 @@
 // Importa os estilos definidos em um arquivo Calendar.css
 import './Calendar.css';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 // Array contendo os nomes dos meses abreviados
 const monthNames = [
@@ -12,7 +14,9 @@ const weekNames = [
 ];
 
 // Declaração do componente funcional chamado Calendar
-export function Calendar() {
+export function Calendar( {onDateChange} ) {
+  const [selectedDay, setSelectedDay] = useState(null);
+
   // Obtém a data atual
   const date = new Date();
 
@@ -26,8 +30,6 @@ export function Calendar() {
   // Capitalizar a primeira letra
   dayOfWeek = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1);
 
-  // Obtém o dia do mês atual
-  const day = date.getDate();
   // Obtém o ano atual
   const year = date.getFullYear();
   // Obtém o mês atual (0 a 11, onde janeiro é 0 e dezembro é 11)
@@ -82,6 +84,17 @@ function getNumber() {
   const weekDays = getWeeks();
   const numberDays = getNumber();
 
+  // Função para lidar com a mudança de data
+  const handleDateClick = (day) => {
+    setSelectedDay(day);
+    if (onDateChange) {
+      onDateChange(day);
+    }
+  };
+// Adicione PropTypes para validar as propriedades
+Calendar.propTypes = {
+  onDateChange: PropTypes.func,
+};
   // Retorna a estrutura JSX do componente
 return (
   <div className='container__Calendar'>
@@ -102,13 +115,16 @@ return (
 
       {/* Lista os números dos dias do mês */}
       <div className='listDayWeek'>
-        {numberDays.map((number) => (
-          // Adiciona a classe 'active' se o dia for o dia atual
-          <div key={`day-${number}`} className={`list__name__day ${day === number ? 'activeCalendar' : ''}`}>
-            <p className='day'>{number}</p>
-          </div>
-        ))}
-      </div>
+          {numberDays.map((number) => (
+            <div
+              key={`day-${number}`}
+              className={`list__name__day ${selectedDay === number ? 'activeCalendar' : ''}`}
+              onClick={() => handleDateClick(number)}
+            >
+              <p className='day'>{number}</p>
+            </div>
+          ))}
+        </div>
     </div>
   </div>
 );

@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const client = new MercadoPago.MercadoPagoConfig({
-  accessToken: '',
+  accessToken: 'APP_USR-7433076748534689-103020-f2ad6b84165928b9b0d4732a99d73ce6-752130654',
 });
 const preference = new MercadoPago.Preference(client);
 
@@ -28,7 +28,7 @@ const db = mysql.createConnection({
 //Mandando a requisição para a Api-Distance-Matrix-Google
 app.post('/reqApiGoogle', async (req, res) => {
     try {
-      const apiKey = '';
+      const apiKey = 'AIzaSyD-reRtGdFi5iiZqqVUeIjAt0HoY4SxNRY';
       const {latUser, lonUser, coordenadasBarbearias } = req.body;
       // Criar um array de strings formatadas para as coordenadas das barbearias
       const destinations = coordenadasBarbearias.map(coord => `${coord.latitude}%2C${coord.longitude}`).join('%7C');
@@ -106,12 +106,8 @@ app.get('/listBarbearia', async (req, res) => {
   }
 });
 
-/*
-=-=-= listando os Serviços cadastrados pelas barbearias =-=-=
-Aqui está sendo puxado todos os registros, porém, no Front-End, 
-um filtro é aplicado para que apareça apenas os serviços das barbearias selecionadas pelo usuário.
-*/
-app.get('/listServico', async(req, res)=>{
+/*listando os Serviços cadastrados pelas barbearias*/
+app.get('/listServico', async (req, res)=>{
   try {
     db.query('SELECT * FROM servico', (err, rows) => {
       if (err) throw err;
@@ -122,10 +118,11 @@ app.get('/listServico', async(req, res)=>{
     }
 });
 
-//cadastrando a avaliação do usuário
+//Cadastrando a avaliação do usuário
 app.post("/avaliacao", (req, res) => {
-  const sql = "INSERT INTO avaliacoes (`barbearia_id`, `estrelas`, `comentarios`, `data_avaliacao`) VALUES (?)";
+  const sql = "INSERT INTO avaliacoes (`user_id`,`barbearia_id`, `estrelas`, `comentarios`, `data_avaliacao`) VALUES (?)";
   const values = [
+    req.body.userId,
     req.body.barbeariaId,
     req.body.avaliacao,
     req.body.comentario,
@@ -154,9 +151,9 @@ app.get('/SearchAvaliation', async(req, res)=>{
 
 //Salvando o agendamento feito pelo cliente
 app.post('/agendamento', (req, res) => {
-  const { selectedDate, selectedTime, selectedService, barbeariaId} = req.body;
-  db.query('INSERT INTO agendamentos (data_agendamento, horario, servico_id, barbearia_id) VALUES (?, ?, ?, ?)', 
-    [selectedDate, selectedTime, selectedService, barbeariaId], 
+  const { selectedDate, selectedTime, selectedService, barbeariaId, userId} = req.body;
+  db.query('INSERT INTO agendamentos (dia_agendamento, horario, user_id, barbearia_id, servico_id) VALUES (?, ?, ?, ?, ?)', 
+    [selectedDate, selectedTime, userId, barbeariaId, selectedService], 
     (err, results) => {
       if (err) {
         console.error('Erro ao inserir os dados:', err);
@@ -166,6 +163,7 @@ app.post('/agendamento', (req, res) => {
       res.json({ message: 'Agendamento criado com sucesso' });
   });
 });
+
 //RoutesPayment
 app.post('/Checkout', async (req, res) => {
   let body = {

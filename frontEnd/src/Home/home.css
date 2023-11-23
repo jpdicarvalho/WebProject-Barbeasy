@@ -8,7 +8,7 @@
   padding: 15px;
   padding-top: 340px;
   padding-bottom: 70px;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Poppis', sans-serif;
   background: #100d2a;
 }
 .header{
@@ -114,7 +114,7 @@
   background: transparent;
   padding: 5px;
 }
-input[type="search"]{
+#inputSearch{
   padding-left: 40px;
   outline: none;
   border: none;
@@ -129,19 +129,8 @@ input[type="search"]{
 .inputBoxSearch input[type="search"]::placeholder{
   color: #f6f6fc;
   font-weight: bolder;
+  letter-spacing: 1px;
 }
-.location{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #f6f6fc;
-  width: 50px;
-  height: 50px;
-  border-radius: 30px;
-  text-align: center;
-  background: #100d2a;
-}
-/*#4a17d5*/
 #Search{
   color: white;
   border: none;
@@ -151,20 +140,7 @@ input[type="search"]{
   margin-left: 5px;
   font-weight: bold;
   transition: 0.5s;
-}
-#filtro{
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  top: 0;
-  width: 40px;
-  height: 40px;
-  right: 15px;
-  background: linear-gradient(to right, #4a17d5, #6D48D6);
-  color: #fff;
-  cursor: pointer;
+
 }
 #h3{
   position: relative;
@@ -307,7 +283,6 @@ input[type="search"]{
   width: 30px;
   height: 30px;
 }
-
 .Navigation .toggleMenu::before{
   content: '';
   position: absolute;
