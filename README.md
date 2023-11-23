@@ -39,6 +39,7 @@ O sistema Barbeasy é um sistema distribuído, composto por três APIs, sendo du
 
 ### APIs usadas
 - Distance Matrix - Google.
+- OAuth - Google (API não implementada nesta versão do sistema)
 - Gateway de Pagamento do Mercado Pago.
   
  **Obs: Para que a API do Google e do Mercado Pago funcionem, é preciso das credências de acesso. Você pode obter suas credências de acesso do google criando uma conta de desenvolvedor em: (https://developers.google.com/) e a do Mercado Pago em: (https://www.mercadopago.com.br/developers/pt). Além disso, lembre-se de cadastrar a latitude e longitude da barbearia no BD para que a API do google não retorne null.**
@@ -51,9 +52,11 @@ O sistema Barbeasy é um sistema distribuído, composto por três APIs, sendo du
 ---
 # Implementação
 Siga o passo a passo abaixo para realizar a implementaçao do sistema em seu ambiente de desenvolvimento:
-- Banco de Dados: importe o arquivo barbeasy_two.sql no seu painel do phpMyadmim do xampp. Crie uma barbearia fictícia na tabela 'barbearias';
-- Back-End: abra o terminal 'prompt de comando' no VSCode, entre na pasta 'back-end' e use o comando `npm install` para baixar os pacotes necessário;
-- Front-End: abra o terminal 'prompt de comando' no VSCode, entre na pasta 'frontend' e use o comando `npm install` para baixar os pacotes necessário;
+- Banco de Dados:
+  - importe o arquivo barbeasy_two.sql no seu painel do phpMyadmim do xampp; e
+  - Crie uma barbearia fictícia na tabela 'barbearias'.
+- Back-End: abra o terminal 'prompt de comando' no VSCode, entre na pasta 'back-end' e use o comando `npm install` para baixar os pacotes necessário.
+- Front-End: abra o terminal 'prompt de comando' no VSCode, entre na pasta 'frontend' e use o comando `npm install` para baixar os pacotes necessário.
 
 Quando o front-end for iniciado, um link será gerado no terminal, use-o para acessar a aplicação.
 
