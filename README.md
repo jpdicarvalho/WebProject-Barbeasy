@@ -33,17 +33,28 @@ Nesta sessão, iremos dar algumas especificações técnicas sobre o sistema e o
 O sistema Barbeasy é um sistema distribuído, composto por três APIs, sendo duas do Google e uma do MercadoPago.
 
 ### Tecnologias usadas:
-- Front-End: React, HTML5 e CSS.
+- Front-End: React, Vite, HTML5 e CSS.
 - Back-End: JavaScript e Node.js.
 - Banco de Dados: MySQL e Xampp como servidor de Banco de Dados.
 
 ### APIs usadas
 - Distance Matrix - Google.
 - Gateway de Pagamento do Mercado Pago.
-# Obs: Para que a API do Google e do Mercado Pago funcionem, é preciso das credências de acesso. Você pode obter suas credências de acesso do google criando uma conta de desenvolvedor em: (https://developers.google.com/) e a do Mercado Pago em: (https://www.mercadopago.com.br/developers/pt). Além disso, lembre-se de cadastrar a latitude e longitude da barbearia no BD para que a API do google não retorne null.
+  
+ **Obs: Para que a API do Google e do Mercado Pago funcionem, é preciso das credências de acesso. Você pode obter suas credências de acesso do google criando uma conta de desenvolvedor em: (https://developers.google.com/) e a do Mercado Pago em: (https://www.mercadopago.com.br/developers/pt). Além disso, lembre-se de cadastrar a latitude e longitude da barbearia no BD para que a API do google não retorne null.**
 
-### Modelo Entidade-Relacionamento
+## Modelo Entidade-Relacionamento
 ![MER](https://github.com/jpdicarvalho/WebProject-Barbeasy/assets/114435447/651bd3ee-3ae8-469d-b9be-d827b38fa737)
 
-### Diagrama de Componentes
+## Diagrama de Componentes
 ![DC](https://github.com/jpdicarvalho/WebProject-Barbeasy/assets/114435447/fa0841d1-2818-46c5-be95-3e3b238d1da9)
+---
+# Implementação
+Siga o passo a passo abaixo para realizar a implementaçao do sistema em seu ambiente de desenvolvimento:
+- Banco de Dados: importe o arquivo barbeasy_two.sql no seu painel do phpMyadmim do xampp. Crie uma barbearia fictícia na tabela 'barbearias';
+- Back-End: abra o terminal 'prompt de comando' no VSCode, entre na pasta 'back-end' e use o comando `npm install` para baixar os pacotes necessário;
+- Front-End: abra o terminal 'prompt de comando' no VSCode, entre na pasta 'frontend' e use o comando `npm install` para baixar os pacotes necessário;
+
+Quando o front-end for iniciado, um link será gerado no terminal, use-o para acessar a aplicação.
+
+# Isso é tudo pessoal!! Thanks!
