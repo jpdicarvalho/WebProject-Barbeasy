@@ -45,7 +45,8 @@ O sistema Barbeasy é um sistema distribuído, composto por três APIs, sendo du
  **Obs: Para que a API do Google e do Mercado Pago funcionem, é preciso das credências de acesso. Você pode obter suas credências de acesso do google criando uma conta de desenvolvedor em: (https://developers.google.com/) e a do Mercado Pago em: (https://www.mercadopago.com.br/developers/pt). Além disso, lembre-se de cadastrar a latitude e longitude da barbearia no BD para que a API do google não retorne null.**
 
 ## Modelo Entidade-Relacionamento
-![mer jpeg](https://github.com/jpdicarvalho/WebProject-Barbeasy/assets/114435447/cb86ec3b-623b-449e-9c40-7daf02848578)
+![MER](https://github.com/jpdicarvalho/WebProject-Barbeasy/assets/114435447/d6812ca4-4e72-45bd-ac9d-ca5704f3536a)
+
 
 
 ## Diagrama de Componentes
