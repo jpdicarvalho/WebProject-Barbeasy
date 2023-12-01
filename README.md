@@ -50,7 +50,8 @@ O sistema Barbeasy é um sistema distribuído, composto por três APIs, sendo du
 
 
 ## Diagrama de Componentes
-![DC](https://github.com/jpdicarvalho/WebProject-Barbeasy/assets/114435447/cc2e2155-79d3-4105-9dd3-3fc97ab7ac1b)
+![Diagrama de Componentes drawio](https://github.com/jpdicarvalho/WebProject-Barbeasy/assets/114435447/0d78cbf4-b9ac-4cf9-8de8-08981803d298)
+
 
 ---
 # Implementação
