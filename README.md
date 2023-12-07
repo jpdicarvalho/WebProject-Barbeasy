@@ -14,9 +14,9 @@ Bem-vindo ao Barbeasy, um sistema eficiente e fácil de usar para agendamento de
 - [x] **Processamento de Pagamentos Seguro:** Receba o valor do serviço agendado pelo seu cliente, no ato do agendamento.
 
 - [ ] **Painel de controle:** Use o painel de controle para definir e personalizar os recursos oferecidos pelo seu negócio, como:
-- [ ] Definição e Gestão de Horários;
-- [ ] Defição e Gestão de Serviços; e
-- [ ] Definição e Gestão de Profissionais.
+  - [ ] Definição e Gestão de Horários;
+  - [ ] Defição e Gestão de Serviços; e
+  - [ ] Definição e Gestão de Profissionais.
 
 - [ ] **Dashboard:** Tenha uma visão geral do desenpenho da sua barbearia, por meio de uma Dashboard detalhada com os dados de agendamentos realizados
 
@@ -27,10 +27,41 @@ Tanto para os clientes das barbearias quando para as proprias barbearias, basta 
 
 ---
 # Especificações Técnicas e Implementação
-Nesta sessão, iremos dar algumas especificações técnicas sobre o sistema e seu modo como foi desenvolvido. Além disso, iremos dar um passo a passo de como implementa-lo em seu ambiente de desenvolvimento.
-
+Nesta sessão, iremos dar algumas especificações técnicas sobre o sistema e o passo a passo de como implementá-lo em seu ambiente de desenvolvimento.  
+  
 ## Especificações Técnicas
 O sistema Barbeasy é um sistema distribuído, composto por três APIs, sendo duas do Google e uma do MercadoPago.
 
+### Tecnologias usadas:
+- Front-End: React, Vite, HTML5 e CSS.
+- Back-End: JavaScript e Node.js.
+- Banco de Dados: MySQL e Xampp como servidor de Banco de Dados.
 
-obs: Para que a API do Google e do Mercado Pago funcionem, é preciso das credências de acesso. Você pode obter suas credências de acesso do google criando uma conta de desenvolvedor em: (https://developers.google.com/) e a do Mercado Pago em: (https://www.mercadopago.com.br/developers/pt)
+### APIs usadas
+- Distance Matrix - Google.
+- OAuth - Google (API não implementada nesta versão do sistema)
+- Gateway de Pagamento do Mercado Pago.
+  
+ **Obs: Para que a API do Google e do Mercado Pago funcionem, é preciso das credências de acesso. Você pode obter suas credências de acesso do google criando uma conta de desenvolvedor em: (https://developers.google.com/) e a do Mercado Pago em: (https://www.mercadopago.com.br/developers/pt). Além disso, lembre-se de cadastrar a latitude e longitude da barbearia no BD para que a API do google não retorne null.**
+
+## Modelo Entidade-Relacionamento
+![MER](https://github.com/jpdicarvalho/WebProject-Barbeasy/assets/114435447/d6812ca4-4e72-45bd-ac9d-ca5704f3536a)
+
+
+
+## Diagrama de Componentes
+![Diagrama de Componentes drawio](https://github.com/jpdicarvalho/WebProject-Barbeasy/assets/114435447/0d78cbf4-b9ac-4cf9-8de8-08981803d298)
+
+
+---
+# Implementação
+Siga o passo a passo abaixo para realizar a implementaçao do sistema em seu ambiente de desenvolvimento:
+- Banco de Dados:
+  - importe o arquivo barbeasy_two.sql no seu painel do phpMyadmim do xampp; e
+  - Crie uma barbearia fictícia na tabela 'barbearias'.
+- Back-End: abra o terminal 'prompt de comando' no VSCode, entre na pasta 'back-end' e use o comando `npm install` para baixar os pacotes necessário.
+- Front-End: abra o terminal 'prompt de comando' no VSCode, entre na pasta 'frontend' e use o comando `npm install` para baixar os pacotes necessário.
+
+Quando o front-end for iniciado, um link será gerado no terminal, use-o para acessar a aplicação.
+
+# Isso é tudo pessoal!! Thanks!
