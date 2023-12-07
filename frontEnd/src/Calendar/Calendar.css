@@ -34,58 +34,33 @@
     background-color: #eee; /* Cor do fundo da barra de rolagem */
 }
 
-.listNamesWeek{
+.list__Names__Week__And__Day{
     position: relative;
-    width: 500px;
+    width: 100%;
     display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: row;
     z-index: 1001;
-}
-.listDayWeek{
-    position: relative;
-    width: 500px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-    z-index: 1000
+    transition: 0.5s;
 }
 .list__name__Week{
-    position: relative;
+   position: relative;
    text-align: center;
-   margin: 5px;
-   width: 40px;
-   z-index: 1000
-
-}
-.list__name__day{
-    position: relative;
-   text-align: center;
-   width: 40px;
-   margin: 5px;
+   margin-left: 7px;
+   padding: 2px;
    z-index: 1000;
+   transition: 0.5s;
 }
-.dayWeekCurrent{
-    z-index: 3;
-}
-.activeCalendar {
-    position: relative;
-    background-color: #0f0; /* Ou qualquer cor desejada para indicar o dia atual */
+.currentDay {
+    background: #354249; /* Substitua com a cor desejada */
     color: white; /* Cor do texto no dia atual */
-    border-radius: 20px;
-    z-index: 0; /* Garante que o elemento pseudo-elemento (::before) fique acima dos outros elementos */
+    border-radius: 6px;
+    width: 40px;
+    padding: 1px;
 }
-/* Adicione um pseudo-elemento ::before para cobrir o conteúdo da div */
-.activeCalendar::before {
-    content: '';
-    position: absolute;
-    top: -35px;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: #283032; /* Mesma cor usada acima */
-    border-radius: 5px; /* Mesmo raio de borda usado acima */
-    z-index: -1; /* Coloca o pseudo-elemento abaixo do conteúdo da div */
-}
+.selectedDay {
+    background-color: #4a17d5; /* Substitua com a cor desejada para o dia selecionado */
+    color: white; /* Cor do texto no dia selecionado */
+    border-radius: 8px;
+    width: 38px;
+    transition: 0.5s;
+  }

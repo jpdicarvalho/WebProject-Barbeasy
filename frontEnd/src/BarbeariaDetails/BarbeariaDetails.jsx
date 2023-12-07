@@ -1,5 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 //import Calendar from 'react-calendar';
 import logoMercadoPago from './logoMercadoPago.png'
 import { Calendar } from '../Calendar/Calendar';
@@ -19,10 +22,10 @@ const { barbearia } = location.state;
 const userData = localStorage.getItem('userData');
 //trasnformando os dados para JSON
 const userInformation = JSON.parse(userData);
-//Buscando o id do usuário
-const userId = userInformation.user[0].id;
-//buscando o email do usuário
+//Buscando os dados do usuário
+//const userId = userInformation.user[0].id;
 const userEmail = userInformation.user[0].email;
+const userName = userInformation.user[0].name;
 
 const [selectedDate, setSelectedDate] = useState(null);
 const [selectedTime, setSelectedTime] = useState("");
@@ -83,7 +86,7 @@ useEffect(() => {
   };
 fetchData();
 }, []);
-
+console.log(selectedDate)
 //Requisição para realizar a gendamento
 /*
 const Agendar = async () => {
@@ -159,7 +162,7 @@ const enviarAvaliacao = async () => {
           avaliacao,
           comentario,
           data_avaliacao: new Date(),
-          userId
+          userName
         }),
       });
       const data = await response.json();
@@ -203,6 +206,7 @@ const calcularMediaAvaliacoes = () => {
 
   return media.toFixed(1).replace('.', ',');
 };
+
   return (
     <div className="ContainerMain">
 
@@ -317,15 +321,37 @@ const calcularMediaAvaliacoes = () => {
             <div className="classificacao">
               <h2>{calcularMediaAvaliacoes()}</h2>
               <p>({totalAvaliacoes(barbearia.id)})</p>
-            <h2>comentários</h2>
-            {AllAvaliation
+          </div>
+          <h2>Comentários</h2>
+      <div className="avaliacao-div">
+        <Slider dots={false} slidesToShow={1} slidesToScroll={1}>
+          {AllAvaliation
             .filter(avaliacoes => avaliacoes.barbearia_id === barbearia.id)
             .map(avaliacoes => (
-              <div key={avaliacoes.id} >
+              <div key={avaliacoes.id} className="avaliacao-div">
+                <div className="HeaderReview">
+                  <div className="img_User">
+                    <img src={logoBarbeariaTeste} alt="" />
+                  </div>
+                  <div className="userName__Stars">
+                    <p>{avaliacoes.user_name}</p>
+                    <div className="Estrelas">
+                      <div id="Star_Unlocked"></div>
+                      {[1, 2, 3, 4, 5].map((estrela) => (
+                        <span
+                          key={estrela}
+                          className={`fa fa-solid fa-star${avaliacoes.estrelas >= estrela ? ' selected' : ''}`}
+                        ></span>
+                      ))}
+                    </div>
+                    <p>{avaliacoes.data_avaliacao}</p>
+                  </div>
+                </div>
                 {avaliacoes.comentarios}
               </div>
-          ))}
-          </div>
+            ))}
+        </Slider>
+      </div>
     </div>
   );
 }

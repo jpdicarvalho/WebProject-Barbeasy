@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const client = new MercadoPago.MercadoPagoConfig({
-  accessToken: 'APP_USR-7433076748534689-103020-f2ad6b84165928b9b0d4732a99d73ce6-752130654',
+  accessToken: 'APP_USR',
 });
 const preference = new MercadoPago.Preference(client);
 
@@ -28,7 +28,7 @@ const db = mysql.createConnection({
 //Mandando a requisição para a Api-Distance-Matrix-Google
 app.post('/reqApiGoogle', async (req, res) => {
     try {
-      const apiKey = 'AIzaSyD-reRtGdFi5iiZqqVUeIjAt0HoY4SxNRY';
+      const apiKey = '';
       const {latUser, lonUser, coordenadasBarbearias } = req.body;
       // Criar um array de strings formatadas para as coordenadas das barbearias
       const destinations = coordenadasBarbearias.map(coord => `${coord.latitude}%2C${coord.longitude}`).join('%7C');
@@ -120,9 +120,9 @@ app.get('/listServico', async (req, res)=>{
 
 //Cadastrando a avaliação do usuário
 app.post("/avaliacao", (req, res) => {
-  const sql = "INSERT INTO avaliacoes (`user_id`,`barbearia_id`, `estrelas`, `comentarios`, `data_avaliacao`) VALUES (?)";
+  const sql = "INSERT INTO avaliacoes (`user_name`,`barbearia_id`, `estrelas`, `comentarios`, `data_avaliacao`) VALUES (?)";
   const values = [
-    req.body.userId,
+    req.body.userName,
     req.body.barbeariaId,
     req.body.avaliacao,
     req.body.comentario,
