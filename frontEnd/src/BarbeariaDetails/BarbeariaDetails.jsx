@@ -1,8 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import { useState, useEffect, useRef } from "react";
+import { motion } from 'framer-motion';
+import { isToday, isYesterday, differenceInDays, differenceInMonths } from 'date-fns';
 //import Calendar from 'react-calendar';
 import logoMercadoPago from './logoMercadoPago.png'
 import { Calendar } from '../Calendar/Calendar';
@@ -166,7 +165,9 @@ const enviarAvaliacao = async () => {
         }),
       });
       const data = await response.json();
-      alert(data.message);
+      console.log(data)
+      // Recarrega a página após a avaliação ser feita com sucesso
+      window.location.reload();
     } catch (error) {
       console.error('Erro ao enviar a avaliação:', error);
     }
@@ -206,6 +207,15 @@ const calcularMediaAvaliacoes = () => {
 
   return media.toFixed(1).replace('.', ',');
 };
+//Reviews settings
+const reviews = useRef();
+const [width, setWidth] = useState(0);
+const reviewsWidth = reviews.current?.scrollWidth - reviews.current?.offsetWidth;
+
+useEffect(()=> {
+  console.log(reviewsWidth);
+  setWidth(reviewsWidth);
+}, [reviewsWidth])
 
   return (
     <div className="ContainerMain">
@@ -231,7 +241,7 @@ const calcularMediaAvaliacoes = () => {
       
       <hr />
 
-      <div className="title__service">
+      <div className="tittle">
         <p>Serviços</p>
       </div>
         <div className="Servicos">
@@ -246,7 +256,7 @@ const calcularMediaAvaliacoes = () => {
 
         <hr />
 
-      <div className="tittle__Calendar">
+      <div className="tittle">
         Escolha um dia de sua preferência
       </div>
       <div className="EscolhaDia">
@@ -254,7 +264,7 @@ const calcularMediaAvaliacoes = () => {
       </div>
 
       <hr />
-      <div className="tittle__Horarios">
+      <div className="tittle">
         Horários Disponíveis
       </div>
       <span>Manhã</span>
@@ -299,8 +309,9 @@ const calcularMediaAvaliacoes = () => {
 
         <hr />
             <div className="AvaliacaoSection">
-              <h2>Avalie esta barbearia</h2>
+              <h4>Classificações e Avaliações</h4>
               <div className="Estrelas">
+                <span id="span__star">Toque para Classificar:</span>
                 {[1, 2, 3, 4, 5].map((estrela) => (
                   <span
                     key={estrela}
@@ -310,49 +321,83 @@ const calcularMediaAvaliacoes = () => {
                 ))}
               </div>
               <textarea
-                placeholder="Deixe um comentário..."
+                placeholder="Deixe seu comentário aqui..."
                 value={comentario}
                 onChange={(e) => setComentario(e.target.value)}
+                required
               ></textarea>
               <button id="SendAvaliation" onClick={enviarAvaliacao}>Enviar Avaliação</button>
             </div>
 
-            <h2>Classificação e Avaliações</h2>
-            <div className="classificacao">
-              <h2>{calcularMediaAvaliacoes()}</h2>
-              <p>({totalAvaliacoes(barbearia.id)})</p>
-          </div>
-          <h2>Comentários</h2>
-      <div className="avaliacao-div">
-        <Slider dots={false} slidesToShow={1} slidesToScroll={1}>
+    <hr />
+
+      <div className="tittle">
+      Avaliações
+      </div>
+      <motion.div
+        ref={reviews}
+        className="reviews"
+        whileTap={{ cursor: "grabbing"}}>
+
+      <motion.div
+      className="reviews__container"
+      drag="x"
+      dragConstraints={{ left: -width, right: 0 }}
+      >
           {AllAvaliation
             .filter(avaliacoes => avaliacoes.barbearia_id === barbearia.id)
-            .map(avaliacoes => (
-              <div key={avaliacoes.id} className="avaliacao-div">
-                <div className="HeaderReview">
-                  <div className="img_User">
-                    <img src={logoBarbeariaTeste} alt="" />
-                  </div>
-                  <div className="userName__Stars">
-                    <p>{avaliacoes.user_name}</p>
-                    <div className="Estrelas">
-                      <div id="Star_Unlocked"></div>
-                      {[1, 2, 3, 4, 5].map((estrela) => (
-                        <span
-                          key={estrela}
-                          className={`fa fa-solid fa-star${avaliacoes.estrelas >= estrela ? ' selected' : ''}`}
-                        ></span>
-                      ))}
-                    </div>
-                    <p>{avaliacoes.data_avaliacao}</p>
-                  </div>
-                </div>
-                {avaliacoes.comentarios}
-              </div>
-            ))}
-        </Slider>
-      </div>
+            .sort((a, b) => b.id - a.id) // Ordenar pelo ID de forma decrescente
+            .map(avaliacoes => {
+              const isTodayReview = isToday(new Date(avaliacoes.data_avaliacao));
+              const isYesterdayReview = isYesterday(new Date(avaliacoes.data_avaliacao));
+              const differenceDays = differenceInDays(new Date(), new Date(avaliacoes.data_avaliacao));
+              const differenceMonths = differenceInMonths(new Date(), new Date(avaliacoes.data_avaliacao));
+
+              let formattedTime = '';
+
+              if (isTodayReview) {
+                formattedTime = 'hoje';
+              } else if (isYesterdayReview) {
+                formattedTime = 'ontem';
+              } else if (differenceDays === 0) {
+                formattedTime = 'hoje';
+              } else if (differenceDays <= 30) {
+                formattedTime = `há ${differenceDays} ${differenceDays === 1 ? 'dia' : 'dias'}`;
+              } else {
+                formattedTime = `há ${differenceMonths} ${differenceMonths === 1 ? 'mês' : 'meses'}`;
+              }
+
+              return (
+                <motion.div key={avaliacoes.id} className="reviws__section">
+                  <motion.div className="HeaderReview">
+                    <motion.div className="img_User">
+                      <img src={logoBarbeariaTeste} alt="" />
+                    </motion.div>
+                    <motion.div className="userName__Stars">
+                      <p id="userName">{avaliacoes.user_name}</p>
+                      <motion.div className="Estrelas">
+                        <motion.div id="Star_Unlocked"></motion.div>
+                        {[1, 2, 3, 4, 5].map((estrela) => (
+                          <span
+                            key={estrela}
+                            className={`fa fa-solid fa-star${avaliacoes.estrelas >= estrela ? ' selected' : ''}`}
+                          ></span>
+                        ))}
+                      </motion.div>
+                    </motion.div>
+                    <motion.div className="reviews__day">
+                    <p>{formattedTime}</p>
+                    </motion.div>
+                  </motion.div>
+                  {avaliacoes.comentarios}
+                </motion.div>
+            
+              );
+            })}
+          </motion.div>
+      </motion.div>
     </div>
+    
   );
 }
 

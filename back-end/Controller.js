@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const client = new MercadoPago.MercadoPagoConfig({
-  accessToken: 'APP_USR',
+  accessToken: '',
 });
 const preference = new MercadoPago.Preference(client);
 

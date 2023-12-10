@@ -67,8 +67,12 @@ const combinarDados = (barbearias, distanciaBarbearias) => {
 
     if (distanciaElements) {
       const distanciaElement = distanciaElements[index];
-      const distancia = distanciaElement ? distanciaElement.distance.text : 'Erro de conexão, atualize a página';
-      const duracao = distanciaElement ? distanciaElement.duration.text : 'Erro de conexão, atualize a página';
+      const distancia = distanciaElement ? distanciaElement.distance.text: 'Erro de conexão';
+      const duracao = distanciaElement ? distanciaElement.duration.text: 'Erro de conexão';
+      
+      if(distancia === "Erro de conexão" && duracao === "Erro de conexão"){
+        window.location.reload();
+      }
 
       return {
         ...barbearia,
