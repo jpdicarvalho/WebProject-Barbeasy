@@ -21,9 +21,10 @@ const [isMenuActive, setMenuActive] = useState(false);
 const [saudacao, setSaudacao] = useState('');
 const [AllAvaliation, setAllAvaliation] = useState([]);
 const [search, setSearch] = useState('');
-//componente API GOOGLE
-const [UserLocation, setUserLocation] = useState([]);
-const [DistanciaBarbearias, setDistanciaBarbearias] = useState([]);
+
+/*componente API GOOGLE
+const [DistanciaBarbearias, setDistanciaBarbearias] = useState([]);*/
+//const [UserLocation, setUserLocation] = useState([]);
 
 //buscando informações do usuário logado
 const userData = localStorage.getItem('userData');
@@ -31,6 +32,7 @@ const userData = localStorage.getItem('userData');
 const userInformation = JSON.parse(userData);
 //Fromatando cada letra inicial do nome do usuário para caixa-alta
 const userName = userInformation.user[0].name;
+const userId = userInformation.user[0].id;
 
 //listando as barbearias cadastradas
 useEffect(() => {
@@ -61,42 +63,11 @@ const barbeariaSearch = barbearias.filter((barbearia) =>
   barbearia.status.toLowerCase().includes(searchLowerCase)
 );
 
-const combinarDados = (barbearias, distanciaBarbearias) => {
-  return barbearias.map((barbearia, index) => {
-    const distanciaElements = distanciaBarbearias.rows?.[0]?.elements;
-
-    if (distanciaElements) {
-      const distanciaElement = distanciaElements[index];
-      const distancia = distanciaElement ? distanciaElement.distance.text: 'Erro de conexão';
-      const duracao = distanciaElement ? distanciaElement.duration.text: 'Erro de conexão';
-      
-      if(distancia === "Erro de conexão" && duracao === "Erro de conexão"){
-        window.location.reload();
-      }
-
-      return {
-        ...barbearia,
-        distancia,
-        duracao,
-        // Adicione outras propriedades necessárias de barbeariaSearch
-      };
-    }
-
-    // Se não houver elementos de distância, retorna um objeto com um aviso
-    return {
-      ...barbearia,
-      distancia: 'Erro de conexão, atualize a página',
-      duracao: 'Erro de conexão, atualize a página',
-    };
-  });
-};
-// Uso da função para obter o novo array combinado
-const barbeariasCompletas = combinarDados(barbeariaSearch, DistanciaBarbearias);
-
 //passando os dados da barbearia selecionada
 const handleBarbeariaClick = (barbearia) => {
   navigate("/BarbeariaDetails", { state: { barbearia } });
 };
+
 //verificando se o menu está ativado
 const handleMenuClick = () => {
   setMenuActive(!isMenuActive);
@@ -122,7 +93,7 @@ useEffect(() => {
 obterSaudacao();
 }, []);
 
-//pegando as cordenadas do usuário
+/*pegando as cordenadas do usuário
 useEffect(() => {
 const obterLocalizacao = async () => {
   try {
@@ -139,39 +110,10 @@ const obterLocalizacao = async () => {
 };
 
   obterLocalizacao();
-}, []);
+}, []);*/
 
 // Modificando o trecho abaixo para incluir as latitudes e longitudes das barbearias na URL da API do Google
-useEffect(() => {
-  const sendUrlToServer = async () => {
-    const coordenadasBarbearias = barbearias.map((barbearia) => ({
-      latitude: barbearia.latitude,
-      longitude: barbearia.longitude,
-    }));
-    //
-    try {
-      const response = await fetch('http://localhost:8000/reqApiGoogle', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          latUser: UserLocation.latitude,
-          lonUser: UserLocation.longitude,
-          coordenadasBarbearias
-        }),
-        
-      });
-      
-      const data = await response.json();
-      //console.log(data)
-      setDistanciaBarbearias(data);
-    } catch (error) {
-      console.error('Erro ao enviar os dados:', error);
-    }
-}
-sendUrlToServer();
-}, [barbearias, UserLocation]);
+
 
 //Buscar as avaliações da barbearia em especifico
 useEffect(() => {
@@ -205,7 +147,14 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
   return media.toFixed(1).replace('.', ',');
 };
 
-    return (
+const handleMercadoPagoLogin = () => {
+  // Redireciona o usuário para a URL de autorização do Mercado Pago
+  window.location.href = `https://auth.mercadopago.com/authorization?client_id=7433076748534689&response_type=code&platform_id=mp&state=123&redirect_uri=`;
+};
+/*TESTUSER1064212823
+WMN2odtHIq*/
+console.log(userId)
+return (
           <div className="containerHome">
 
             <div className="header">
@@ -223,14 +172,18 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
                   <h1>Barbeasy</h1>
                 </div>
                 <div className="containerSearch">
+                <button onClick={handleMercadoPagoLogin} className="mercadoPagoButton">
+                    Acessar com Mercado Pago
+                  </button>
                   <div className="inputBoxSearch">
+                  
                     <i className="fa-solid fa-magnifying-glass lupa"></i>
                     <input type="search" id="inputSearch" name="name" value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Encontrar Barbearia'/>
                   </div>
                 </div> 
               </div>
 
-              {barbeariasCompletas.map((barbearia) => (
+              {barbeariaSearch.map((barbearia) => (
                 <div key={barbearia.id} className="containerBarbearia">
                       <div className="imgBoxSection">
                         <img src={InteriorBarbearia} alt="frente da barbearia" />
@@ -249,9 +202,9 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
                         </h2>
                       </div>
                       
-                      <div className="distancia-duracao">
-                        <p>{barbearia.distancia} • {barbearia.duracao}</p>
-                        <i className="fa-solid fa-person"></i>
+                      <div className="endereco">
+                      <p className="material-symbols-outlined location">location_on </p>
+                      <p>{barbearia.endereco}</p>
                       </div>
                       <button className="agendar"
                         onClick={() => handleBarbeariaClick(barbearia)}>

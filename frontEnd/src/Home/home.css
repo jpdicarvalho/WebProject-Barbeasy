@@ -158,6 +158,7 @@
   width: 300px;
   height: 300px;
   border-radius: 20px;
+  padding: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -169,27 +170,30 @@
 .section{
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: absolute;
-  bottom: 0;
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+  height: 160px;
+  margin-top: 5px ;
   padding: 5px;
+  border-radius: 12px;
 }
 .imgBoxSection{
-  position: absolute;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
+  width: 280px;
+  height: 290px;
+  border-radius: 12px;
+  overflow: hidden;
 }
 .imgBoxSection img{
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  
 }
 .Barbearias{
   position: relative;
@@ -216,19 +220,17 @@
   margin-right: 3px;
   overflow: hidden;
 }
-.distancia-duracao{
+.endereco{
   display: flex;
   flex-direction: row;
   letter-spacing: 1px;
-  width: 100%;
   padding-left: 5px;
   font-size: 11px;
   border-radius: 20px;
   padding-bottom: 3px;
 }
-.fa-solid.fa-person{
-  color: #f6f6fc;
-  margin-left: 3px;
+.material-symbols-outlined.location{
+  padding-right: 5px;
 }
 .agendar{
   position: relative;
@@ -355,7 +357,7 @@
 }
 .fechado {
   position: relative;
-  color: rgb(141, 5, 5);
+  color: #1c2035;
   padding: 5px;
   width: auto;
   text-align: center;

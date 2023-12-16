@@ -1,10 +1,11 @@
+import 'dotenv/config'
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mysql from "mysql";
 import jwt  from 'jsonwebtoken';
-
 import MercadoPago from "mercadopago";
+
 
 const app = express();
 
@@ -12,23 +13,18 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
 
-const client = new MercadoPago.MercadoPagoConfig({
-  accessToken: '',
-});
-const preference = new MercadoPago.Preference(client);
-
-//Criando conexão com BD MySQL
+//Create conection with BD MySQL
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "barbeasy_two"
+  host: process.env.database_Host,
+  user: process.env.database_User,
+  password: process.env.database_Password,
+  database: process.env.database_Name
 });
 
-//Mandando a requisição para a Api-Distance-Matrix-Google
+/*Send rest to Api-Distance-Matrix-Google
 app.post('/reqApiGoogle', async (req, res) => {
     try {
-      const apiKey = '';
+      const apiKey = 'AIzaSyD-reRtGdFi5iiZqqVUeIjAt0HoY4SxNRY';
       const {latUser, lonUser, coordenadasBarbearias } = req.body;
       // Criar um array de strings formatadas para as coordenadas das barbearias
       const destinations = coordenadasBarbearias.map(coord => `${coord.latitude}%2C${coord.longitude}`).join('%7C');
@@ -45,7 +41,7 @@ app.post('/reqApiGoogle', async (req, res) => {
       res.status(500).json({ error: 'Erro na solicitação à API Distance Matrix' });
     }
     
-});
+});*/
 
 //Cadastro de ususário com senha criptografada
 app.post("/SingUp", async (req, res) => {
@@ -82,7 +78,7 @@ app.post('/SignIn', async (req, res) => {
     if (result.length > 0) {
       const user = result[0];
       // Criação do token
-      const token = jwt.sign({ userId: user.id, userEmail: user.email }, 'abaporujucaiba', { expiresIn: "1h" });
+      const token = jwt.sign({ userId: user.id, userEmail: user.email }, process.env.tokenWordSecret, { expiresIn: "1h" });
       // Envie o token no corpo da resposta
       res.status(200).json({ success: true, token: token, user: result });
       
@@ -166,6 +162,14 @@ app.post('/agendamento', (req, res) => {
 
 //RoutesPayment
 app.post('/Checkout', async (req, res) => {
+  //set API Mercago Pago
+  const client = new MercadoPago.MercadoPagoConfig({
+    accessToken: process.env.accessTokenMercadoPago,
+  });
+  
+  const preference = new MercadoPago.Preference(client);
+
+  //create preferences
   let body = {
     items:[{
           title: req.body.nameServico,
@@ -195,6 +199,7 @@ app.post('/Checkout', async (req, res) => {
    });
  });
 
-app.listen(8000, () => {
-  console.log("Listening...");
+app.listen({
+  host: '0.0.0.0',
+  port: process.env.portServerNode ?? 8080
 });

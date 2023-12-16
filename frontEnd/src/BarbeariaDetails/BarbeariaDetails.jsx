@@ -232,8 +232,7 @@ useEffect(()=> {
             <h3 id="BarbeariaName">{barbearia.name} • {calcularMediaAvaliacoes()} <i className="fa-solid fa-star"/> ({totalAvaliacoes(barbearia.id)})</h3>
             <div className="location">
               <p className="material-symbols-outlined location">location_on </p>
-              <p>{barbearia.distancia} {barbearia.duracao} •</p>
-              <i className="fa-solid fa-person"></i>
+              <p>{barbearia.endereco}</p>
             </div>
         </div>
         <p></p>
