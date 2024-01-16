@@ -40,7 +40,7 @@ const App = () => {
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/BarbeariaDetails" element={<PrivateRoute element={<BarbeariaDetails />} />} />
         <Route path="/Checkout" element={<PrivateRoute element={<Checkout />} />} />
-        <Route path="/Widget" element={<PrivateRoute element={<Widget />} />} />
+        <Route path="/Widget" element={<Widget />} />
       </Routes>
     </Router>
   );

@@ -1,4 +1,3 @@
-import 'dotenv/config'
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -6,12 +5,19 @@ import mysql from "mysql";
 import jwt  from 'jsonwebtoken';
 import MercadoPago from "mercadopago";
 
+import multer from "multer";
+
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+import 'dotenv/config'
 
 const app = express();
 
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.static('public'));
 
 //Create conection with BD MySQL
 const db = mysql.createConnection({
@@ -20,6 +26,117 @@ const db = mysql.createConnection({
   password: process.env.database_Password,
   database: process.env.database_Name
 });
+
+const storage = multer.memoryStorage()
+const upload = multer({storage: storage})
+
+const awsBucketName = process.env.AWS_S3_BUCKET_NAME
+const awsRegion = process.env.AWS_REGION
+const awsAccessKey = process.env.AWS_ACCESS_KEY_ID
+const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
+
+const s3 = new S3Client({
+  credentials:{
+    accessKeyId: awsAccessKey,
+    secretAccessKey: awsSecretAccessKey,
+  },
+  region: awsRegion
+});
+
+// Rota POST '/upload' para lidar com o upload de uma única imagem
+app.post('/upload', upload.single('image'), (req, res) => {
+  const userId = 2;
+  const newImageUser = req.file.originalname;
+
+  //Verifica se o usuário possuí imagem cadastrada
+  const verifyImage = "SELECT * from images WHERE user_id = ?";
+  db.query(verifyImage, [userId], (err, result) =>{
+    //Mensagem de erro caso não seja possuível realizar a consulta no Banco de Dados
+    if(err){
+      console.error('Error on verification image:', err);
+      return res.status(500).json({ error: 'Verify Image - Internal Server Error' });
+    }else{
+      if(result.length > 0){
+        //Update da imagem cadastrada no Banco de Dados
+        const sql = "UPDATE images SET img_profile=? WHERE user_id=?";
+        db.query(sql, [newImageUser, userId], (updateErr, updateResult) => {
+          if (updateErr) {
+            //Mensagem de erro caso não seja possuível realizar a atualização da imagem no Banco de Dados
+            console.error('Error on Update Image:', updateErr);
+            return res.status(500).json({ error: 'Update Image - Internal Server Error' });
+          }else{
+              // Cria os parâmetros para enviar a imagem para o bucket da AWS S3
+              const params = {
+              Bucket: awsBucketName,
+              Key: newImageUser,
+              Body: req.file.buffer,
+              ContentType: req.file.mimetype,
+            }
+
+            // Cria um comando PutObject para enviar o arquivo para o AWS S3
+            const command = new PutObjectCommand(params)
+
+            // Envia o comando para o Amazon S3 usando a instância do serviço S3
+            s3.send(command)
+
+            //Mensagem de sucesso referente atualização da imagem no Banco de Dados
+            return res.status(200).json({ Status: "Success" });
+          }
+        });
+      }else{
+        // Cadastra a imagem no Banco de Dados caso o usuário não possua nenhuma imagem
+        const insertImageQuery = "INSERT INTO images (user_id, img_profile) VALUES (?, ?)";
+        db.query(insertImageQuery, [userId, newImageUser], (insertErr, insertResult) => {
+          if (insertErr) {
+            //Mensagem de erro caso não seja possuível realizar o cadastro no Banco de Dados
+            console.error('Erro ao inserir imagem no banco de dados:', insertErr);
+            return res.status(500).json({ error: 'Insert Image - Internal Server Error' });
+          }else{
+            // Cria os parâmetros para enviar a imagem para o bucket da AWS S3
+            const params = {
+              Bucket: awsBucketName,
+              Key: newImageUser,
+              Body: req.file.buffer,
+              ContentType: req.file.mimetype,
+            }
+
+            // Cria um comando PutObject para enviar o arquivo para o AWS S3
+            const command = new PutObjectCommand(params)
+
+            // Envia o comando para o Amazon S3 usando a instância do serviço S3
+            s3.send(command)
+            //Mensagem de sucesso referente atualização da imagem no Banco de Dados
+            return res.status(200).json({ Status: "Success" });
+          }
+        });
+      }
+    }
+  })
+});
+
+app.get('/imageUser', (req, res) =>{
+  const userId = 2; 
+
+  const sql = "SELECT * from images WHERE user_id = ?";
+  db.query(sql, [userId], async (err, result) => {
+    if(err){
+      console.error('Erro ao buscar imagem no banco de dados:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }else{
+      if(result.length > 0){
+        const getObjectParams = {
+          Bucket: awsBucketName,
+          Key: result[0].img_profile,
+        }
+      
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+  
+        return res.json({url});
+      }
+    }
+  })
+})
 
 /*Send rest to Api-Distance-Matrix-Google
 app.post('/reqApiGoogle', async (req, res) => {
@@ -200,6 +317,5 @@ app.post('/Checkout', async (req, res) => {
  });
 
 app.listen({
-  host: '0.0.0.0',
   port: process.env.portServerNode ?? 8080
 });
