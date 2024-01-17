@@ -138,6 +138,30 @@ app.get('/imageUser', (req, res) =>{
   })
 })
 
+
+// Rota POST '/upload-banners' para lidar com o upload de imagens de banners
+app.post('/upload-banners', upload.array('images'), (req, res) => {
+  try {
+    //obtendo o nome e o buffer para salvar no BD e na AWS-S3, respectivamente, das imagens enviadas
+    const bannerImages = req.files.map((file) => {
+      return {
+        originalname: file.originalname,
+        buffer: file.buffer,
+      };
+    });
+    for (let i = 0; i < bannerImages.length; i++) {
+      console.log(bannerImages[i].originalname);
+    }
+
+    // Salve os nomes ou buffers das imagens de banners no banco de dados ou tome a ação necessária
+
+    res.json({ Status: 'Success' });
+  } catch (error) {
+    console.error('Erro durante o upload de imagens de banners:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 /*Send rest to Api-Distance-Matrix-Google
 app.post('/reqApiGoogle', async (req, res) => {
     try {
