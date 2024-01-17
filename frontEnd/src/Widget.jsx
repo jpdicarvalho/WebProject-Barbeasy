@@ -19,7 +19,7 @@ const Widget = () => {
   }
 
   const handleUpload = () => {
-    const userId = 2;
+    const barbeariaId = 1;
     const allowedExtensions = ['jpg', 'jpeg', 'png'];
 
     const formdata = new FormData();
@@ -34,7 +34,7 @@ const Widget = () => {
   }
 
     // Renomeia a imagem com o ID do usuário mantendo a extensão original
-    const renamedFile = new File([file], `userId_${userId}.${fileExtension}`, { type: file.type });
+    const renamedFile = new File([file], `userBarbeariaId_${barbeariaId}.${fileExtension}`, { type: file.type });
     formdata.append('image', renamedFile);
 
     axios.post('http://localhost:8000/upload', formdata)
@@ -63,7 +63,7 @@ const Widget = () => {
   }
 
   const handleBannerImagesUpload = () => {
-    const barbeariaId = 5; // ou o ID do usuário correspondente
+    const barbeariaId = 1; // ou o ID do usuário correspondente
     const allowedExtensions = ['jpg', 'jpeg', 'png'];
     const bannerFormData = new FormData();
 
