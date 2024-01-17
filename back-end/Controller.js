@@ -48,26 +48,71 @@ app.post('/upload', upload.single('image'), (req, res) => {
   const barbeariaId = 1;
   const newImageUser = req.file.originalname;
 
-  //Update da imagem cadastrada no Banco de Dados
-  const sql = "UPDATE barbearia SET user_image=? WHERE id=?";
-  db.query(sql, [newImageUser, barbeariaId], (updateErr, updateResult) => {
-    if (updateErr) {
-      //Mensagem de erro caso não seja possuível realizar a atualização da imagem no Banco de Dados
-      console.error('Error on Update Image:', updateErr);
-      return res.status(500).json({ error: 'Update Image - Internal Server Error' });
-    }else{
-        // Cria os parâmetros para enviar a imagem para o bucket da AWS S3
-        const params = {
+  //Buscando imagem atual salva no BD MySQL
+  const currentImg = "SELECT user_image FROM barbearia WHERE id = ?";
+  db.query(currentImg, [barbeariaId], (err, result) => {
+    if(err){
+      console.error('Error on Update Image:', err);
+      return res.status(500).json({ error: 'Current Image - Internal Server Error' });
+    }
+    if(result[0].user_image != ''){
+      const currentImageName = result[0].user_image;
+      const params = {
         Bucket: awsBucketName,
-        Key: newImageUser,
-        Body: req.file.buffer,
-        ContentType: req.file.mimetype,
+        Key: currentImageName
       }
-      const command = new PutObjectCommand(params)// Cria um comando PutObject para enviar o arquivo para o AWS S3
-      s3.send(command)// Envia o comando para o Amazon S3 usando a instância do serviço S3
-      return res.status(200).json({ Status: "Success" }); //Mensagem de sucesso referente atualização da imagem no Banco de Dados
+      const command = new DeleteObjectCommand(params)
+      s3.send(command, (sendErr, sendResult) =>{
+        if(sendErr){
+          console.error('Send Error:', sendErr);
+        }else{
+          //Update da imagem cadastrada no Banco de Dados
+          const sql = "UPDATE barbearia SET user_image=? WHERE id=?";
+          db.query(sql, [newImageUser, barbeariaId], (updateErr, updateResult) => {
+            if (updateErr) {
+              //Mensagem de erro caso não seja possuível realizar a atualização da imagem no Banco de Dados
+              console.error('Error on Update Image:', updateErr);
+              return res.status(500).json({ error: 'Update Image - Internal Server Error' });
+            }else{
+                // Cria os parâmetros para enviar a imagem para o bucket da AWS S3
+                const updateParams = {
+                Bucket: awsBucketName,
+                Key: newImageUser,
+                Body: req.file.buffer,
+                ContentType: req.file.mimetype,
+              }
+              const updateCommand = new PutObjectCommand(updateParams)// Cria um comando PutObject para enviar o arquivo para o AWS S3
+              s3.send(updateCommand)// Envia o comando para o Amazon S3 usando a instância do serviço S3
+              return res.status(200).json({ Status: "Success" });
+            }
+          });
+        }
+        
+      })
+    }else{
+      //Update da imagem cadastrada no Banco de Dados
+      const sql = "UPDATE barbearia SET user_image=? WHERE id=?";
+      db.query(sql, [newImageUser, barbeariaId], (updateErr, updateResult) => {
+        if (updateErr) {
+          //Mensagem de erro caso não seja possuível realizar a atualização da imagem no Banco de Dados
+          console.error('Error on Update Image:', updateErr);
+          return res.status(500).json({ error: 'Update Image - Internal Server Error' });
+        }else{
+            // Cria os parâmetros para enviar a imagem para o bucket da AWS S3
+            const params = {
+            Bucket: awsBucketName,
+            Key: newImageUser,
+            Body: req.file.buffer,
+            ContentType: req.file.mimetype,
+          }
+          const command = new PutObjectCommand(params)// Cria um comando PutObject para enviar o arquivo para o AWS S3
+          s3.send(command)// Envia o comando para o Amazon S3 usando a instância do serviço S3
+          return res.status(200).json({ Status: "Success" }); //Mensagem de sucesso referente atualização da imagem no Banco de Dados
+        }
+      });//
     }
   });
+
 });
 
 app.get('/imageUser', (req, res) =>{
@@ -132,7 +177,7 @@ app.post('/upload-banners', upload.array('images'), (req, res) => {
    
     const bannerImagesNameString = bannerImagesName.join(','); // Converte o array de nomes em uma string separada por vírgulas
 
-    const sql = "UPDATE images SET banner_images = ? WHERE barbearia_id = ?";
+    const sql = "UPDATE barbearia SET banner_images = ? WHERE id = ?";
 
     db.query(sql, [bannerImagesNameString, barbeariaId], (err, result) => {
       if (err) {
