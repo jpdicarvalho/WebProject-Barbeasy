@@ -142,6 +142,7 @@ app.get('/imageUser', (req, res) =>{
 // Rota POST '/upload-banners' para lidar com o upload de imagens de banners
 app.post('/upload-banners', upload.array('images'), (req, res) => {
   try {
+    const barbeariaId = 1;
     //obtendo o nome e o buffer para salvar no BD e na AWS-S3, respectivamente, das imagens enviadas
     const bannerImages = req.files.map((file) => {
       return {
@@ -149,13 +150,31 @@ app.post('/upload-banners', upload.array('images'), (req, res) => {
         buffer: file.buffer,
       };
     });
+    
+    const bannerImagesName = []; //Array com os nomes das imagens enviadas
+
+    //Salvando os nomes das imagens no array acima
     for (let i = 0; i < bannerImages.length; i++) {
-      console.log(bannerImages[i].originalname);
+      bannerImagesName.push(bannerImages[i].originalname);
     }
+   
+    const bannerImagesNameString = bannerImagesName.join(','); // Converte o array de nomes em uma string separada por vírgulas
 
-    // Salve os nomes ou buffers das imagens de banners no banco de dados ou tome a ação necessária
+    const sql = "UPDATE images SET banner_images = ? WHERE barbearia_id = ?";
 
-    res.json({ Status: 'Success' });
+    db.query(sql, [bannerImagesNameString, barbeariaId], (updateErr, updateResult) => {
+      if (updateErr) {
+        console.error('Erro ao atualizar o nome das imagens no banco de dados:', updateErr);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      if(updateResult.length > 0){
+        console.log(updateResult)
+      }
+    
+      // Retorna um JSON indicando sucesso após a atualização do banco de dados
+      res.status(200).json({ Status: 'Success' });
+    });
+
   } catch (error) {
     console.error('Erro durante o upload de imagens de banners:', error);
     res.status(500).json({ error: 'Internal Server Error' });
