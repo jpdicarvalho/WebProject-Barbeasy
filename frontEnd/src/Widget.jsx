@@ -107,14 +107,14 @@ const Widget = () => {
       })
       .catch(err => console.log(err));
   }
-/*
+
   useEffect(() => {
-    axios.get('http://localhost:8000/images-banners')
-      .then(res => {
-        setBannerImages(res.data.urls);
+    axios.get('http://localhost:8000/api/banner-images')
+      .then(result => {
+        setBannerImages(result.data.urls);
       })
-      .catch(err => console.log(err));
-  }, [])*/
+      .catch(error => console.log(error));
+  }, [])
 
   return (
     <>
@@ -129,7 +129,15 @@ const Widget = () => {
         <input type="file" onChange={handleBannerImages} multiple />
         <button onClick={handleBannerImagesUpload}>Upload Banners Images</button>
         <p>{bannerMessage}</p>
+    </div>
+    {bannerImages && (
+      <div className="banner-images-container">
+        {bannerImages.map((url, index) => (
+          <img key={index} src={url} alt={`Banner ${index + 1}`} style={{width: '100px', height: '100px', objectFit: 'cover'}}/>
+        ))}
       </div>
+    )}
+
     </>
   );
 };

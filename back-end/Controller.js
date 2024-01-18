@@ -193,29 +193,40 @@ app.post('/upload-banners', upload.array('images'), (req, res) => {
       }
     })
 });
-app.get('/api/banner-images', (req, res) =>{
-  const barbeariaId = 1; 
+app.get('/api/banner-images', (req, res) => {
+  const barbeariaId = 1;
 
-  const sql = "SELECT user_image FROM barbearia WHERE id = ?";
+  const sql = "SELECT banner_images FROM barbearia WHERE id = ?";
   db.query(sql, [barbeariaId], async (err, result) => {
-    if(err){
-      console.error('Erro ao buscar imagem no banco de dados:', err);
+    if (err) {
+      console.error('Erro ao buscar imagens banner no banco de dados:', err);
       return res.status(500).json({ error: 'Internal Server Error' });
-    }else{
-      if(result.length > 0){
-        const getObjectParams = {
-          Bucket: awsBucketName,
-          Key: result[0].user_image,
-        }
-      
-        const command = new GetObjectCommand(getObjectParams);
-        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-  
-        return res.json({url});
-      }
     }
-  })
-})
+    if (result.length > 0) {
+      const bannerImagesName = result[0].banner_images;
+      const bannerImagesArray = bannerImagesName.split(',');
+      const urls = [];
+
+      for (let i = 0; i < bannerImagesArray.length; i++) {
+        const imageName = bannerImagesArray[i];
+
+        // Configurando os parâmetros para obter as imagens salvas no bucket da AWS S3
+        const getParams = {
+          Bucket: awsBucketName,
+          Key: imageName
+        };
+
+        const getCommand = new GetObjectCommand(getParams);
+
+        // Enviando o comando para obter a URL assinada da imagem
+        const url = await getSignedUrl(s3, getCommand, { expiresIn: 3700 });
+        urls.push(url);
+      }
+      return res.json({ urls });
+    }
+  });
+});
+
 
 /*Send rest to Api-Distance-Matrix-Google
 app.post('/reqApiGoogle', async (req, res) => {
