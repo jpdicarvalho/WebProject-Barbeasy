@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import './widget.css';
 
 
 const Widget = () => {
@@ -115,9 +116,73 @@ const Widget = () => {
       })
       .catch(error => console.log(error));
   }, [])
+  /*--------------------------------------*/
+  const [mostrarStatus, setMostrarStatus] = useState(false);
+  const [status, setStatus] = useState();
+
+  const alternarStatus = () => {
+    setMostrarStatus(!mostrarStatus);
+  };
+
+  const statusUpdate = () => {
+    // Aqui você pode fazer uma solicitação para o backend usando o axios
+    axios.post('http://localhost:8000/api/status-update', { Status: status })
+    .then(res => {
+        if(res.data.Success === 'Success'){
+          console.log('Status atualizado!');
+        }
+      })
+      .catch(error => {
+        // Lógica a ser executada em caso de erro na solicitação
+        console.error('Erro ao atualizar o status:', error);
+      });
+  };
+  useEffect(() => {
+    axios.get('http://localhost:8000/api/status-barbearia')
+      .then(res => {
+        console.log(res.data.StatusBarbearia)
+        setStatus(res.data.StatusBarbearia)
+      })
+      .catch(error => console.log(error));
+  }, [])
 
   return (
     <>
+    <div className="menu__main" onClick={alternarStatus}>
+            {status === 'Aberta' ?
+            <span className="material-symbols-outlined icon_menu" style={{color: 'green'}}>radio_button_checked</span>
+            :
+            <span className="material-symbols-outlined icon_menu">radio_button_checked</span>
+            }
+            
+              Status
+            <span className={`material-symbols-outlined arrow ${mostrarStatus ? 'girar' : ''}`} id='arrow'>expand_more</span>
+          </div>
+          
+
+          {mostrarStatus && (
+            <div className="divSelected">
+              <div className="container__checkBox">
+                <span>Aberta</span>
+                <input
+              type="checkbox"
+              id='status'
+              checked={status === 'Aberta'} // Marca o input se o status for 'Aberta'
+              onChange={() => {
+                const novoStatus = status === 'Aberta' ? 'Fechada' : 'Aberta'; // Inverte o estado atual
+                setStatus(novoStatus); // Atualiza o estado 'status'
+                statusUpdate(); // Chama a função para atualizar o status no backend
+              }}
+            />  
+
+                <label htmlFor="status" className='switch'>
+                  <span className='slider'></span>
+                </label>
+              </div>
+            </div>
+      )}
+
+
     <div className="container">
       <input type="file" onChange={handleFile}/>
       <button onClick={handleUpload}>upload</button>
