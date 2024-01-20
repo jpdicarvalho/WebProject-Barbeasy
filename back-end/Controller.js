@@ -106,13 +106,7 @@ app.get('/imageUser', (req, res) =>{
       return res.status(500).json({ error: 'Internal Server Error' });
     }else{
       if(result.length > 0){
-        const getObjectParams = {
-          Bucket: awsBucketName,
-          Key: result[0].user_image,
-        }
-      
-        const command = new GetObjectCommand(getObjectParams);
-        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        const url = "https://d15o6h0uxpz56g.cloudfront.net/" + result[0].user_image;
   
         return res.json({url});
       }
