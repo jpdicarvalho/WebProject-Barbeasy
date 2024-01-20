@@ -196,24 +196,14 @@ app.get('/api/banner-images', (req, res) => {
       return res.status(500).json({ error: 'Internal Server Error' });
     }
     if (result.length > 0) {
-      const bannerImagesName = result[0].banner_images;
-      const bannerImagesArray = bannerImagesName.split(',');
-      const urls = [];
+      const bannerImagesName = result[0].banner_images;//Obtendo String com os nomes das imagens salvas
+      const bannerImagesArray = bannerImagesName.split(',');//Separando os nomes das imagens e salvando em um array
+      const urls = [];//Array para armazenar as urls das imagens salvas no bucket AWS-S3
 
       for (let i = 0; i < bannerImagesArray.length; i++) {
-        const imageName = bannerImagesArray[i];
-
-        // Configurando os parâmetros para obter as imagens salvas no bucket da AWS S3
-        const getParams = {
-          Bucket: awsBucketName,
-          Key: imageName
-        };
-
-        const getCommand = new GetObjectCommand(getParams);
-
-        // Enviando o comando para obter a URL assinada da imagem
-        const url = await getSignedUrl(s3, getCommand, { expiresIn: 3700 });
-        urls.push(url);
+        const imageName = bannerImagesArray[i];//Pegando o nome de cada imagem salva no array anterior
+        const url = "https://d15o6h0uxpz56g.cloudfront.net/" + imageName;// Salvando a URL da imagem obtida pelo Cloud Front AWS-S3
+        urls.push(url);//Adicionando a nova imagem no Array de URLs
       }
       return res.json({ urls });
     }
