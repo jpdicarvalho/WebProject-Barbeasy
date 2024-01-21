@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import './widget.css';
 
 
@@ -15,19 +13,6 @@ const Widget = () => {
   const [bannerFiles, setBannerFiles] = useState([]);
   const [bannerImages, setBannerImages] = useState([]);
   const [bannerMessage, setBannerMessage] = useState('');
-
-  const notify = () => {
-    toast.success('Imagem Atualizada!', {
-      position: "bottom-left",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark"
-      });
-  }
 
   //Upload user image
   const handleFile = (e) => {
@@ -195,12 +180,38 @@ const Widget = () => {
       .catch(error => console.log(error));
   }, [])
 /*-------------------------------------------*/
+  const [mostrarEndereco, setMostrarEndereco] = useState(false);
+  const [novoEndereco, setNovoEndereco] = useState('');
+
+  const alternarEndereco = () => {
+    setMostrarEndereco(!mostrarEndereco);
+  };
+
+  const [values, setValues] = useState({
+    street: '',
+    number:'',
+    neighborhood:'',
+    city:''
+  });
+
+  const alterarEndereco = () => {
+    axios.post('http://localhost:8000/api/update-endereco', {Values: values})
+    .then(res => {
+        if(res.data.Success === 'Success'){
+          window.location.reload()
+        }
+      })
+      .catch(error => {
+        // Lógica a ser executada em caso de erro na solicitação
+        console.error('Erro ao atualizar o nome da barbearia:', error);
+      });
+  };
+  console.log(values)
+/*-------------------------------------------*/
   return (
     <>
-<button onClick={notify}>Notify !</button>
-          <ToastContainer />
 
-    <div className="menu__main" onClick={alternarStatus}>
+      <div className="menu__main" onClick={alternarStatus}>
             {status === 'Aberta' ?
             <span className="material-symbols-outlined icon_menu" style={{color: 'green'}}>radio_button_checked</span>
             :
@@ -209,9 +220,8 @@ const Widget = () => {
             
               Status
             <span className={`material-symbols-outlined arrow ${mostrarStatus ? 'girar' : ''}`} id='arrow'>expand_more</span>
-          </div>
-
-          {mostrarStatus && (
+      </div>
+      {mostrarStatus && (
             <div className="divSelected">
               <div className="container__checkBox">
                 <span>Aberta</span>
@@ -233,33 +243,32 @@ const Widget = () => {
             </div>
       )}
 
-    <div className="container">
-      <input type="file" onChange={handleFile}/>
-      <button onClick={handleUpload}>upload</button>
-    </div>
-    <p>{message}</p>
-    <img src={imageUser} alt="" style={{width: '100px', height: '100px', objectFit: 'cover'}}/>
-
-    <div className="container">
-        <input type="file" onChange={handleBannerImages} multiple />
-        <button onClick={handleBannerImagesUpload}>Upload Banners Images</button>
-        <p>{bannerMessage}</p>
-    </div>
-    {bannerImages && (
-      <div className="banner-images-container">
-        {bannerImages.map((url, index) => (
-          <img key={index} src={url} alt={`Banner ${index + 1}`} style={{width: '100px', height: '100px', objectFit: 'cover'}}/>
-        ))}
+      <div className="container">
+        <input type="file" onChange={handleFile}/>
+        <button onClick={handleUpload}>upload</button>
       </div>
-    )}
+      <p>{message}</p>
+      <img src={imageUser} alt="" style={{width: '100px', height: '100px', objectFit: 'cover'}}/>
 
-<div className="menu__main" onClick={alternarNomeBarbearia} >
+      <div className="container">
+          <input type="file" onChange={handleBannerImages} multiple />
+          <button onClick={handleBannerImagesUpload}>Upload Banners Images</button>
+          <p>{bannerMessage}</p>
+      </div>
+      {bannerImages && (
+        <div className="banner-images-container">
+          {bannerImages.map((url, index) => (
+            <img key={index} src={url} alt={`Banner ${index + 1}`} style={{width: '100px', height: '100px', objectFit: 'cover'}}/>
+          ))}
+        </div>
+      )}
+
+      <div className="menu__main" onClick={alternarNomeBarbearia} >
           <span className="material-symbols-outlined icon_menu">store</span>
             Nome
             <span className={`material-symbols-outlined arrow ${mostrarNomeBarbearia ? 'girar' : ''}`} id='arrow'>expand_more</span>
-          </div>
-
-          {mostrarNomeBarbearia && (
+      </div>
+      {mostrarNomeBarbearia && (
             <div className="divSelected">
             <p className='information__span'>Altere o nome da Barbearia</p>
           
@@ -281,7 +290,90 @@ const Widget = () => {
             </button>
           </div>          
          
-          )}
+      )}
+
+      <div className="menu__main" onClick={alternarEndereco} >
+          <span className="material-symbols-outlined icon_menu">pin_drop</span>
+            Endereço
+            <span className={`material-symbols-outlined arrow ${mostrarEndereco ? 'girar' : ''}`} id='arrow'>expand_more</span>
+      </div>
+      {mostrarEndereco && (
+                  <div className="divSelected">
+                    <p className='information__span'>Altere o endereço da Barbearia</p>
+
+                    <div className="inputBox">
+                      <input
+                      type="text"
+                      id="street"
+                      name="street"
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        // Remover caracteres especiais
+                        const sanitizedValue = inputValue.replace(/[^a-zA-Z0-9\sçéúíóáõãèòìàêôâ]/g, '');
+
+                        // Limitar a 50 caracteres
+                        const truncatedValue = sanitizedValue.slice(0, 50);
+                        setValues({ ...values, street: truncatedValue });
+                      }}
+                      placeholder="Rua"
+                      required
+                    /> <span className="material-symbols-outlined icon_input">add_road</span>
+
+                  <input
+                    type="text"
+                    id="number"
+                    name="number"
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      // Remover caracteres não numéricos
+                      const numericValue = inputValue.replace(/\D/g, '');
+                      // Limitar a 10 caracteres
+                      const truncatedValue = numericValue.slice(0, 5);
+                      setValues({ ...values, number: truncatedValue });
+                    }}
+                    placeholder="Nº"
+                    required
+                  />{' '} <span className="material-symbols-outlined" id="icon_street_number">home_pin</span>
+                  
+                  <input
+                    type="text"
+                    id="neighborhood"
+                    name="neighborhood"
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      // Remover caracteres especiais
+                      const sanitizedValue = inputValue.replace(/[^a-zA-Z0-9\sçéúíóáõãèòìàêôâ]/g, '');
+                      // Limitar a 50 caracteres
+                      const truncatedValue = sanitizedValue.slice(0, 50);
+                      setValues({ ...values, neighborhood: truncatedValue });
+                    }}
+                    placeholder="Bairro"
+                    required
+                  /><span className="material-symbols-outlined" id="icon_input_neighborhood">route</span>
+                  
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      // Remover caracteres especiais
+                      const sanitizedValue = inputValue.replace(/[^a-zA-Z0-9\sçéúíóáõãèòìàêôâ]/g, '');
+                      // Limitar a 50 caracteres
+                      const truncatedValue = sanitizedValue.slice(0, 30);
+                      setValues({ ...values, city: truncatedValue });
+                    }}
+                    placeholder="Cidade"
+                    required
+                  />{' '} <span className="material-symbols-outlined" id="icon_input_city">map</span>
+                    </div>
+
+                      <button className='button__change' onClick={alterarEndereco}>
+                        Alterar
+                      </button>
+                  </div>
+                  
+      )}
 
     </>
   );

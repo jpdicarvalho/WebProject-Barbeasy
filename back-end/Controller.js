@@ -276,6 +276,20 @@ app.get('/api/nome-barbearia', (req, res) => {
   })
 })
 
+app.post('/api/update-endereco', (req, res) => {
+  const values = req.body.Values;
+  const enderocoArray = [];
+
+  enderocoArray.push(values.street);
+  enderocoArray.push(values.number);
+  enderocoArray.push(values.neighborhood);
+  enderocoArray.push(values.city);
+  
+  const newEndereco = enderocoArray.join(', ');// Usando o método join para criar uma string com vírgula e espaço como separadores
+
+  console.log(newEndereco)
+})
+
 
 
 
