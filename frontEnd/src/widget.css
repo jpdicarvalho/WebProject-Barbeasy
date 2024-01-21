@@ -372,3 +372,6 @@
     background: darkred;
     color: #f6f6fc;
 }
+.white-placeholder::placeholder {
+    color: white;
+  }

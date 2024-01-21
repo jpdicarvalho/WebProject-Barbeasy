@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './widget.css';
 
 
@@ -13,6 +15,19 @@ const Widget = () => {
   const [bannerFiles, setBannerFiles] = useState([]);
   const [bannerImages, setBannerImages] = useState([]);
   const [bannerMessage, setBannerMessage] = useState('');
+
+  const notify = () => {
+    toast.success('Imagem Atualizada!', {
+      position: "bottom-left",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark"
+      });
+  }
 
   //Upload user image
   const handleFile = (e) => {
@@ -47,8 +62,7 @@ const Widget = () => {
     axios.post('http://localhost:8000/upload', formdata)
     .then(res => {
       if(res.data.Status === "Success"){
-        console.log('Succeded')
-        window.location.reload();
+        window.location.reload()
       }else{
         console.log('faled')
       }
@@ -150,9 +164,42 @@ const Widget = () => {
       })
       .catch(error => console.log(error));
   }, [])
+/*-------------------------------------------*/
+  //Constantes para atualizar o nome da Barbearia
+  const [mostrarNomeBarbearia, setMostrarNomeBarbearia] = useState(false);
+  const [novoNomeBarbearia, setNovoNomeBarbearia] = useState('');
+  const [NomeBarbeariaAtual, setNovoNomeBarbeariaAtual] = useState('');
 
+  //Função para mostrar o input de alteração do nome
+  const alternarNomeBarbearia = () => {
+    setMostrarNomeBarbearia(!mostrarNomeBarbearia);
+  };
+  //Função para mandar o novo nome da barbearia
+  const alterarNomeBarbearia = () => {
+    axios.post('http://localhost:8000/api/update-barbearia-name', {novoNome: novoNomeBarbearia})
+    .then(res => {
+        if(res.data.Success === 'Success'){
+          window.location.reload()
+        }
+      })
+      .catch(error => {
+        // Lógica a ser executada em caso de erro na solicitação
+        console.error('Erro ao atualizar o nome da barbearia:', error);
+      });
+  };
+  useEffect(() => {
+    axios.get('http://localhost:8000/api/nome-barbearia')
+      .then(res => {
+        setNovoNomeBarbeariaAtual(res.data.NomeBarbearia)
+      })
+      .catch(error => console.log(error));
+  }, [])
+/*-------------------------------------------*/
   return (
     <>
+<button onClick={notify}>Notify !</button>
+          <ToastContainer />
+
     <div className="menu__main" onClick={alternarStatus}>
             {status === 'Aberta' ?
             <span className="material-symbols-outlined icon_menu" style={{color: 'green'}}>radio_button_checked</span>
@@ -163,7 +210,6 @@ const Widget = () => {
               Status
             <span className={`material-symbols-outlined arrow ${mostrarStatus ? 'girar' : ''}`} id='arrow'>expand_more</span>
           </div>
-          
 
           {mostrarStatus && (
             <div className="divSelected">
@@ -187,7 +233,6 @@ const Widget = () => {
             </div>
       )}
 
-
     <div className="container">
       <input type="file" onChange={handleFile}/>
       <button onClick={handleUpload}>upload</button>
@@ -207,6 +252,36 @@ const Widget = () => {
         ))}
       </div>
     )}
+
+<div className="menu__main" onClick={alternarNomeBarbearia} >
+          <span className="material-symbols-outlined icon_menu">store</span>
+            Nome
+            <span className={`material-symbols-outlined arrow ${mostrarNomeBarbearia ? 'girar' : ''}`} id='arrow'>expand_more</span>
+          </div>
+
+          {mostrarNomeBarbearia && (
+            <div className="divSelected">
+            <p className='information__span'>Altere o nome da Barbearia</p>
+          
+            <div className="inputBox">
+              <input
+                type="text"
+                id="name"
+                name="name"
+                onChange={(e) => setNovoNomeBarbearia(e.target.value)}
+                placeholder={NomeBarbeariaAtual}
+                className="white-placeholder"
+                required
+              />
+              <span className="material-symbols-outlined icon_input">add_business</span>
+            </div>
+          
+            <button className='button__change' onClick={alterarNomeBarbearia}>
+              Alterar
+            </button>
+          </div>          
+         
+          )}
 
     </>
   );

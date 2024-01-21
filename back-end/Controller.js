@@ -243,6 +243,39 @@ app.get('/api/status-barbearia', (req, res) =>{
   })
 });
 
+//Rota para atualizar o nome da barbearia
+app.post('/api/update-barbearia-name', (req, res) => {
+  const barbeariaId = 1;
+  const novoNomeBarbearia = req.body.novoNome;
+  const sql = "UPDATE barbearia SET name = ? WHERE id = ?";
+  db.query(sql, [novoNomeBarbearia, barbeariaId], (err, result) =>{
+    if(err){
+      console.error("Erro ao atualizar o nome da barbearia", err);
+      return res.status(500).json({Error: "Internal Server Error"});
+    }else{
+      if(result) {
+        return res.status(200).json({Success: "Success"});
+      }
+    }
+  })
+});
+//Rota para obter o nome da barbeari
+app.get('/api/nome-barbearia', (req, res) => {
+  const barbeariaId = 1;
+  const sql = "SELECT name FROM barbearia WHERE id = ?";
+  db.query(sql, [barbeariaId], (err, result) => {
+    if(err) {
+      console.error("Erro ao buscar o nome da barbearia", err);
+      return res.status(500).json({Error: "Internal Server Error"});
+    }else{
+      if(result.length > 0) {
+        const nomeBarbearia = result[0].name;
+        return res.status(200).json({ NomeBarbearia: nomeBarbearia});
+      }
+    }
+  })
+})
+
 
 
 
