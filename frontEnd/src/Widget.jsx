@@ -121,156 +121,34 @@ const Widget = () => {
       })
       .catch(error => console.log(error));
   }, [])
-  /*--------------------------------------*/
-  const [mostrarStatus, setMostrarStatus] = useState(false);
-  const [status, setStatus] = useState();
+/*--------------------------------------*/
+const [mostrarNome, setMostrarNome] = useState(false);
+const [novoUserName, setNovoUserName] = useState('');
 
-  const alternarStatus = () => {
-    setMostrarStatus(!mostrarStatus);
+const alternarNome = () => {
+    setMostrarNome(!mostrarNome);
   };
 
-  const statusUpdate = () => {
-    // Aqui você pode fazer uma solicitação para o backend usando o axios
-    axios.post('http://localhost:8000/api/status-update', { Status: status })
+const alterarUserName = () => {
+    axios.post('http://localhost:8000/api/upload-user-name-barbearia', {newUserName: novoUserName})
     .then(res => {
         if(res.data.Success === 'Success'){
-          console.log('Status atualizado!');
+          console.log('foi')
+          //window.location.reload()
         }
       })
       .catch(error => {
         // Lógica a ser executada em caso de erro na solicitação
-        console.error('Erro ao atualizar o status:', error);
+        console.error('Erro ao atualizar o nome de usuário:', error);
       });
   };
-  useEffect(() => {
-    axios.get('http://localhost:8000/api/status-barbearia')
-      .then(res => {
-        setStatus(res.data.StatusBarbearia)
-      })
-      .catch(error => console.log(error));
-  }, [])
 /*-------------------------------------------*/
-  //Constantes para atualizar o nome da Barbearia
-  const [mostrarNomeBarbearia, setMostrarNomeBarbearia] = useState(false);
-  const [novoNomeBarbearia, setNovoNomeBarbearia] = useState('');
-  const [NomeBarbeariaAtual, setNovoNomeBarbeariaAtual] = useState('');
 
-  //Função para mostrar o input de alteração do nome
-  const alternarNomeBarbearia = () => {
-    setMostrarNomeBarbearia(!mostrarNomeBarbearia);
-  };
-  //Função para mandar o novo nome da barbearia
-  const alterarNomeBarbearia = () => {
-    axios.post('http://localhost:8000/api/update-barbearia-name', {novoNome: novoNomeBarbearia})
-    .then(res => {
-        if(res.data.Success === 'Success'){
-          window.location.reload()
-        }
-      })
-      .catch(error => {
-        // Lógica a ser executada em caso de erro na solicitação
-        console.error('Erro ao atualizar o nome da barbearia:', error);
-      });
-  };
-  useEffect(() => {
-    axios.get('http://localhost:8000/api/nome-barbearia')
-      .then(res => {
-        setNovoNomeBarbeariaAtual(res.data.NomeBarbearia)
-      })
-      .catch(error => console.log(error));
-  }, [])
 /*-------------------------------------------*/
-  const [mostrarEndereco, setMostrarEndereco] = useState(false);
-  const [messageEndereco, setMessageEndereco] = useState('');
-  const [novoEndereco, setNovoEndereco] = useState('');
-
-  //Função para mostrar os inputs de alteração de endereço
-  const alternarEndereco = () => {
-    setMostrarEndereco(!mostrarEndereco);
-  };
-  //Obtendo os valores dos inputs
-  const [values, setValues] = useState({
-    street: '',
-    number:'',
-    neighborhood:'',
-    city:''
-  });
-  //Função para vericicar se há algum input vazio
-  const verificarValoresPreenchidos = () => {
-    for (const key in values) {
-      if (values.hasOwnProperty(key) && !values[key]) {
-        return false; // Retorna falso se algum valor não estiver preenchido
-      }
-    }
-    return true; // Retorna verdadeiro se todos os valores estiverem preenchidos
-  };
-  //Função responsável por enviar os valores ao back-end
-  const alterarEndereco = () => {
-    if (verificarValoresPreenchidos()) {
-      axios.post('http://localhost:8000/api/update-endereco', { Values: values })
-        .then(res => {
-          if (res.data.Success === 'Success') {
-            setMessageEndereco("Endereço Alterado com Sucesso!")
-            // Limpar a mensagem após 3 segundos (3000 milissegundos)
-            setTimeout(() => {
-              setMessageEndereco('');
-              window.location.reload();
-            }, 3000);
-          }
-        })
-        .catch(error => {
-          setMessageEndereco('Erro ao atualizar o endereço.');
-          // Limpar a mensagem de erro após 3 segundos (3000 milissegundos)
-          setTimeout(() => {
-            setMessageEndereco('');
-          }, 3000);
-          // Lógica a ser executada em caso de erro na solicitação
-          console.error('Erro ao atualizar o nome da barbearia:', error);
-        });
-    } else {
-      setMessageEndereco('Preencha todos os campos de endereço.');
-
-      setTimeout(() => {
-        setMessageEndereco('');
-      }, 3000);
-    }
-  };
   
 /*-------------------------------------------*/
   return (
     <>
-
-      <div className="menu__main" onClick={alternarStatus}>
-            {status === 'Aberta' ?
-            <span className="material-symbols-outlined icon_menu" style={{color: 'green'}}>radio_button_checked</span>
-            :
-            <span className="material-symbols-outlined icon_menu">radio_button_checked</span>
-            }
-            
-              Status
-            <span className={`material-symbols-outlined arrow ${mostrarStatus ? 'girar' : ''}`} id='arrow'>expand_more</span>
-      </div>
-      {mostrarStatus && (
-            <div className="divSelected">
-              <div className="container__checkBox">
-                <span>Aberta</span>
-                <input
-              type="checkbox"
-              id='status'
-              checked={status === 'Aberta'} // Marca o input se o status for 'Aberta'
-              onChange={() => {
-                const novoStatus = status === 'Aberta' ? 'Fechada' : 'Aberta'; // Inverte o estado atual
-                setStatus(novoStatus); // Atualiza o estado 'status'
-                statusUpdate(); // Chama a função para atualizar o status no backend
-              }}
-            />  
-
-                <label htmlFor="status" className='switch'>
-                  <span className='slider'></span>
-                </label>
-              </div>
-            </div>
-      )}
 
       <div className="container">
         <input type="file" onChange={handleFile}/>
@@ -292,124 +170,41 @@ const Widget = () => {
         </div>
       )}
 
-      <div className="menu__main" onClick={alternarNomeBarbearia} >
-          <span className="material-symbols-outlined icon_menu">store</span>
+<div className="menu__main" onClick={alternarNome}>
+          <span className="material-symbols-outlined icon_menu">person</span>
             Nome
-            <span className={`material-symbols-outlined arrow ${mostrarNomeBarbearia ? 'girar' : ''}`} id='arrow'>expand_more</span>
-      </div>
-      {mostrarNomeBarbearia && (
+            <span className={`material-symbols-outlined arrow ${mostrarNome ? 'girar' : ''}`} id='arrow'>expand_more</span>
+          </div>
+
+          {mostrarNome && (
             <div className="divSelected">
-            <p className='information__span'>Altere o nome da Barbearia</p>
-          
+              <p className='information__span'>Alterar Nome de usuário</p>
+
             <div className="inputBox">
-              <input
+            <input
                 type="text"
-                id="name"
-                name="name"
-                onChange={(e) => setNovoNomeBarbearia(e.target.value)}
-                placeholder={NomeBarbeariaAtual}
-                className="white-placeholder"
+                id="usuario"
+                name="usuario"
+                
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  // Remover caracteres não alfanuméricos
+                  const filteredValue = inputValue.replace(/[^a-zA-Z0-9.\s]/g, '');
+                  // Limitar a 30 caracteres
+                  const userName = filteredValue.slice(0, 30);
+                setNovoUserName({ userName });
+                }}
+                placeholder="Nome de Usuário"
                 required
-              />
-              <span className="material-symbols-outlined icon_input">add_business</span>
+              />{' '}<span className="material-symbols-outlined icon_input">person_edit</span>
             </div>
-            
-            <button className={`button__change ${novoNomeBarbearia ? 'show' : ''}`} onClick={alterarNomeBarbearia}>
+
+            <button className={`button__change ${novoUserName ? 'show' : ''}`} onClick={alterarUserName}>
               Alterar
             </button>
-            
-          </div>          
+         </div>
          
-      )}
-
-      <div className="menu__main" onClick={alternarEndereco} >
-          <span className="material-symbols-outlined icon_menu">pin_drop</span>
-            Endereço
-            <span className={`material-symbols-outlined arrow ${mostrarEndereco ? 'girar' : ''}`} id='arrow'>expand_more</span>
-      </div>
-      {mostrarEndereco && (
-                  <div className="divSelected">
-                    <p className='information__span'>Altere o endereço da Barbearia</p>
-
-                    {messageEndereco === 'Endereço Alterado com Sucesso!' ?
-                      <p className="mensagem-sucesso">{messageEndereco}</p>
-                      :
-                      <p className="mensagem-erro">{messageEndereco}</p>
-                    }
-                    
-                    <div className="inputBox">
-                      <input
-                      type="text"
-                      id="street"
-                      name="street"
-                      onChange={(e) => {
-                        const inputValue = e.target.value;
-                        // Remover caracteres especiais
-                        const sanitizedValue = inputValue.replace(/[^a-zA-Z0-9\sçéúíóáõãèòìàêôâ]/g, '');
-
-                        // Limitar a 50 caracteres
-                        const truncatedValue = sanitizedValue.slice(0, 50);
-                        setValues({ ...values, street: truncatedValue });
-                      }}
-                      placeholder="Rua"
-                      required
-                    /> <span className="material-symbols-outlined icon_input">add_road</span>
-
-                  <input
-                    type="text"
-                    id="number"
-                    name="number"
-                    onChange={(e) => {
-                      const inputValue = e.target.value;
-                      // Remover caracteres não numéricos
-                      const numericValue = inputValue.replace(/\D/g, '');
-                      // Limitar a 10 caracteres
-                      const truncatedValue = numericValue.slice(0, 5);
-                      setValues({ ...values, number: truncatedValue });
-                    }}
-                    placeholder="Nº"
-                    required
-                  />{' '} <span className="material-symbols-outlined" id="icon_street_number">home_pin</span>
-                  
-                  <input
-                    type="text"
-                    id="neighborhood"
-                    name="neighborhood"
-                    onChange={(e) => {
-                      const inputValue = e.target.value;
-                      // Remover caracteres especiais
-                      const sanitizedValue = inputValue.replace(/[^a-zA-Z0-9\sçéúíóáõãèòìàêôâ]/g, '');
-                      // Limitar a 50 caracteres
-                      const truncatedValue = sanitizedValue.slice(0, 50);
-                      setValues({ ...values, neighborhood: truncatedValue });
-                    }}
-                    placeholder="Bairro"
-                    required
-                  /><span className="material-symbols-outlined" id="icon_input_neighborhood">route</span>
-                  
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    onChange={(e) => {
-                      const inputValue = e.target.value;
-                      // Remover caracteres especiais
-                      const sanitizedValue = inputValue.replace(/[^a-zA-Z0-9\sçéúíóáõãèòìàêôâ]/g, '');
-                      // Limitar a 50 caracteres
-                      const truncatedValue = sanitizedValue.slice(0, 30);
-                      setValues({ ...values, city: truncatedValue });
-                    }}
-                    placeholder="Cidade"
-                    required
-                  />{' '} <span className="material-symbols-outlined" id="icon_input_city">map</span>
-                    </div>
-
-                    <button className={`button__change ${values.street ? 'show' : ''}`} onClick={alterarNomeBarbearia}>
-                    Alterar
-                  </button>
-                  </div>
-                  
-      )}
+          )}
 
     </>
   );

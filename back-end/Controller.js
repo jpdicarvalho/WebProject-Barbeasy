@@ -259,7 +259,7 @@ app.post('/api/update-barbearia-name', (req, res) => {
     }
   })
 });
-//Rota para obter o nome da barbeari
+//Rota para obter o nome da barbearia
 app.get('/api/nome-barbearia', (req, res) => {
   const barbeariaId = 1;
   const sql = "SELECT name FROM barbearia WHERE id = ?";
@@ -275,7 +275,7 @@ app.get('/api/nome-barbearia', (req, res) => {
     }
   })
 })
-//Rota para obter atualizar o endereço da barbearia
+//Rota para atualizar o endereço da barbearia
 app.post('/api/update-endereco', (req, res) => {
   const barbeariaId = 1;
   const values = req.body.Values;//Obtendo os valores informados pelo usuário
@@ -299,6 +299,39 @@ app.post('/api/update-endereco', (req, res) => {
     }else{
       if(result){
         return res.status(200).json({Success: "Success"});
+      }
+    }
+  })
+})
+//Rota para atualizar o nome de usuário da barbearia
+app.post('/api/upload-user-name-barbearia', (req, res) => {
+  const barbeariaId = 1;
+  const newUserName = req.body.newUserName.userName;
+
+  const sql = "UPDATE barbearia SET usuario = ? WHERE id = ?";
+  db.query(sql, [newUserName, barbeariaId], (err, result) =>{
+    if(err){
+      console.error("Erro ao atualizar o nome de usuário da barbearia", err);
+      return res.status(500).json({Error: "Internal Server Error"});
+    }else{
+      if(result){
+        return res.status(200).json({Success: "Success"});
+      }
+    }
+  })
+});
+//Rota para obter o nome de usuário da barbearia
+app.get('/api/user-name-barbearia', (req, res) => {
+  const barbeariaId = 1;
+  const sql = "SELECT usuario FROM barbearia WHERE id = ?";
+  db.query(sql, [barbeariaId], (err, result) => {
+    if(err) {
+      console.error("Erro ao buscar o nome da barbearia", err);
+      return res.status(500).json({Error: "Internal Server Error"});
+    }else{
+      if(result.length > 0) {
+        const userNameBarbearia = result[0].usuario;
+        return res.status(200).json({ UserNameBarbearia: userNameBarbearia});
       }
     }
   })
