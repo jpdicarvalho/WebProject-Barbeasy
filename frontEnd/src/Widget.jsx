@@ -181,32 +181,61 @@ const Widget = () => {
   }, [])
 /*-------------------------------------------*/
   const [mostrarEndereco, setMostrarEndereco] = useState(false);
+  const [messageEndereco, setMessageEndereco] = useState('');
   const [novoEndereco, setNovoEndereco] = useState('');
 
+  //Função para mostrar os inputs de alteração de endereço
   const alternarEndereco = () => {
     setMostrarEndereco(!mostrarEndereco);
   };
-
+  //Obtendo os valores dos inputs
   const [values, setValues] = useState({
     street: '',
     number:'',
     neighborhood:'',
     city:''
   });
-
-  const alterarEndereco = () => {
-    axios.post('http://localhost:8000/api/update-endereco', {Values: values})
-    .then(res => {
-        if(res.data.Success === 'Success'){
-          window.location.reload()
-        }
-      })
-      .catch(error => {
-        // Lógica a ser executada em caso de erro na solicitação
-        console.error('Erro ao atualizar o nome da barbearia:', error);
-      });
+  //Função para vericicar se há algum input vazio
+  const verificarValoresPreenchidos = () => {
+    for (const key in values) {
+      if (values.hasOwnProperty(key) && !values[key]) {
+        return false; // Retorna falso se algum valor não estiver preenchido
+      }
+    }
+    return true; // Retorna verdadeiro se todos os valores estiverem preenchidos
   };
-  console.log(values)
+  //Função responsável por enviar os valores ao back-end
+  const alterarEndereco = () => {
+    if (verificarValoresPreenchidos()) {
+      axios.post('http://localhost:8000/api/update-endereco', { Values: values })
+        .then(res => {
+          if (res.data.Success === 'Success') {
+            setMessageEndereco("Endereço Alterado com Sucesso!")
+            // Limpar a mensagem após 3 segundos (3000 milissegundos)
+            setTimeout(() => {
+              setMessageEndereco('');
+              window.location.reload();
+            }, 3000);
+          }
+        })
+        .catch(error => {
+          setMessageEndereco('Erro ao atualizar o endereço.');
+          // Limpar a mensagem de erro após 3 segundos (3000 milissegundos)
+          setTimeout(() => {
+            setMessageEndereco('');
+          }, 3000);
+          // Lógica a ser executada em caso de erro na solicitação
+          console.error('Erro ao atualizar o nome da barbearia:', error);
+        });
+    } else {
+      setMessageEndereco('Preencha todos os campos de endereço.');
+
+      setTimeout(() => {
+        setMessageEndereco('');
+      }, 3000);
+    }
+  };
+  
 /*-------------------------------------------*/
   return (
     <>
@@ -301,6 +330,12 @@ const Widget = () => {
                   <div className="divSelected">
                     <p className='information__span'>Altere o endereço da Barbearia</p>
 
+                    {messageEndereco === 'Endereço Alterado com Sucesso!' ?
+                      <p className="mensagem-sucesso">{messageEndereco}</p>
+                      :
+                      <p className="mensagem-erro">{messageEndereco}</p>
+                    }
+                    
                     <div className="inputBox">
                       <input
                       type="text"
