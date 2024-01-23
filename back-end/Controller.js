@@ -373,33 +373,25 @@ app.get('/api/email-barbearia', (req, res) => {
 app.get('/api/update-password-barbearia', (req, res) => {
   const barbeariaId = req.query.barbeariaId;
   const passwordConfirm = req.query.passwordConfirm;
+  const newPassword = req.query.newPassword;
   
   const sql = "SELECT senha FROM barbearia WHERE id = ? AND senha = ?";
   db.query(sql, [barbeariaId, passwordConfirm], (err, result) => {
     if(err) {
       console.error("Erro ao comparar senha de usuário da barbearia", err);
       return res.status(500).json({Error: "Internal Server Error"});
-    }else{
-      if(result.length > 0) {
-        return res.status(200).json({ Success: "Success"});
-      }
     }
-  })
-});
-//Rota para atualizar a senha de usuário da barbearia
-app.post('/api/upload-password-barbearia', (req, res) => {
-  const barbeariaId = 1;
-  const newPassword = req.body.newPassword;
-
-  const sql = "UPDATE barbearia SET senha = ? WHERE id = ?";
-  db.query(sql, [newPassword, barbeariaId], (err, result) =>{
-    if(err){
-      console.error("Erro ao atualizar a senha de usuário barbearia", err);
-      return res.status(500).json({Error: "Internal Server Error"});
+    if(result.length > 0) {
+      const sql = "UPDATE barbearia SET senha = ? WHERE id = ?";
+      db.query(sql, [newPassword, barbeariaId], (err, result) =>{
+        if(err){
+          console.error("Erro ao atualizar a senha de usuário barbearia", err);
+          return res.status(500).json({Error: "Internal Server Error"});
+        }
+      })
+      return res.status(200).json({ Success: "Success"});
     }else{
-      if(result){
-        return res.status(200).json({Success: "Success"});
-      }
+      return res.status(404).json({ Success: "Falied"});
     }
   })
 });

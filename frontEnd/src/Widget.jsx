@@ -173,44 +173,33 @@ const alternarSenha = () => {
 
 const alterarSenha = () => {
   const barbeariaId = 1;
-  axios.get('http://localhost:8000/api/verify-password-barbearia', {
+  axios.get('http://localhost:8000/api/update-password-barbearia', {
     params: {
       barbeariaId: barbeariaId,
-      passwordConfirm: passwordConfirm
+      passwordConfirm: passwordConfirm,
+      newPassword: newPassword
     }
-  })
-  .then(result => {
-    if(result.data.Success === 'Success') {
-      axios.post('http://localhost:8000/api/upload-password-barbearia', {NewPassword: newPassword})
-      .then(res => {
-          if(res.data.Success === 'Success'){
-            setMessagePassword("Senha Alterada com Sucesso!")
-              // Limpar a mensagem após 3 segundos (3000 milissegundos)
-              setTimeout(() => {
-                setMessagePassword('');
-                window.location.reload();
-              }, 3000);
-          }
-        })
-        .catch(error => {
-          setMessagePassword("Erro ao atualizar a senha de usuário")
-              // Limpar a mensagem após 3 segundos (3000 milissegundos)
-              setTimeout(() => {
-                setMessagePassword('');
-                window.location.reload();
-              }, 3000);
-          // Lógica a ser executada em caso de erro na solicitação
-          console.error('Erro ao atualizar a senha de usuário:', error);
-        });
+  }).then(res => {
+    if(res.data.Success === 'Success'){
+      setMessagePassword("Senha Alterada com Sucesso!")
+        // Limpar a mensagem após 3 segundos (3000 milissegundos)
+        setTimeout(() => {
+          setMessagePassword('');
+          window.location.reload();
+        }, 3000);
     }
-    
-  })
-  .catch(error => console.log(error));
+  }).catch(error => {
+    setMessagePassword("Senha atual não confirmada!")
+        // Limpar a mensagem após 3 segundos (3000 milissegundos)
+        setTimeout(() => {
+          setMessagePassword('');
+          //window.location.reload();
+        }, 5000);
+  });
 };
 
 
 //console.log(passwordConfirm)
-console.log(passwordConfirm)
 /*-------------------------------------------*/
   return (
     <>
@@ -248,7 +237,7 @@ console.log(passwordConfirm)
                 <p className="mensagem-sucesso">{messageEmail}</p>
                   :
                 <p className="mensagem-erro">{messageEmail}</p>
-            }
+              }
 
             <div className="inputBox">
               <input
@@ -292,13 +281,19 @@ console.log(passwordConfirm)
           {mostrarSenha && (
             <div className="divSelected">
               <p className='information__span'>Alterar Senha</p>
+              {messagePassword === 'Senha Alterada com Sucesso!' ?
+                <p className="mensagem-sucesso">{messagePassword}</p>
+                  :
+                <p className="mensagem-erro">{messagePassword}</p>
+              }
 
             <div className="inputBox">
-              <p>{messagePassword}</p>
+              <p>{}</p>
               <input
                 type="password"
                 id="senha"
                 name="senha"
+                maxlength="10"
                 onChange={(e) => {
                   const inputValue = e.target.value;
                   // Limitar a 10 caracteres
@@ -315,11 +310,12 @@ console.log(passwordConfirm)
                 type="password"
                 id="NovaSenha"
                 name="NovaSenha"
+                maxlength="10"
                 onChange={(e) => {
                   const inputValue = e.target.value;
                   // Limitar a 8 caracteres
                   const truncatedValue = inputValue.slice(0, 8);
-                  setNewPassword({ truncatedValue });
+                  setNewPassword(truncatedValue);
                 }}
                 placeholder="Nova Senha"
                 required
