@@ -363,13 +363,29 @@ app.get('/api/email-barbearia', (req, res) => {
       return res.status(500).json({Error: "Internal Server Error"});
     }else{
       if(result.length > 0) {
-        const emailBarbearia = result[0].email;
-        return res.status(200).json({ EmailBarbearia: emailBarbearia});
+        return res.status(200).json({ Success: "Success"});
       }
     }
   })
 });
-
+//Rota para obter o nome de usuário da barbearia
+app.get('/api/verify-password-barbearia', (req, res) => {
+  const barbeariaId = req.query.barbeariaId;
+  const passwordConfirm = req.query.passwordConfirm;
+  
+  const sql = "SELECT senha FROM barbearia WHERE id = ? AND senha = ?";
+  db.query(sql, [barbeariaId, passwordConfirm], (err, result) => {
+    if(err) {
+      console.error("Erro ao comparar senha de usuário da barbearia", err);
+      return res.status(500).json({Error: "Internal Server Error"});
+    }else{
+      if(result.length > 0) {
+        const senhaBarbearia = result[0].senha;
+        return res.status(200).json({ SenhaBarbearia: senhaBarbearia});
+      }
+    }
+  })
+});
 
 
 

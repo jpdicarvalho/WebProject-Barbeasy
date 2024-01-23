@@ -161,7 +161,56 @@ const Widget = () => {
       .catch(error => console.log(error));
   }, [])
 /*-------------------------------------------*/
-  
+const [mostrarSenha, setMostrarSenha] = useState(false);
+const [currentPassword, setCurrentPassword] = useState('');
+const [passwordConfirm, setPasswordConfirm] = useState('');
+const [newPassword, setNewPassword] = useState('');
+const [messagePassword, setMessagePassword] = useState('');
+
+const alternarSenha = () => {
+  setMostrarSenha(!mostrarSenha);
+};
+
+const alterarSenha = () => {
+  const barbeariaId = 1;
+  axios.get('http://localhost:8000/api/verify-password-barbearia', {
+    params: {
+      barbeariaId: barbeariaId,
+      passwordConfirm: passwordConfirm
+    }
+  })
+  .then(result => {
+    if(result.data.Success === 'Success') {
+      axios.post('http://localhost:8000/api/upload-email-barbearia', {NewEmail: newEmail})
+      .then(res => {
+          if(res.data.Success === 'Success'){
+            setMessageEmail("Email Alterado com Sucesso!")
+              // Limpar a mensagem após 3 segundos (3000 milissegundos)
+              setTimeout(() => {
+                setMessageEmail('');
+                window.location.reload();
+              }, 3000);
+          }
+        })
+        .catch(error => {
+          setMessageEmail("Erro ao atualizar o email de usuário")
+              // Limpar a mensagem após 3 segundos (3000 milissegundos)
+              setTimeout(() => {
+                setMessageEmail('');
+                window.location.reload();
+              }, 3000);
+          // Lógica a ser executada em caso de erro na solicitação
+          console.error('Erro ao atualizar o email de usuário:', error);
+        });
+    }
+    
+  })
+  .catch(error => console.log(error));
+};
+
+
+//console.log(passwordConfirm)
+console.log(passwordConfirm)
 /*-------------------------------------------*/
   return (
     <>
@@ -233,6 +282,56 @@ const Widget = () => {
          </div>
          
           )} 
+
+<div className="menu__main" onClick={alternarSenha}>
+          <span className="material-symbols-outlined icon_menu">password</span>
+            Senha
+            <span className={`material-symbols-outlined arrow ${mostrarSenha ? 'girar' : ''}`} id='arrow'>expand_more</span>
+          </div>
+
+          {mostrarSenha && (
+            <div className="divSelected">
+              <p className='information__span'>Alterar Senha</p>
+
+            <div className="inputBox">
+              <p>{messagePassword}</p>
+              <input
+                type="password"
+                id="senha"
+                name="senha"
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  // Limitar a 10 caracteres
+                  const truncatedPasswordConfirm = inputValue.slice(0, 10);
+                  setPasswordConfirm(truncatedPasswordConfirm);
+                }}
+                placeholder="Senha Atual"
+                required
+                />{' '} <span className="material-symbols-outlined icon_input">lock</span>
+            </div>
+
+            <div className="inputBox">
+            <input
+                type="password"
+                id="NovaSenha"
+                name="NovaSenha"
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  // Limitar a 8 caracteres
+                  const truncatedValue = inputValue.slice(0, 8);
+                  setNewPassword({ truncatedValue });
+                }}
+                placeholder="Nova Senha"
+                required
+                />{' '} <span className="material-symbols-outlined icon_input">lock_reset</span>
+            </div>
+
+            <button className={`button__change ${newPassword ? 'show' : ''}`} onClick={alterarSenha}>
+              Alterar
+            </button>
+         </div>
+         
+          )}
 
     </>
   );
