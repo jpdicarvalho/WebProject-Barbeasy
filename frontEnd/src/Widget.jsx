@@ -121,29 +121,45 @@ const Widget = () => {
       })
       .catch(error => console.log(error));
   }, [])
-/*--------------------------------------*/
-const [mostrarNome, setMostrarNome] = useState(false);
-const [novoUserName, setNovoUserName] = useState('');
+/*-------------------------------------------*/
+  const [mostrarEmail, setMostrarEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
+  const [currentEmail, setCurrentEmail] = useState('');
+  const [messageEmail, setMessageEmail] = useState('');
 
-const alternarNome = () => {
-    setMostrarNome(!mostrarNome);
+  const alternarEmail = () => {
+    setMostrarEmail(!mostrarEmail);
   };
-
-const alterarUserName = () => {
-    axios.post('http://localhost:8000/api/upload-user-name-barbearia', {newUserName: novoUserName})
+  const alterarEmail = () => {
+    axios.post('http://localhost:8000/api/upload-email-barbearia', {NewEmail: newEmail})
     .then(res => {
         if(res.data.Success === 'Success'){
-          console.log('foi')
-          //window.location.reload()
+          setMessageEmail("Email Alterado com Sucesso!")
+            // Limpar a mensagem após 3 segundos (3000 milissegundos)
+            setTimeout(() => {
+              setMessageEmail('');
+              window.location.reload();
+            }, 3000);
         }
       })
       .catch(error => {
+        setMessageEmail("Erro ao atualizar o email de usuário")
+            // Limpar a mensagem após 3 segundos (3000 milissegundos)
+            setTimeout(() => {
+              setMessageEmail('');
+              window.location.reload();
+            }, 3000);
         // Lógica a ser executada em caso de erro na solicitação
-        console.error('Erro ao atualizar o nome de usuário:', error);
+        console.error('Erro ao atualizar o email de usuário:', error);
       });
   };
-/*-------------------------------------------*/
-
+  useEffect(() => {
+    axios.get('http://localhost:8000/api/email-barbearia')
+      .then(result => {
+        setCurrentEmail(result.data.EmailBarbearia);
+      })
+      .catch(error => console.log(error));
+  }, [])
 /*-------------------------------------------*/
   
 /*-------------------------------------------*/
@@ -170,41 +186,53 @@ const alterarUserName = () => {
         </div>
       )}
 
-<div className="menu__main" onClick={alternarNome}>
-          <span className="material-symbols-outlined icon_menu">person</span>
-            Nome
-            <span className={`material-symbols-outlined arrow ${mostrarNome ? 'girar' : ''}`} id='arrow'>expand_more</span>
+      <div className="menu__main" onClick={alternarEmail} >
+          <span className="material-symbols-outlined icon_menu">mail</span>
+            Email
+            <span className={`material-symbols-outlined arrow ${mostrarEmail ? 'girar' : ''}`} id='arrow'>expand_more</span>
           </div>
 
-          {mostrarNome && (
+          {mostrarEmail && (
             <div className="divSelected">
-              <p className='information__span'>Alterar Nome de usuário</p>
+              <p className='information__span'>Alterar Email</p>
+              {messageEmail === 'Email Alterado com Sucesso!' ?
+                <p className="mensagem-sucesso">{messageEmail}</p>
+                  :
+                <p className="mensagem-erro">{messageEmail}</p>
+            }
 
             <div className="inputBox">
-            <input
-                type="text"
-                id="usuario"
-                name="usuario"
-                
+              <input
+                type="email"
+                id="email"
+                name="email"
                 onChange={(e) => {
                   const inputValue = e.target.value;
-                  // Remover caracteres não alfanuméricos
-                  const filteredValue = inputValue.replace(/[^a-zA-Z0-9.\s]/g, '');
-                  // Limitar a 30 caracteres
-                  const userName = filteredValue.slice(0, 30);
-                setNovoUserName({ userName });
+                  // Substituir o conteúdo do campo para conter apenas números, letras, "@" e "."
+                  const sanitizedValue = inputValue.replace(/[^a-zA-Z0-9@.]/g, '');
+                  // Limitar a 50 caracteres
+                  const truncatedValue = sanitizedValue.slice(0, 50);
+
+                  // Validar se o valor atende ao formato de email esperado
+                  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(truncatedValue);
+
+                  // Atualizar o estado apenas se o email for válido
+                  if (isValidEmail) {
+                    setNewEmail(truncatedValue);
+                  }
                 }}
-                placeholder="Nome de Usuário"
+                placeholder={currentEmail}
+                className="white-placeholder"
                 required
-              />{' '}<span className="material-symbols-outlined icon_input">person_edit</span>
+              />{' '}<span className="material-symbols-outlined icon_input">alternate_email</span>
             </div>
 
-            <button className={`button__change ${novoUserName ? 'show' : ''}`} onClick={alterarUserName}>
+            <button className={`button__change ${newEmail ? 'show' : ''}`} onClick={alterarEmail}>
               Alterar
             </button>
          </div>
          
-          )}
+          )} 
 
     </>
   );

@@ -274,7 +274,7 @@ app.get('/api/nome-barbearia', (req, res) => {
       }
     }
   })
-})
+});
 //Rota para atualizar o endereço da barbearia
 app.post('/api/update-endereco', (req, res) => {
   const barbeariaId = 1;
@@ -302,7 +302,7 @@ app.post('/api/update-endereco', (req, res) => {
       }
     }
   })
-})
+});
 //Rota para atualizar o nome de usuário da barbearia
 app.post('/api/upload-user-name-barbearia', (req, res) => {
   const barbeariaId = 1;
@@ -335,9 +335,40 @@ app.get('/api/user-name-barbearia', (req, res) => {
       }
     }
   })
-})
+});
+//Rota para atualizar o nome de usuário da barbearia
+app.post('/api/upload-email-barbearia', (req, res) => {
+  const barbeariaId = 1;
+  const newEmail = req.body.NewEmail;
 
-
+  const sql = "UPDATE barbearia SET email = ? WHERE id = ?";
+  db.query(sql, [newEmail, barbeariaId], (err, result) =>{
+    if(err){
+      console.error("Erro ao atualizar o email de usuário barbearia", err);
+      return res.status(500).json({Error: "Internal Server Error"});
+    }else{
+      if(result){
+        return res.status(200).json({Success: "Success"});
+      }
+    }
+  })
+});
+//Rota para obter o nome de usuário da barbearia
+app.get('/api/email-barbearia', (req, res) => {
+  const barbeariaId = 1;
+  const sql = "SELECT email FROM barbearia WHERE id = ?";
+  db.query(sql, [barbeariaId], (err, result) => {
+    if(err) {
+      console.error("Erro ao buscar o email de usuário da barbearia", err);
+      return res.status(500).json({Error: "Internal Server Error"});
+    }else{
+      if(result.length > 0) {
+        const emailBarbearia = result[0].email;
+        return res.status(200).json({ EmailBarbearia: emailBarbearia});
+      }
+    }
+  })
+});
 
 
 
