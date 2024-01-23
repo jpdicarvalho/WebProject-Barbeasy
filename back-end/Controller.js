@@ -336,7 +336,7 @@ app.get('/api/user-name-barbearia', (req, res) => {
     }
   })
 });
-//Rota para atualizar o nome de usuário da barbearia
+//Rota para atualizar o email de usuário da barbearia
 app.post('/api/upload-email-barbearia', (req, res) => {
   const barbeariaId = 1;
   const newEmail = req.body.NewEmail;
@@ -353,7 +353,7 @@ app.post('/api/upload-email-barbearia', (req, res) => {
     }
   })
 });
-//Rota para obter o nome de usuário da barbearia
+//Rota para obter o email de usuário da barbearia
 app.get('/api/email-barbearia', (req, res) => {
   const barbeariaId = 1;
   const sql = "SELECT email FROM barbearia WHERE id = ?";
@@ -363,13 +363,14 @@ app.get('/api/email-barbearia', (req, res) => {
       return res.status(500).json({Error: "Internal Server Error"});
     }else{
       if(result.length > 0) {
-        return res.status(200).json({ Success: "Success"});
+        const emailBarbearia = result[0].email;
+        return res.status(200).json({ EmailBarbearia: emailBarbearia});
       }
     }
   })
 });
-//Rota para obter o nome de usuário da barbearia
-app.get('/api/verify-password-barbearia', (req, res) => {
+//Rota para comparar a senha de usuário da barbearia
+app.get('/api/update-password-barbearia', (req, res) => {
   const barbeariaId = req.query.barbeariaId;
   const passwordConfirm = req.query.passwordConfirm;
   
@@ -380,8 +381,24 @@ app.get('/api/verify-password-barbearia', (req, res) => {
       return res.status(500).json({Error: "Internal Server Error"});
     }else{
       if(result.length > 0) {
-        const senhaBarbearia = result[0].senha;
-        return res.status(200).json({ SenhaBarbearia: senhaBarbearia});
+        return res.status(200).json({ Success: "Success"});
+      }
+    }
+  })
+});
+//Rota para atualizar a senha de usuário da barbearia
+app.post('/api/upload-password-barbearia', (req, res) => {
+  const barbeariaId = 1;
+  const newPassword = req.body.newPassword;
+
+  const sql = "UPDATE barbearia SET senha = ? WHERE id = ?";
+  db.query(sql, [newPassword, barbeariaId], (err, result) =>{
+    if(err){
+      console.error("Erro ao atualizar a senha de usuário barbearia", err);
+      return res.status(500).json({Error: "Internal Server Error"});
+    }else{
+      if(result){
+        return res.status(200).json({Success: "Success"});
       }
     }
   })

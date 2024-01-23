@@ -181,26 +181,26 @@ const alterarSenha = () => {
   })
   .then(result => {
     if(result.data.Success === 'Success') {
-      axios.post('http://localhost:8000/api/upload-email-barbearia', {NewEmail: newEmail})
+      axios.post('http://localhost:8000/api/upload-password-barbearia', {NewPassword: newPassword})
       .then(res => {
           if(res.data.Success === 'Success'){
-            setMessageEmail("Email Alterado com Sucesso!")
+            setMessagePassword("Senha Alterada com Sucesso!")
               // Limpar a mensagem após 3 segundos (3000 milissegundos)
               setTimeout(() => {
-                setMessageEmail('');
+                setMessagePassword('');
                 window.location.reload();
               }, 3000);
           }
         })
         .catch(error => {
-          setMessageEmail("Erro ao atualizar o email de usuário")
+          setMessagePassword("Erro ao atualizar a senha de usuário")
               // Limpar a mensagem após 3 segundos (3000 milissegundos)
               setTimeout(() => {
-                setMessageEmail('');
+                setMessagePassword('');
                 window.location.reload();
               }, 3000);
           // Lógica a ser executada em caso de erro na solicitação
-          console.error('Erro ao atualizar o email de usuário:', error);
+          console.error('Erro ao atualizar a senha de usuário:', error);
         });
     }
     
