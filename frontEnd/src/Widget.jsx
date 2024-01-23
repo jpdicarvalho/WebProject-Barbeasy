@@ -162,7 +162,6 @@ const Widget = () => {
   }, [])
 /*-------------------------------------------*/
 const [mostrarSenha, setMostrarSenha] = useState(false);
-const [currentPassword, setCurrentPassword] = useState('');
 const [passwordConfirm, setPasswordConfirm] = useState('');
 const [newPassword, setNewPassword] = useState('');
 const [messagePassword, setMessagePassword] = useState('');
@@ -272,7 +271,7 @@ const alterarSenha = () => {
          
           )} 
 
-<div className="menu__main" onClick={alternarSenha}>
+      <div className="menu__main" onClick={alternarSenha}>
           <span className="material-symbols-outlined icon_menu">password</span>
             Senha
             <span className={`material-symbols-outlined arrow ${mostrarSenha ? 'girar' : ''}`} id='arrow'>expand_more</span>
