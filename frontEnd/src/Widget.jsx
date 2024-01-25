@@ -122,45 +122,6 @@ const Widget = () => {
       .catch(error => console.log(error));
   }, [])
 /*-------------------------------------------*/
-  const [mostrarEmail, setMostrarEmail] = useState(false);
-  const [newEmail, setNewEmail] = useState('');
-  const [currentEmail, setCurrentEmail] = useState('');
-  const [messageEmail, setMessageEmail] = useState('');
-
-  const alternarEmail = () => {
-    setMostrarEmail(!mostrarEmail);
-  };
-  const alterarEmail = () => {
-    axios.post('http://localhost:8000/api/upload-email-barbearia', {NewEmail: newEmail})
-    .then(res => {
-        if(res.data.Success === 'Success'){
-          setMessageEmail("Email Alterado com Sucesso!")
-            // Limpar a mensagem após 3 segundos (3000 milissegundos)
-            setTimeout(() => {
-              setMessageEmail('');
-              window.location.reload();
-            }, 3000);
-        }
-      })
-      .catch(error => {
-        setMessageEmail("Erro ao atualizar o email de usuário")
-            // Limpar a mensagem após 3 segundos (3000 milissegundos)
-            setTimeout(() => {
-              setMessageEmail('');
-              window.location.reload();
-            }, 3000);
-        // Lógica a ser executada em caso de erro na solicitação
-        console.error('Erro ao atualizar o email de usuário:', error);
-      });
-  };
-  useEffect(() => {
-    axios.get('http://localhost:8000/api/email-barbearia')
-      .then(result => {
-        setCurrentEmail(result.data.EmailBarbearia);
-      })
-      .catch(error => console.log(error));
-  }, [])
-/*-------------------------------------------*/
 const [mostrarSenha, setMostrarSenha] = useState(false);
 const [passwordConfirm, setPasswordConfirm] = useState('');
 const [newPassword, setNewPassword] = useState('');
@@ -169,7 +130,6 @@ const [messagePassword, setMessagePassword] = useState('');
 const alternarSenha = () => {
   setMostrarSenha(!mostrarSenha);
 };
-
 const alterarSenha = () => {
   const barbeariaId = 1;
   axios.get('http://localhost:8000/api/update-password-barbearia', {
@@ -196,12 +156,132 @@ const alterarSenha = () => {
         }, 5000);
   });
 };
+/*-------------------------------------------*/
+const [daysWeekSelected, setDaysWeekSelected] = useState([]);
+const [QntDaysSelected, setQntDaysSelected] = useState([]);
+const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+const [mostrarDiasSemana, setMostrarDiasSemana] = useState(false);
+const [messageAgenda, setMessageAgenda] = useState('');
 
-
-//console.log(passwordConfirm)
+  const alternarDiasTrabalho = () => {
+    setMostrarDiasSemana(!mostrarDiasSemana);
+  };
+  const handleCheckboxChange = (dia) => {
+    if (daysWeekSelected.includes(dia)) {
+      // Se o dia já estiver selecionado, remova-o
+      setDaysWeekSelected(daysWeekSelected.filter((selectedDia) => selectedDia !== dia));
+    } else {
+      // Se o dia não estiver selecionado, adicione-o
+      setDaysWeekSelected([...daysWeekSelected, dia]);
+    }
+  };
+  const Checkbox = ({ dia }) => {
+    return (
+      <>
+        <input
+          type="checkbox"
+          id={dia}
+          checked={daysWeekSelected.includes(dia)}
+          onChange={() => handleCheckboxChange(dia)}
+          className="days-switch" // Adicione a classe aqui
+        />
+        <label htmlFor={dia} className="switch">
+          <span className="slider"></span>
+        </label>
+      </>
+    );
+  };
+  const CheckboxQntDias = ({ value }) => {
+    return (
+      <>
+        <input
+          type="checkbox"
+          id={value}
+          checked={QntDaysSelected === value}
+          onChange={() => {
+            if (QntDaysSelected === value) {
+              // Se a opção já estiver selecionada, desmarque-a
+              setQntDaysSelected('');
+            } else {
+              // Caso contrário, selecione a opção
+              setQntDaysSelected(value);
+            }
+          }}
+          className="days-switch"
+        />
+        <label htmlFor={value} className="switch">
+          <span className="slider"></span>
+        </label>
+      </>
+    );
+  };
+  const updateAgenda = () =>{
+    const barbeariaId = 1;
+    
+    axios.post(`http://localhost:8000/api/update-agenda/${barbeariaId}`, {daysWeek: daysWeekSelected, qntDays: QntDaysSelected})
+    .then(res => {
+      if(res.data.Success === 'Success'){
+        setMessageAgenda("Agenda Atualizada com Sucesso!")
+        // Limpar a mensagem após 3 segundos (3000 milissegundos)
+        setTimeout(() => {
+          setMessageAgenda('');
+          window.location.reload();
+        }, 3000);
+      }
+    }).catch(error => {
+      setMessageAgenda("Não foi possível atualizar sua agenda.")
+        // Limpar a mensagem após 3 segundos (3000 milissegundos)
+        setTimeout(() => {
+          setMessageAgenda('');
+          window.location.reload();
+        }, 3000);
+      console.error('erro ao atualizar a agenda', error)
+    })
+  }
 /*-------------------------------------------*/
   return (
     <>
+      <div className="menu__main" onClick={alternarDiasTrabalho}>
+        <span className="material-symbols-outlined icon_menu">calendar_clock</span>
+          Definir Dias de Trabalho
+        <span className={`material-symbols-outlined arrow`} id='arrow'>expand_more</span>
+      </div>
+
+      {mostrarDiasSemana && (
+        <div className="divSelected">
+          {messageAgenda === 'Agenda Atualizada com Sucesso!' ?
+                <p className="mensagem-sucesso">{messageAgenda}</p>
+                  :
+                <p className="mensagem-erro">{messageAgenda}</p>
+              }
+        <p className='information__span'>Selecione os dias da semana em que deseja trabalhar:</p>
+        {diasSemana.map((dia, index) => (
+          <div className="container__checkBox" key={index}>
+            <span>{dia}</span>
+            <Checkbox dia={dia} />
+          </div>
+        ))}
+
+        <p className='information__span'>Escolha a quantidade de dias a serem disponibilizados para agendamento:</p>
+        <div className="container__checkBox">
+          <span>Próximos 7 dias</span>
+          <CheckboxQntDias value="7" />
+        </div>
+        <div className="container__checkBox">
+          <span>Próximos 15 dias</span>
+          <CheckboxQntDias value="15" />
+        </div>
+        <div className="container__checkBox">
+          <span>Próximos 30 dias</span>
+          <CheckboxQntDias value="30" />
+        </div>
+        <button className={`button__change ${QntDaysSelected.length > 0 && daysWeekSelected.length > 0 ? 'show' : ''}`} onClick={updateAgenda}>
+          Alterar
+        </button>
+
+      </div>
+      )}
+
 
       <div className="container">
         <input type="file" onChange={handleFile}/>
@@ -223,61 +303,13 @@ const alterarSenha = () => {
         </div>
       )}
 
-      <div className="menu__main" onClick={alternarEmail} >
-          <span className="material-symbols-outlined icon_menu">mail</span>
-            Email
-            <span className={`material-symbols-outlined arrow ${mostrarEmail ? 'girar' : ''}`} id='arrow'>expand_more</span>
-          </div>
-
-          {mostrarEmail && (
-            <div className="divSelected">
-              <p className='information__span'>Alterar Email</p>
-              {messageEmail === 'Email Alterado com Sucesso!' ?
-                <p className="mensagem-sucesso">{messageEmail}</p>
-                  :
-                <p className="mensagem-erro">{messageEmail}</p>
-              }
-
-            <div className="inputBox">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                onChange={(e) => {
-                  const inputValue = e.target.value;
-                  // Substituir o conteúdo do campo para conter apenas números, letras, "@" e "."
-                  const sanitizedValue = inputValue.replace(/[^a-zA-Z0-9@.]/g, '');
-                  // Limitar a 50 caracteres
-                  const truncatedValue = sanitizedValue.slice(0, 50);
-
-                  // Validar se o valor atende ao formato de email esperado
-                  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(truncatedValue);
-
-                  // Atualizar o estado apenas se o email for válido
-                  if (isValidEmail) {
-                    setNewEmail(truncatedValue);
-                  }
-                }}
-                placeholder={currentEmail}
-                className="white-placeholder"
-                required
-              />{' '}<span className="material-symbols-outlined icon_input">alternate_email</span>
-            </div>
-
-            <button className={`button__change ${newEmail ? 'show' : ''}`} onClick={alterarEmail}>
-              Alterar
-            </button>
-         </div>
-         
-          )} 
-
-    <div className="menu__main" onClick={alternarSenha}>
+      <div className="menu__main" onClick={alternarSenha}>
           <span className="material-symbols-outlined icon_menu">password</span>
             Senha
             <span className={`material-symbols-outlined arrow ${mostrarSenha ? 'girar' : ''}`} id='arrow'>expand_more</span>
-          </div>
+      </div>
 
-          {mostrarSenha && (
+      {mostrarSenha && (
             <div className="divSelected">
               <p className='information__span'>Alterar Senha</p>
               {messagePassword === 'Senha Alterada com Sucesso!' ?
@@ -292,7 +324,7 @@ const alterarSenha = () => {
                 type="password"
                 id="senha"
                 name="senha"
-                maxlength="10"
+                maxLength="10"
                 onChange={(e) => {
                   const inputValue = e.target.value;
                   // Limitar a 10 caracteres
@@ -326,7 +358,7 @@ const alterarSenha = () => {
             </button>
          </div>
          
-          )}
+      )}
 
     </>
   );

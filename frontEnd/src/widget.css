@@ -226,32 +226,43 @@
 #status{
     display: none;
 }
-.switch{
-   position: relative;
-   display: flex;
-   align-items: center;
-   background: #777;
-   width: 45px;
-   height: 25px;
-   padding: 3px;
-   transition: all .5s ease-in-out;
-   border-radius: 40px;
-   cursor: pointer;
+.days-switch {
+    display: none;
 }
-.slider{
+  
+.switch {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #777;
+    width: 45px;
+    height: 25px;
+    padding: 3px;
+    transition: all .5s ease-in-out;
+    border-radius: 40px;
+    cursor: pointer;
+  }
+  .switch.checked {
+    /* Adicione estilos específicos para quando o switch estiver marcado aqui */
+    background: #1AEE07;
+  }
+  
+  .slider {
     position: absolute;
     background: #f6f6f6;
     border-radius: 50%;
     width: 20px;
     height: 20px;
     transition: all .5s ease-in-out;
-}
-#status:checked ~ .switch{
+  }
+  
+  .days-switch:checked ~ .switch {
     background: #1AEE07;
-}
-#status:checked ~ .switch .slider{
+  }
+  
+  .days-switch:checked ~ .switch .slider {
     transform: translateX(19px);
-}
+  }
 .hr_menu{
     margin-left: 34px;
     border-bottom: 1px solid #354249;
