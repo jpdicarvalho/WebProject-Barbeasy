@@ -4,124 +4,7 @@ import './widget.css';
 
 
 const Widget = () => {
-  //Upload user image
-  const [file, setfile] = useState();
-  const [imageUser, setImageUser] = useState([]);
-  const [message, setMessage] = useState('');
-
-  //Upload Banner images
-  const [bannerFiles, setBannerFiles] = useState([]);
-  const [bannerImages, setBannerImages] = useState([]);
-  const [bannerMessage, setBannerMessage] = useState('');
-
-  //Upload user image
-  const handleFile = (e) => {
-    setfile(e.target.files[0])
-  }
-
-  const handleUpload = () => {
-    const barbeariaId = 1;
-    const allowedExtensions = ['jpg', 'jpeg', 'png'];
-
-    const formdata = new FormData();
-
-    // Obtém a extensão do arquivo original
-    const fileExtension = file.name.split('.').pop();
-
-    // Verifica se a extensão é permitida
-    if (!allowedExtensions.includes(fileExtension)) {
-    setMessage("Extensão de arquivo não permitida. Use 'jpg', 'jpeg' ou 'png'.");
-    return;
-  }
-
-    // Obtém a data e hora atual
-    const currentDateTime = new Date();
-
-    // Formata a data e hora no formato desejado (por exemplo: YYYYMMDD_HHMMSS)
-    const formattedDateTime = `${currentDateTime.getFullYear()}${(currentDateTime.getMonth() + 1).toString().padStart(2, '0')}${currentDateTime.getDate().toString().padStart(2, '0')}_${currentDateTime.getHours().toString().padStart(2, '0')}${currentDateTime.getMinutes().toString().padStart(2, '0')}${currentDateTime.getSeconds().toString().padStart(2, '0')}`;
   
-    // Renomeia a imagem com o ID do usuário, número aleatório e a data/hora
-    const renamedFile = new File([file], `userBarbeariaId_${barbeariaId}_${formattedDateTime}.${fileExtension}`, { type: file.type });
-    formdata.append('image', renamedFile);
-
-    axios.post('http://localhost:8000/upload', formdata)
-    .then(res => {
-      if(res.data.Status === "Success"){
-        window.location.reload()
-      }else{
-        console.log('faled')
-      }
-    })
-    .catch(err => console.log(err));
-  }
-  useEffect(() =>{
-    axios.get('http://localhost:8000/imageUser')
-    .then(res => {
-      setImageUser(res.data.url);
-    })
-    .catch(err => console.log(err));
-  }, [])
-
-  //Upload banner images
-  const handleBannerImages = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setBannerFiles(selectedFiles);
-  }
-
-  const handleBannerImagesUpload = () => {
-    const barbeariaId = 1; // ou o ID do usuário correspondente
-    const allowedExtensions = ['jpg', 'jpeg', 'png'];
-    const bannerFormData = new FormData();
-
-    if (bannerFiles.length === 0) {
-      setBannerMessage("Selecione pelo menos uma imagem.");
-      return;
-    }
-    if(bannerFiles.length > 5){
-      setBannerMessage("Selecione apenas 5 imagens");
-      return;
-    }
-
-    // Itera sobre os arquivos selecionados
-    for (let i = 0; i < bannerFiles.length; i++) {
-      const file = bannerFiles[i];
-
-      // Obtém a extensão do arquivo original
-      const fileExtension = file.name.split('.').pop();
-
-      // Verifica se a extensão é permitida
-      if (!allowedExtensions.includes(fileExtension)) {
-        setBannerMessage("Extensão de arquivo não permitida. Use 'jpg', 'jpeg' ou 'png'.");
-        return;
-      }
-
-      // Renomeia a imagem com o ID do usuário mantendo a extensão original
-      const renamedFile = new File([file], `barbeariaId_${barbeariaId}_banner_${i + 1}.${fileExtension}`, { type: file.type });
-
-      // Adiciona o arquivo ao FormData
-      bannerFormData.append(`images`, renamedFile);
-    }
-
-    axios.post('http://localhost:8000/upload-banners', bannerFormData)
-      .then(res => {
-        if (res.data.Status === "Success") {
-          console.log('Banner Images Uploaded Successfully');
-          window.location.reload();
-        } else {
-          console.log('Banner Images Upload Failed');
-        }
-      })
-      .catch(err => console.log(err));
-  }
-
-  useEffect(() => {
-    axios.get('http://localhost:8000/api/banner-images')
-      .then(result => {
-        setBannerImages(result.data.urls);
-      })
-      .catch(error => console.log(error));
-  }, [])
-/*-------------------------------------------*/
 const [mostrarSenha, setMostrarSenha] = useState(false);
 const [passwordConfirm, setPasswordConfirm] = useState('');
 const [newPassword, setNewPassword] = useState('');
@@ -161,6 +44,8 @@ const alterarSenha = () => {
   const [daysWeekSelected, setDaysWeekSelected] = useState([]);
   const [QntDaysSelected, setQntDaysSelected] = useState([]);
   const [agenda, setAgenda] = useState([]);
+  const [daysFromAgenda, setDaysFromAgenda] = useState([]);
+
   const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
   const [messageAgenda, setMessageAgenda] = useState('');
 
@@ -258,12 +143,73 @@ const alterarSenha = () => {
   }, [])
   //Iniciando os inputs Checked com os valores cadastrados na agenda
   useEffect(() => {
-    if (agenda[0] && agenda[1].length > 0) {
-      const daysFromAgenda = agenda[0].split(',')
-      setDaysWeekSelected(daysFromAgenda)
+    if (Array.isArray(agenda) && agenda.length >= 2) {
+      setDaysFromAgenda(agenda[0].split(','));
+      setDaysWeekSelected(daysFromAgenda);
       setQntDaysSelected(agenda[1].toString());
     }
   }, [agenda]);
+/*-------------------------------------------*/
+const [mostrarHorario, setMostrarHorario] = useState(false);
+const [diaSelecionado, setDiaSelecionado] = useState(null);
+const [horariosDia, setHorariosDia] = useState({
+  manha: '',
+  tarde: '',
+  noite: ''
+});
+// Adicione esses estados ao seu componente
+const [tempoAtendimento, setTempoAtendimento] = useState({
+  manha: '',
+  tarde: '',
+  noite: ''
+});
+const generateTempoAtendimentoOptions = () => {
+  const opcoesTempo = [
+    { value: "30", label: "30 minutos" },
+    { value: "60", label: "1 hora" },
+    { value: "90", label: "1 hora e 30 minutos" },
+    // Adicione mais opções conforme necessário
+  ];
+
+  return opcoesTempo.map((opcao) => (
+    <option key={opcao.value} value={opcao.value}>
+      {opcao.label}
+    </option>
+  ));
+};
+
+const alternarHorario = () => {
+  setMostrarHorario(!mostrarHorario);
+};
+
+const handleDiaClick = (dia) => {
+  setDiaSelecionado(dia);
+};
+
+const handleHorariosSubmit = () => {
+  console.log('Horários submetidos:', horariosDia);
+};
+const generateHorarioOptions = (inicio, fim, intervalo) => {
+  const options = [];
+  let horaAtual = inicio;
+
+  while (horaAtual <= fim) {
+    options.push(
+      <option key={horaAtual} value={horaAtual}>
+        {horaAtual}
+      </option>
+    );
+
+    const [horas, minutos] = horaAtual.split(':');
+    const totalMinutos = parseInt(horas) * 60 + parseInt(minutos) + parseInt(intervalo);
+    const novaHora = Math.floor(totalMinutos / 60).toString().padStart(2, '0');
+    const novosMinutos = (totalMinutos % 60).toString().padStart(2, '0');
+    horaAtual = `${novaHora}:${novosMinutos}`;
+  }
+
+  return options;
+};
+
 /*-------------------------------------------*/
   return (
     <>
@@ -307,34 +253,67 @@ const alterarSenha = () => {
 
       </div>
       )}
+<hr />
 
+<div className="menu__main" onClick={alternarHorario}>
+          <span className="material-symbols-outlined icon_menu">schedule</span>
+              Definir Horários de Trabalho
+              <span className={`material-symbols-outlined arrow ${mostrarHorario ? 'girar' : ''}`} id='arrow'>expand_more</span>
+          </div>
 
-      <div className="container">
-        <input type="file" onChange={handleFile}/>
-        <button onClick={handleUpload}>upload</button>
-      </div>
-      <p>{message}</p>
-      <img src={imageUser} alt="" style={{width: '100px', height: '100px', objectFit: 'cover'}}/>
-
-      <div className="container">
-          <input type="file" onChange={handleBannerImages} multiple />
-          <button onClick={handleBannerImagesUpload}>Upload Banners Images</button>
-          <p>{bannerMessage}</p>
-      </div>
-      {bannerImages && (
-        <div className="banner-images-container">
-          {bannerImages.map((url, index) => (
-            <img key={index} src={url} alt={`Banner ${index + 1}`} style={{width: '100px', height: '100px', objectFit: 'cover'}}/>
-          ))}
-        </div>
-      )}
-
+          {mostrarHorario && (
+            <div className="divSelected">
+              <p className='information__span'>Defina os horários de atendimento para cada dia definido anteriormente:</p>
+              {daysFromAgenda.length === 0 ? (
+                <p style={{textAlign: 'center', marginTop: '10px'}}>Nenhum dia selecionado</p>
+              ) : (
+                daysFromAgenda.map(day => (
+                  <div key={day} className='Dias_Trabalho_Rapido'>
+                    <div className='Dias_Semana' onClick={() => handleDiaClick(day)}>{day}
+                    <p className='information__span'>Início do Expediente</p>
+                    {diaSelecionado === day && (
+                      <div className="inputs-horarios">
+                        <select className='inputSelect' value={horariosDia.manha} onChange={(e) => setHorariosDia({ ...horariosDia, manha: e.target.value })}>
+                          <option value="">Manhã</option>
+                          {generateHorarioOptions('07:00', '08:30', 15)}
+                        </select>
+                        <select className='inputSelect' value={horariosDia.tarde} onChange={(e) => setHorariosDia({ ...horariosDia, tarde: e.target.value })}>
+                        <option value="">Tarde</option>
+                          {generateHorarioOptions('13:00', '14:30', 15)}
+                        </select>
+                        <select className='inputSelect' value={horariosDia.noite} onChange={(e) => setHorariosDia({ ...horariosDia, noite: e.target.value })}>
+                        <option value="">Noite</option>
+                          {generateHorarioOptions('18:30', '19:30', 15)}
+                        </select>
+                      </div>
+                    )}
+                    <p className='information__span'>Tempo de atendimento</p>
+                      <select className='inputSelect' value={tempoAtendimento.manha} onChange={(e) => setTempoAtendimento({ ...tempoAtendimento, manha: e.target.value })}>
+                        <option value="">Manhã</option>
+                        {generateTempoAtendimentoOptions()}
+                      </select>
+                      <select className='inputSelect' value={tempoAtendimento.tarde} onChange={(e) => setTempoAtendimento({ ...tempoAtendimento, tarde: e.target.value })}>
+                        <option value="">Tarde</option>
+                        {generateTempoAtendimentoOptions()}
+                      </select>
+                      <select className='inputSelect' value={tempoAtendimento.noite} onChange={(e) => setTempoAtendimento({ ...tempoAtendimento, noite: e.target.value })}>
+                        <option value="">Noite</option>
+                        {generateTempoAtendimentoOptions()}
+                      </select>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+<hr />
       <div className="menu__main" onClick={alternarSenha}>
           <span className="material-symbols-outlined icon_menu">password</span>
             Senha
             <span className={`material-symbols-outlined arrow ${mostrarSenha ? 'girar' : ''}`} id='arrow'>expand_more</span>
       </div>
 
+<hr />
       {mostrarSenha && (
             <div className="divSelected">
               <p className='information__span'>Alterar Senha</p>
@@ -345,7 +324,6 @@ const alterarSenha = () => {
               }
 
             <div className="inputBox">
-              <p>{}</p>
               <input
                 type="password"
                 id="senha"
@@ -367,7 +345,7 @@ const alterarSenha = () => {
                 type="password"
                 id="NovaSenha"
                 name="NovaSenha"
-                maxlength="10"
+                maxLength="10"
                 onChange={(e) => {
                   const inputValue = e.target.value;
                   // Limitar a 8 caracteres

@@ -327,7 +327,8 @@
 .Dias_Semana{
     border: none;
     width: 100%;
-    height: 30px;
+    height: 300px;
+    padding: 10px;
     margin-bottom: 10px;
     font-size: 16px;
     font-weight: bold;
@@ -338,9 +339,22 @@
 }
 .Dias_Semana:hover{
     border-radius: 10px;
-    color: #f6f6f6;
-    background: #4a17d5;
     transition: 0.5s;
+}
+.inputs-horarios{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.inputSelect{
+    background: transparent;
+    border: 1px solid #4a17d5;
+    margin: 5px;
+    color: #4a17d5;
+    outline: none;
+    transition: 0.5s;
+    
 }
 .tittle_horario{
     border-radius: 5px;
