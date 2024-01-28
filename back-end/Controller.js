@@ -395,7 +395,7 @@ app.get('/api/update-password-barbearia', (req, res) => {
     }
   })
 });
-//Rota para atualizar o email de usuário da barbearia
+//Rota para atualizar a agenda da barbearia
 app.post('/api/update-agenda/:barbeariaId', (req, res) => {
   //Obtendo as variáveis enviadas
   const barbeariaId = req.params.barbeariaId;
@@ -455,7 +455,7 @@ app.get('/api/agenda/:barbeariaId', (req, res) => {
 
         agenda.push(result[0].dias);
         agenda.push(result[0].qnt_dias);
-        
+
         return res.status(200).json({ Agenda: agenda});
       }
     }
