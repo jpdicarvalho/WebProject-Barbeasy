@@ -157,15 +157,18 @@ const alterarSenha = () => {
   });
 };
 /*-------------------------------------------*/
-const [daysWeekSelected, setDaysWeekSelected] = useState([]);
-const [QntDaysSelected, setQntDaysSelected] = useState([]);
-const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-const [mostrarDiasSemana, setMostrarDiasSemana] = useState(false);
-const [messageAgenda, setMessageAgenda] = useState('');
+  const [mostrarDiasSemana, setMostrarDiasSemana] = useState(false);
+  const [daysWeekSelected, setDaysWeekSelected] = useState([]);
+  const [QntDaysSelected, setQntDaysSelected] = useState([]);
+  const [agenda, setAgenda] = useState([]);
+  const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+  const [messageAgenda, setMessageAgenda] = useState('');
 
+  //Mostrando a div com os inputs Cheked
   const alternarDiasTrabalho = () => {
     setMostrarDiasSemana(!mostrarDiasSemana);
   };
+  //Obtendo os valores selecionados pelo usuário
   const handleCheckboxChange = (dia) => {
     if (daysWeekSelected.includes(dia)) {
       // Se o dia já estiver selecionado, remova-o
@@ -175,6 +178,7 @@ const [messageAgenda, setMessageAgenda] = useState('');
       setDaysWeekSelected([...daysWeekSelected, dia]);
     }
   };
+  //Passando os valores para o input Dias da Semanas
   const Checkbox = ({ dia }) => {
     return (
       <>
@@ -191,6 +195,7 @@ const [messageAgenda, setMessageAgenda] = useState('');
       </>
     );
   };
+  //Passando os valores para o input Quantidade de dias
   const CheckboxQntDias = ({ value }) => {
     return (
       <>
@@ -215,6 +220,7 @@ const [messageAgenda, setMessageAgenda] = useState('');
       </>
     );
   };
+  //Cadastrando os valores na agenda da barbearia
   const updateAgenda = () =>{
     const barbeariaId = 1;
     
@@ -238,6 +244,26 @@ const [messageAgenda, setMessageAgenda] = useState('');
       console.error('erro ao atualizar a agenda', error)
     })
   }
+  //Obtendo os dados da agenda da barbearia
+  useEffect(() => {
+    const barbeariaId = 1;
+    axios.get(`http://localhost:8000/api/agenda/${barbeariaId}`)
+    .then(res => {
+      if(res.status === 200){
+        setAgenda(res.data.Agenda)
+      }
+    }).catch(error => {
+      console.error('Erro ao buscar informações da agenda da barbearia', error)
+    })
+  }, [])
+  //Iniciando os inputs Checked com os valores cadastrados na agenda
+  useEffect(() => {
+    if (agenda[0] && agenda[1].length > 0) {
+      const daysFromAgenda = agenda[0].split(',')
+      setDaysWeekSelected(daysFromAgenda)
+      setQntDaysSelected(agenda[1].toString());
+    }
+  }, [agenda]);
 /*-------------------------------------------*/
   return (
     <>
