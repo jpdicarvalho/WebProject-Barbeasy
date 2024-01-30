@@ -4,42 +4,7 @@ import './widget.css';
 
 
 const Widget = () => {
-  
-const [mostrarSenha, setMostrarSenha] = useState(false);
-const [passwordConfirm, setPasswordConfirm] = useState('');
-const [newPassword, setNewPassword] = useState('');
-const [messagePassword, setMessagePassword] = useState('');
 
-const alternarSenha = () => {
-  setMostrarSenha(!mostrarSenha);
-};
-const alterarSenha = () => {
-  const barbeariaId = 1;
-  axios.get('http://localhost:8000/api/update-password-barbearia', {
-    params: {
-      barbeariaId: barbeariaId,
-      passwordConfirm: passwordConfirm,
-      newPassword: newPassword
-    }
-  }).then(res => {
-    if(res.data.Success === 'Success'){
-      setMessagePassword("Senha Alterada com Sucesso!")
-        // Limpar a mensagem após 3 segundos (3000 milissegundos)
-        setTimeout(() => {
-          setMessagePassword('');
-          window.location.reload();
-        }, 3000);
-    }
-  }).catch(error => {
-    setMessagePassword("Senha atual não confirmada!")
-        // Limpar a mensagem após 3 segundos (3000 milissegundos)
-        setTimeout(() => {
-          setMessagePassword('');
-          //window.location.reload();
-        }, 5000);
-  });
-};
-/*-------------------------------------------*/
   const [mostrarDiasSemana, setMostrarDiasSemana] = useState(false);
   const [daysWeekSelected, setDaysWeekSelected] = useState([]);
   const [QntDaysSelected, setQntDaysSelected] = useState([]);
@@ -152,63 +117,66 @@ const alterarSenha = () => {
 /*-------------------------------------------*/
 const [mostrarHorario, setMostrarHorario] = useState(false);
 const [diaSelecionado, setDiaSelecionado] = useState(null);
-const [horariosDia, setHorariosDia] = useState({
-  manha: '',
-  tarde: '',
-  noite: ''
-});
-// Adicione esses estados ao seu componente
-const [tempoAtendimento, setTempoAtendimento] = useState({
-  manha: '',
-  tarde: '',
-  noite: ''
-});
-const generateTempoAtendimentoOptions = () => {
-  const opcoesTempo = [
-    { value: "30", label: "30 minutos" },
-    { value: "60", label: "1 hora" },
-    { value: "90", label: "1 hora e 30 minutos" },
-    // Adicione mais opções conforme necessário
-  ];
-
-  return opcoesTempo.map((opcao) => (
-    <option key={opcao.value} value={opcao.value}>
-      {opcao.label}
-    </option>
-  ));
-};
+const [HorarioFuncionamento, setHorarioFuncionamento] = useState([]);
+const [intervaloSelecionado, setIntervaloSelecionado] = useState([]);
+const [tempoAtendimento, setTempoAtendimento] = useState([]);
 
 const alternarHorario = () => {
   setMostrarHorario(!mostrarHorario);
 };
-
 const handleDiaClick = (dia) => {
   setDiaSelecionado(dia);
 };
-
-const handleHorariosSubmit = () => {
-  console.log('Horários submetidos:', horariosDia);
-};
-const generateHorarioOptions = (inicio, fim, intervalo) => {
-  const options = [];
+function generateHorarios(inicio, termino, intervalo) {
+  const horarios = [];
   let horaAtual = inicio;
 
-  while (horaAtual <= fim) {
-    options.push(
-      <option key={horaAtual} value={horaAtual}>
-        {horaAtual}
-      </option>
-    );
-
-    const [horas, minutos] = horaAtual.split(':');
-    const totalMinutos = parseInt(horas) * 60 + parseInt(minutos) + parseInt(intervalo);
-    const novaHora = Math.floor(totalMinutos / 60).toString().padStart(2, '0');
-    const novosMinutos = (totalMinutos % 60).toString().padStart(2, '0');
-    horaAtual = `${novaHora}:${novosMinutos}`;
+  while (horaAtual <= termino) {
+      horarios.push(horaAtual);
+      
+      const [horas, minutos] = horaAtual.split(':');
+      const totalMinutos = parseInt(horas) * 60 + parseInt(minutos) + intervalo;
+      const novaHora = Math.floor(totalMinutos / 60).toString().padStart(2, '0');
+      const novosMinutos = (totalMinutos % 60).toString().padStart(2, '0');
+      horaAtual = `${novaHora}:${novosMinutos}`;
   }
-
-  return options;
+  return horarios;
+}
+const horarios = generateHorarios('07:30', '22:30', 15);
+// Função para lidar com a seleção de um horário
+const handleHorarioFuncionamento = (horario) => {
+    if (HorarioFuncionamento.length === 2 && !HorarioFuncionamento.includes(horario)) {
+        // Já existem dois horários selecionados e o horário clicado não está entre eles
+        return;
+    }
+    // Verifica se o horário já está selecionado
+    if (HorarioFuncionamento.includes(horario)) {
+        // Remove o horário da seleção
+        setHorarioFuncionamento(HorarioFuncionamento.filter(item => item !== horario));
+    } else {
+        // Adiciona o horário à seleção
+        setHorarioFuncionamento([...HorarioFuncionamento, horario]);
+    }
 };
+// Função para lidar com a seleção de um horário
+const handleIntervalo = (intervalo) => {
+  if (intervaloSelecionado.length === 4 && !intervaloSelecionado.includes(intervalo)) {
+      // Já existem quatro horários selecionados e o horário clicado não está entre eles
+      return;
+  }
+  // Verifica se o horário já está selecionado
+  if (intervaloSelecionado.includes(intervalo)) {
+      // Remove o horário da seleção
+      setIntervaloSelecionado(intervaloSelecionado.filter(item => item !== intervalo));
+  } else {
+      // Adiciona o horário à seleção
+      setIntervaloSelecionado([...intervaloSelecionado, intervalo]);
+  }
+};
+const handleAtendimento = (atendimento) => {
+  setTempoAtendimento(atendimento)
+}
+
 
 /*-------------------------------------------*/
   return (
@@ -255,7 +223,7 @@ const generateHorarioOptions = (inicio, fim, intervalo) => {
       )}
 <hr />
 
-<div className="menu__main" onClick={alternarHorario}>
+      <div className="menu__main" onClick={alternarHorario}>
           <span className="material-symbols-outlined icon_menu">schedule</span>
               Definir Horários de Trabalho
               <span className={`material-symbols-outlined arrow ${mostrarHorario ? 'girar' : ''}`} id='arrow'>expand_more</span>
@@ -263,106 +231,65 @@ const generateHorarioOptions = (inicio, fim, intervalo) => {
 
           {mostrarHorario && (
             <div className="divSelected">
-              <p className='information__span'>Defina os horários de atendimento para cada dia definido anteriormente:</p>
+              <p className='information__span'>Defina seus horários de funcionamento para cada dia definido anteriormente:</p>
               {daysFromAgenda.length === 0 ? (
                 <p style={{textAlign: 'center', marginTop: '10px'}}>Nenhum dia selecionado</p>
               ) : (
                 daysFromAgenda.map(day => (
                   <div key={day} className='Dias_Trabalho_Rapido'>
                     <div className='Dias_Semana' onClick={() => handleDiaClick(day)}>{day}
-                    <p className='information__span'>Início do Expediente</p>
+                    
+                      {diaSelecionado === day && (
+                        <div><p className='information__span'>Selecione o horário de início e término do expediente:</p>
+                          <div className="inputs-horarios">
+                            {horarios.map((horario, index) => (
+                                <div
+                                    key={index}
+                                    className={`horario-item ${HorarioFuncionamento.includes(horario) ? 'Horario-selecionado' : ''}`}
+                                    onClick={() => handleHorarioFuncionamento(horario)}
+                                >
+                                    <p>{horario}</p>
+                                </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     {diaSelecionado === day && (
-                      <div className="inputs-horarios">
-                        <select className='inputSelect' value={horariosDia.manha} onChange={(e) => setHorariosDia({ ...horariosDia, manha: e.target.value })}>
-                          <option value="">Manhã</option>
-                          {generateHorarioOptions('07:00', '08:30', 15)}
-                        </select>
-                        <select className='inputSelect' value={horariosDia.tarde} onChange={(e) => setHorariosDia({ ...horariosDia, tarde: e.target.value })}>
-                        <option value="">Tarde</option>
-                          {generateHorarioOptions('13:00', '14:30', 15)}
-                        </select>
-                        <select className='inputSelect' value={horariosDia.noite} onChange={(e) => setHorariosDia({ ...horariosDia, noite: e.target.value })}>
-                        <option value="">Noite</option>
-                          {generateHorarioOptions('18:30', '19:30', 15)}
-                        </select>
+                      <div><p className='information__span'>Adicionar intervalo no período de funcionamento definido acima:</p>
+                        <div className="inputs-horarios">
+                          {horarios.map((intervalo, index) => (
+                              <div
+                                  key={index}
+                                  className={`horario-item ${intervaloSelecionado.includes(intervalo) ? 'Horario-selecionado' : ''}`}
+                                  onClick={() => handleIntervalo(intervalo)}
+                              >
+                                  <p>{intervalo}</p>
+                              </div>
+                          ))}
+                        </div>
                       </div>
-                    )}
-                    <p className='information__span'>Tempo de atendimento</p>
-                      <select className='inputSelect' value={tempoAtendimento.manha} onChange={(e) => setTempoAtendimento({ ...tempoAtendimento, manha: e.target.value })}>
-                        <option value="">Manhã</option>
-                        {generateTempoAtendimentoOptions()}
-                      </select>
-                      <select className='inputSelect' value={tempoAtendimento.tarde} onChange={(e) => setTempoAtendimento({ ...tempoAtendimento, tarde: e.target.value })}>
-                        <option value="">Tarde</option>
-                        {generateTempoAtendimentoOptions()}
-                      </select>
-                      <select className='inputSelect' value={tempoAtendimento.noite} onChange={(e) => setTempoAtendimento({ ...tempoAtendimento, noite: e.target.value })}>
-                        <option value="">Noite</option>
-                        {generateTempoAtendimentoOptions()}
-                      </select>
+                      )}
+                      {diaSelecionado === day && (
+                      <div><p className='information__span'>Tempo de atendimento</p>
+                        <div className="inputs-horarios">
+                          {['20min','30min','40min','50min','1h','1h10min','1h20min','1h30min'].map((atendimento, index) => (
+                              <div
+                                  key={index}
+                                  className={`horario-item ${tempoAtendimento.includes(atendimento) ? 'Horario-selecionado' : ''}`}
+                                  onClick={() => handleAtendimento(atendimento)}
+                              >
+                                  <p>{atendimento}</p>
+                              </div>
+                          ))}
+                        </div>
+                      </div>
+                      )}
                     </div>
                   </div>
                 ))
               )}
             </div>
           )}
-<hr />
-      <div className="menu__main" onClick={alternarSenha}>
-          <span className="material-symbols-outlined icon_menu">password</span>
-            Senha
-            <span className={`material-symbols-outlined arrow ${mostrarSenha ? 'girar' : ''}`} id='arrow'>expand_more</span>
-      </div>
-
-<hr />
-      {mostrarSenha && (
-            <div className="divSelected">
-              <p className='information__span'>Alterar Senha</p>
-              {messagePassword === 'Senha Alterada com Sucesso!' ?
-                <p className="mensagem-sucesso">{messagePassword}</p>
-                  :
-                <p className="mensagem-erro">{messagePassword}</p>
-              }
-
-            <div className="inputBox">
-              <input
-                type="password"
-                id="senha"
-                name="senha"
-                maxLength="10"
-                onChange={(e) => {
-                  const inputValue = e.target.value;
-                  // Limitar a 10 caracteres
-                  const truncatedPasswordConfirm = inputValue.slice(0, 10);
-                  setPasswordConfirm(truncatedPasswordConfirm);
-                }}
-                placeholder="Senha Atual"
-                required
-                />{' '} <span className="material-symbols-outlined icon_input">lock</span>
-            </div>
-
-            <div className="inputBox">
-            <input
-                type="password"
-                id="NovaSenha"
-                name="NovaSenha"
-                maxLength="10"
-                onChange={(e) => {
-                  const inputValue = e.target.value;
-                  // Limitar a 8 caracteres
-                  const truncatedValue = inputValue.slice(0, 8);
-                  setNewPassword(truncatedValue);
-                }}
-                placeholder="Nova Senha"
-                required
-                />{' '} <span className="material-symbols-outlined icon_input">lock_reset</span>
-            </div>
-
-            <button className={`button__change ${newPassword ? 'show' : ''}`} onClick={alterarSenha}>
-              Alterar
-            </button>
-         </div>
-         
-      )}
 
     </>
   );
