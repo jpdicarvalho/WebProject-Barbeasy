@@ -119,7 +119,9 @@ const [mostrarHorario, setMostrarHorario] = useState(false);
 const [diaSelecionado, setDiaSelecionado] = useState(null);
 const [HorarioFuncionamento, setHorarioFuncionamento] = useState([]);
 const [intervaloSelecionado, setIntervaloSelecionado] = useState([]);
-const [tempoAtendimento, setTempoAtendimento] = useState([]);
+const [tempoAtendimentoSelected, setTempoAtendimentoSelected] = useState([]);
+const [tempoAtendimentoConvertido, setTempoAtendimentoConvertido] = useState(null);
+const [arrayTeste, setArrayTeste] = useState([]);
 
 const alternarHorario = () => {
   setMostrarHorario(!mostrarHorario);
@@ -132,14 +134,14 @@ function generateHorarios(inicio, termino, intervalo) {
   let horaAtual = inicio;
 
   while (horaAtual <= termino) {
-      horarios.push(horaAtual);
-      
-      const [horas, minutos] = horaAtual.split(':');
-      const totalMinutos = parseInt(horas) * 60 + parseInt(minutos) + intervalo;
-      const novaHora = Math.floor(totalMinutos / 60).toString().padStart(2, '0');
-      const novosMinutos = (totalMinutos % 60).toString().padStart(2, '0');
-      horaAtual = `${novaHora}:${novosMinutos}`;
+    horarios.push(horaAtual);
+
+    const totalMinutos = parseInt(horaAtual.substring(0, 2)) * 60 + parseInt(horaAtual.substring(3)) + intervalo;
+    const novaHora = Math.floor(totalMinutos / 60).toString().padStart(2, '0');
+    const novosMinutos = (totalMinutos % 60).toString().padStart(2, '0');
+    horaAtual = `${novaHora}:${novosMinutos}`;
   }
+
   return horarios;
 }
 const horarios = generateHorarios('07:30', '22:30', 15);
@@ -173,14 +175,99 @@ const handleIntervalo = (intervalo) => {
       setIntervaloSelecionado([...intervaloSelecionado, intervalo]);
   }
 };
+// Função para lidar com a seleção de um horário
 const handleAtendimento = (atendimento) => {
-  setTempoAtendimento(atendimento)
+  if (tempoAtendimentoSelected.length === 1 && !tempoAtendimentoSelected.includes(atendimento)) {
+      return;
+  }
+  // Verifica se o horário já está selecionado
+  if (tempoAtendimentoSelected.includes(atendimento)) {
+      setTempoAtendimentoSelected(tempoAtendimentoSelected.filter(item => item !== atendimento));      
+  } else {
+      setTempoAtendimentoSelected([...tempoAtendimentoSelected, atendimento]);
+  }
+};
+const horariosDefinidos = () =>{
+  if(HorarioFuncionamento && intervaloSelecionado && tempoAtendimentoSelected.length > 0){
+    const tempAtendimento = parseInt(tempoAtendimentoSelected[0].split('min')[0]);
+    const horariosDefinidos = generateHorarios(HorarioFuncionamento[0], HorarioFuncionamento[1], tempAtendimento)
+    setArrayTeste(horariosDefinidos)
+  }else{
+  }
 }
-
-
+//console.log(parseInt(tempoAtendimentoSelected[0].split("min")));
+console.log(arrayTeste)
 /*-------------------------------------------*/
   return (
     <>
+    <div className="menu__main" onClick={alternarHorario}>
+          <span className="material-symbols-outlined icon_menu">schedule</span>
+              Definir Horários de Trabalho
+              <span className={`material-symbols-outlined arrow ${mostrarHorario ? 'girar' : ''}`} id='arrow'>expand_more</span>
+          </div>
+
+          {mostrarHorario && (
+            <div className="divSelected">
+              <p className='information__span'>Defina seus horários de funcionamento para cada dia definido anteriormente:</p>
+              {daysFromAgenda.length === 0 ? (
+                <p style={{textAlign: 'center', marginTop: '10px'}}>Nenhum dia selecionado</p>
+              ) : (
+                daysFromAgenda.map(day => (
+                  <div key={day} className='Dias_Trabalho_Rapido'>
+                    <button onClick={horariosDefinidos}>verificar</button>
+                    <div className='Dias_Semana' onClick={() => handleDiaClick(day)}>{day}
+                    
+                      {diaSelecionado === day && (
+                        <div><p className='information__span'>Selecione o horário de início e término do expediente:</p>
+                          <div className="inputs-horarios">
+                            {horarios.map((horario, index) => (
+                                <div
+                                    key={index}
+                                    className={`horario-item ${HorarioFuncionamento.includes(horario) ? 'Horario-selecionado' : ''}`}
+                                    onClick={() => handleHorarioFuncionamento(horario)}
+                                >
+                                    <p>{horario}</p>
+                                </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    {diaSelecionado === day && (
+                      <div><p className='information__span'>Adicionar intervalo no período de funcionamento definido acima:</p>
+                        <div className="inputs-horarios">
+                          {horarios.map((intervalo, index) => (
+                              <div
+                                  key={index}
+                                  className={`horario-item ${intervaloSelecionado.includes(intervalo) ? 'Horario-selecionado' : ''}`}
+                                  onClick={() => handleIntervalo(intervalo)}
+                              >
+                                  <p>{intervalo}</p>
+                              </div>
+                          ))}
+                        </div>
+                      </div>
+                      )}
+                      {diaSelecionado === day && (
+                      <div><p className='information__span'>Tempo de atendimento</p>
+                        <div className="inputs-horarios">
+                          {['15min','30min','45min','60min','1h15min', '1h30min'].map((atendimento, index) => (
+                              <div
+                                  key={index}
+                                  className={`horario-item ${tempoAtendimentoSelected.includes(atendimento) ? 'Horario-selecionado' : ''}`}
+                                  onClick={() => handleAtendimento(atendimento)}
+                              >
+                                  <p>{atendimento}</p>
+                              </div>
+                          ))}
+                        </div>
+                      </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
       <div className="menu__main" onClick={alternarDiasTrabalho}>
         <span className="material-symbols-outlined icon_menu">calendar_clock</span>
           Definir Dias de Trabalho
@@ -222,74 +309,6 @@ const handleAtendimento = (atendimento) => {
       </div>
       )}
 <hr />
-
-      <div className="menu__main" onClick={alternarHorario}>
-          <span className="material-symbols-outlined icon_menu">schedule</span>
-              Definir Horários de Trabalho
-              <span className={`material-symbols-outlined arrow ${mostrarHorario ? 'girar' : ''}`} id='arrow'>expand_more</span>
-          </div>
-
-          {mostrarHorario && (
-            <div className="divSelected">
-              <p className='information__span'>Defina seus horários de funcionamento para cada dia definido anteriormente:</p>
-              {daysFromAgenda.length === 0 ? (
-                <p style={{textAlign: 'center', marginTop: '10px'}}>Nenhum dia selecionado</p>
-              ) : (
-                daysFromAgenda.map(day => (
-                  <div key={day} className='Dias_Trabalho_Rapido'>
-                    <div className='Dias_Semana' onClick={() => handleDiaClick(day)}>{day}
-                    
-                      {diaSelecionado === day && (
-                        <div><p className='information__span'>Selecione o horário de início e término do expediente:</p>
-                          <div className="inputs-horarios">
-                            {horarios.map((horario, index) => (
-                                <div
-                                    key={index}
-                                    className={`horario-item ${HorarioFuncionamento.includes(horario) ? 'Horario-selecionado' : ''}`}
-                                    onClick={() => handleHorarioFuncionamento(horario)}
-                                >
-                                    <p>{horario}</p>
-                                </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    {diaSelecionado === day && (
-                      <div><p className='information__span'>Adicionar intervalo no período de funcionamento definido acima:</p>
-                        <div className="inputs-horarios">
-                          {horarios.map((intervalo, index) => (
-                              <div
-                                  key={index}
-                                  className={`horario-item ${intervaloSelecionado.includes(intervalo) ? 'Horario-selecionado' : ''}`}
-                                  onClick={() => handleIntervalo(intervalo)}
-                              >
-                                  <p>{intervalo}</p>
-                              </div>
-                          ))}
-                        </div>
-                      </div>
-                      )}
-                      {diaSelecionado === day && (
-                      <div><p className='information__span'>Tempo de atendimento</p>
-                        <div className="inputs-horarios">
-                          {['20min','30min','40min','50min','1h','1h10min','1h20min','1h30min'].map((atendimento, index) => (
-                              <div
-                                  key={index}
-                                  className={`horario-item ${tempoAtendimento.includes(atendimento) ? 'Horario-selecionado' : ''}`}
-                                  onClick={() => handleAtendimento(atendimento)}
-                              >
-                                  <p>{atendimento}</p>
-                              </div>
-                          ))}
-                        </div>
-                      </div>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
 
     </>
   );
