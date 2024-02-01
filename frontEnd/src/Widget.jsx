@@ -118,9 +118,7 @@ const Widget = () => {
 const [mostrarHorario, setMostrarHorario] = useState(false);
 const [diaSelecionado, setDiaSelecionado] = useState(null);
 const [HorarioFuncionamento, setHorarioFuncionamento] = useState([]);
-const [intervaloSelecionado, setIntervaloSelecionado] = useState([]);
 const [tempoAtendimentoSelected, setTempoAtendimentoSelected] = useState([]);
-const [arrayHoraDefIntervalo, setArrayHoraDefIntervalo] = useState(null);
 const [horarioDefinido, setHorarioDefinido] = useState([]);
 
 const alternarHorario = () => {
@@ -141,7 +139,6 @@ function generateHorarios(inicio, termino, intervalo) {
     const novosMinutos = (totalMinutos % 60).toString().padStart(2, '0');
     horaAtual = `${novaHora}:${novosMinutos}`;
   }
-
   return horarios;
 }
 const horarios = generateHorarios('07:30', '22:30', 15);
@@ -171,7 +168,6 @@ const handleIntervalo = (horario) => {
     setHorarioDefinido([...horarioDefinido, horario]);
   }
 };
-
 // Função para lidar com a seleção de um horário
 const handleAtendimento = (atendimento) => {
   if (tempoAtendimentoSelected.length === 1 && !tempoAtendimentoSelected.includes(atendimento)) {
@@ -184,15 +180,6 @@ const handleAtendimento = (atendimento) => {
       setTempoAtendimentoSelected([...tempoAtendimentoSelected, atendimento]);
   }
 };
-//Função para gerar automaticamente os horários de funcionamento
-useEffect(() => {
-  const timeout = setTimeout(() => {
-    handleHorariosDefinidos();
-  }, 1000);
-  return () => clearTimeout(timeout);
-
-}, [HorarioFuncionamento, tempoAtendimentoSelected]);
-
 //Função para gerar o período de funcionamento
 const handleHorariosDefinidos = () => {
   if(HorarioFuncionamento && tempoAtendimentoSelected.length > 0){
@@ -201,17 +188,24 @@ const handleHorariosDefinidos = () => {
     return setHorarioDefinido(horariosDefinido)
   }
 }
-console.log('teste',intervaloSelecionado)
+//Função para gerar automaticamente os horários de funcionamento
+useEffect(() => {
+  const timeout = setTimeout(() => {
+    handleHorariosDefinidos();
+  }, 1000);
+  return () => clearTimeout(timeout);
+
+}, [HorarioFuncionamento, tempoAtendimentoSelected]);
 /*-------------------------------------------*/
   return (
     <>
-    <div className="menu__main" onClick={alternarHorario}>
+      <div className="menu__main" onClick={alternarHorario}>
           <span className="material-symbols-outlined icon_menu">schedule</span>
               Definir Horários de Trabalho
               <span className={`material-symbols-outlined arrow ${mostrarHorario ? 'girar' : ''}`} id='arrow'>expand_more</span>
-          </div>
+      </div>
 
-          {mostrarHorario && (
+      {mostrarHorario && (
             <div className="divSelected">
               <p className='information__span'>Defina seus horários de funcionamento para cada dia definido anteriormente:</p>
               {daysFromAgenda.length === 0 ? (
@@ -273,7 +267,8 @@ console.log('teste',intervaloSelecionado)
                 ))
               )}
             </div>
-          )}
+      )}
+
       <div className="menu__main" onClick={alternarDiasTrabalho}>
         <span className="material-symbols-outlined icon_menu">calendar_clock</span>
           Definir Dias de Trabalho
