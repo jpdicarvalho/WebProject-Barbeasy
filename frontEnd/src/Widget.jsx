@@ -254,7 +254,7 @@ console.log('teste',intervaloSelecionado)
                       )}
                       {diaSelecionado === day && horarioDefinido.length > 0 && (
                         <div>
-                          <p className='information__span'>Deseja remover algum horário do período de funcionamento?</p>
+                          <p className='information__span'>Deseja remover algum horário?</p>
                           <div className="inputs-horarios">
                             {horarioDefinido.map((horario, index) => (
                               <div
