@@ -10,7 +10,6 @@ const Widget = () => {
   const [QntDaysSelected, setQntDaysSelected] = useState([]);
   const [agenda, setAgenda] = useState([]);
   const [daysFromAgenda, setDaysFromAgenda] = useState([]);
-
   const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
   const [messageAgenda, setMessageAgenda] = useState('');
 
@@ -203,7 +202,7 @@ useEffect(() => {
           <span className="material-symbols-outlined icon_menu">schedule</span>
               Definir Horários de Trabalho
               <span className={`material-symbols-outlined arrow ${mostrarHorario ? 'girar' : ''}`} id='arrow'>expand_more</span>
-      </div>
+          </div>
 
       {mostrarHorario && (
             <div className="divSelected">

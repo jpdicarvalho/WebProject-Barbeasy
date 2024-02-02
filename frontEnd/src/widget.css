@@ -226,9 +226,7 @@
 #status{
     display: none;
 }
-.days-switch {
-    display: none;
-}
+
 .switch {
     position: relative;
     display: flex;
@@ -253,11 +251,12 @@
     height: 20px;
     transition: all .5s ease-in-out;
 }
-  
+.days-switch {
+    display: none;
+} 
 .days-switch:checked ~ .switch {
     background: #1AEE07;
-}
-  
+} 
 .days-switch:checked ~ .switch .slider {
     transform: translateX(19px);
 }
