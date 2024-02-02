@@ -12,12 +12,37 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 import 'dotenv/config'
 
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
+
 const app = express();
 
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
+
+const options = {
+  // API information
+  swaggerDefinition: {
+    info: {
+      title: "API Barbeasy",
+      version: "1.0.0",
+      description: "API do sistema de agendamentos e pagamentos de serviços de barbearias Barbeasy",
+      contact: {
+        name: "API Barbeasy",
+        email: "joaopedrobraga.07@gmail.com",
+      },
+    },
+  },
+  explorer: true,
+  // Security schemes
+  apis: ["./Controller.js"], // Change this path to match your route files
+};
+
+const swaggerDocs = swaggerJsdoc(options);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 //Create conection with BD MySQL
 const db = mysql.createConnection({
@@ -44,6 +69,46 @@ const s3 = new S3Client({
 });
 
 // Rota POST '/upload' para lidar com o upload de uma única imagem
+/**
+ * @swagger
+ * /upload:
+ *   post:
+ *     summary: Rota para fazer upload de uma única imagem.
+ *     description: Esta rota lida com o upload de uma única imagem para a barbearia especificada.
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: formData
+ *         name: image
+ *         type: file
+ *         required: true
+ *         description: Arquivo de imagem a ser enviado.
+ *     responses:
+ *       '200':
+ *         description: Upload da imagem realizado com sucesso.
+ *       '500':
+ *         description: Erro interno do servidor ao processar o upload da imagem.
+ * @swagger
+ * /upload:
+ *   post:
+ *     summary: Rota para fazer upload de uma única imagem.
+ *     description: Esta rota lida com o upload de uma única imagem para a barbearia especificada.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       '200':
+ *         description: Upload da imagem realizado com sucesso.
+ *       '500':
+ *         description: Erro interno do servidor ao processar o upload da imagem.
+ */
 app.post('/upload', upload.single('image'), (req, res) => {
   const barbeariaId = 1;
   const newImageUser = req.file.originalname;
