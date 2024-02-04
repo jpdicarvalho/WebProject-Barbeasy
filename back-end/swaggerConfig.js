@@ -1,5 +1,4 @@
 // swaggerConfig.js
-
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
 import './swaggerComments.js';
@@ -16,6 +15,13 @@ const swaggerOptions = {
         email: 'joaopedro.ufopa@email.com',
       },
     },
+    servers: [
+      {
+        url: 'http://localhost:8000', // URL do servidor local
+        description: 'Servidor Local',
+      },
+      // Adicione mais objetos de servidor conforme necessário para ambientes de desenvolvimento, teste e produção
+    ],
   },
   apis: ['./swaggerComments.js'], // Caminho para os arquivos de rotas da sua API
 };

@@ -649,6 +649,6 @@ app.post('/Checkout', async (req, res) => {
    });
  });
 
-app.listen({
-  port: process.env.portServerNode ?? 8080
+app.listen( process.env.portServerNode, () =>{
+  console.log(`Servidor está rodando em http://localhost:${process.env.portServerNode}`);
 });
