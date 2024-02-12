@@ -120,6 +120,7 @@ const [HorarioFuncionamento, setHorarioFuncionamento] = useState([]);
 const [tempoAtendimentoSelected, setTempoAtendimentoSelected] = useState([]);
 const [horarioDefinido, setHorarioDefinido] = useState([]);
 const [agendaDoDiaSelecionado, setAgendaDoDiaSelecionado] = useState([]);
+const [messageAgendaHorarios, setMessageAgendaHorarios] = useState('');
 //Função para alternar o estado de 'mostrarHorario' (variável booleana), responsável por mostrar os horários a serem definidos
 const alternarHorario = () => {
   setMostrarHorario(!mostrarHorario);
@@ -224,7 +225,8 @@ const diaSelecionadoFormat = () => {
   }
 };
 
-const configAgenda = () => {
+//Função para configurar a agenda de horários do dia selecionado
+const configAgendaDiaSelecionado = () => {
   if (agendaDoDiaSelecionado && agendaDoDiaSelecionado.length > 1) {
     for (let i = 0; i < agendaDoDiaSelecionado.length; i++) {
       if (agendaDoDiaSelecionado[i] && agendaDoDiaSelecionado[i].length > 5) {
@@ -235,7 +237,23 @@ const configAgenda = () => {
   }
 };
 
-
+const salvarAgendaDiaSelecionado = () =>{
+  const barbeariaId = 1;
+  let strAgendaDiaSelecionado = agendaDoDiaSelecionado.join(',');
+  
+  axios.post(`http://localhost:8000/api/update-agendaDiaSelecionado/${barbeariaId}`, {StrAgenda: strAgendaDiaSelecionado})
+  .then(res => {
+    if(res.data.Success === 'Success'){
+      setMessageAgendaHorarios("Horários Salvos com Sucesso!")
+        // Limpar a mensagem após 3 segundos (3000 milissegundos)
+        setTimeout(() => {
+          setMessageAgendaHorarios('');
+        }, 3000);
+    }
+  }).catch(error => {
+    console.log('Internal Server Error');
+  })
+}
 
 // Função para gerar o período de funcionamento
 const handleHorariosDefinidos = () => {
@@ -272,9 +290,9 @@ useEffect(() => {
 // useEffect para configurar a agenda do dia selecionado
 useEffect(() => {
   // Executa diaSelecionadoFormat sempre que horarioDefinido ou diaSelecionado mudarem
-  configAgenda();
+  configAgendaDiaSelecionado();
 }, [agendaDoDiaSelecionado]);
-console.log(agendaDoDiaSelecionado)
+
 /*-------------------------------------------*/
   return (
     <>
@@ -293,7 +311,6 @@ console.log(agendaDoDiaSelecionado)
                 daysFromAgenda.map(day => (
                   <div key={day} className='Dias_Trabalho_Rapido'>
                     <div className='Dias_Semana' onClick={() => handleDiaClick(day)}>{day}
-                    
                       {diaSelecionado === day && (
                         <div><p className='information__span'>Defina o seu horário de funcionamento:</p>
                           <div className="inputs-horarios">
@@ -338,9 +355,19 @@ console.log(agendaDoDiaSelecionado)
                                       onClick={() => handleIntervalo(value)}
                                   >
                                       <p>{value}</p>
+                                      
                                   </div>
                                 )
                               ))}
+                          </div>
+                            {messageAgendaHorarios === 'Horários Salvos com Sucesso!' ?
+                              <p className="mensagem-sucesso">{messageAgendaHorarios}</p>
+                                :
+                              <p className="mensagem-erro">{messageAgendaHorarios}</p>
+                            }
+                          <div className="container_button">
+                            <button className="add_Service" onClick={salvarAgendaDiaSelecionado}>Salvar para esse dia</button>
+                            <button className="add_Service">Salvar para todos os outros dias</button>
                           </div>
                         </div>
                       )}
