@@ -120,98 +120,160 @@ const [HorarioFuncionamento, setHorarioFuncionamento] = useState([]);
 const [tempoAtendimentoSelected, setTempoAtendimentoSelected] = useState([]);
 const [horarioDefinido, setHorarioDefinido] = useState([]);
 const [agendaDoDiaSelecionado, setAgendaDoDiaSelecionado] = useState([]);
+//Função para alternar o estado de 'mostrarHorario' (variável booleana), responsável por mostrar os horários a serem definidos
 const alternarHorario = () => {
   setMostrarHorario(!mostrarHorario);
 };
+
+//Função responsável por atualizar o estado 'diaSelecionado' com o dia que foi selecionado.
 const handleDiaClick = (dia) => {
   setDiaSelecionado(dia);
 };
+
+// Função responsável por gerar uma lista de horários com base no horário de início, término e intervalo fornecidos como parâmetros.
 function generateHorarios(inicio, termino, intervalo) {
+  // Array para armazenar os horários gerados
   const horarios = [];
+  // Inicializa a hora atual com o horário de início
   let horaAtual = inicio;
 
+  // Loop para gerar os horários até alcançar o horário de término
   while (horaAtual <= termino) {
-    horarios.push(horaAtual);
+      // Adiciona o horário atual ao array de horários
+      horarios.push(horaAtual);
 
-    const totalMinutos = parseInt(horaAtual.substring(0, 2)) * 60 + parseInt(horaAtual.substring(3)) + intervalo;
-    const novaHora = Math.floor(totalMinutos / 60).toString().padStart(2, '0');
-    const novosMinutos = (totalMinutos % 60).toString().padStart(2, '0');
-    horaAtual = `${novaHora}:${novosMinutos}`;
+      // Calcula o total de minutos
+      const totalMinutos = parseInt(horaAtual.substring(0, 2)) * 60 + parseInt(horaAtual.substring(3)) + intervalo;
+      // Calcula a nova hora e os novos minutos com base no total de minutos
+      const novaHora = Math.floor(totalMinutos / 60).toString().padStart(2, '0');
+      const novosMinutos = (totalMinutos % 60).toString().padStart(2, '0');
+      // Atualiza a hora atual para o próximo horário
+      horaAtual = `${novaHora}:${novosMinutos}`;
   }
+  // Retorna a lista de horários gerados
   return horarios;
 }
+
+//Esta linha gera os horários com base nos parâmetros fornecidos
 const horarios = generateHorarios('07:30', '22:30', 15);
-// Função para definir o início e término do expediente
+
+// Função responsável por adicionar ou remover o horário selecionado
 const handleHorarioFuncionamento = (horario) => {
-    if (HorarioFuncionamento.length === 2 && !HorarioFuncionamento.includes(horario)) {
-        // Já existem dois horários selecionados e o horário clicado não está entre eles
-        return;
-    }
-    // Verifica se o horário já está selecionado
-    if (HorarioFuncionamento.includes(horario)) {
-        // Remove o horário da seleção
-        setHorarioFuncionamento(HorarioFuncionamento.filter(item => item !== horario));
-    } else {
-        // Adiciona o horário à seleção
-        setHorarioFuncionamento([...HorarioFuncionamento, horario]);
-    }
-};
-// Função para definir o tempo de atendimento
-const handleAtendimento = (atendimento) => {
-  if (tempoAtendimentoSelected.length === 1 && !tempoAtendimentoSelected.includes(atendimento)) {
+  // Verifica se já existem dois horários selecionados e se o horário clicado não está entre eles
+  if (HorarioFuncionamento.length === 2 && !HorarioFuncionamento.includes(horario)) {
+      // Caso positivo, não faz nada e retorna
       return;
   }
+  
   // Verifica se o horário já está selecionado
+  if (HorarioFuncionamento.includes(horario)) {
+      // Se o horário já estiver selecionado, remove-o da seleção
+      setHorarioFuncionamento(HorarioFuncionamento.filter(item => item !== horario));
+  } else {
+      // Se o horário não estiver selecionado, adiciona-o à seleção
+      setHorarioFuncionamento([...HorarioFuncionamento, horario]);
+  }
+};
+
+// Função para definir o tempo de atendimento
+const handleAtendimento = (atendimento) => {
+  // Verifica se já há um tempo de atendimento selecionado e se o tempo atual não está incluído nele
+  if (tempoAtendimentoSelected.length === 1 && !tempoAtendimentoSelected.includes(atendimento)) {
+      // Se sim, não faz nada e retorna
+      return;
+  }
+
+  // Verifica se o tempo de atendimento já está selecionado
   if (tempoAtendimentoSelected.includes(atendimento)) {
+      // Se estiver selecionado, remove-o da seleção
       setTempoAtendimentoSelected(tempoAtendimentoSelected.filter(item => item !== atendimento));      
   } else {
+      // Se não estiver selecionado, adiciona-o à seleção
       setTempoAtendimentoSelected([...tempoAtendimentoSelected, atendimento]);
   }
 };
+
 // Função para remover horários do array horarioDefinido
 const handleIntervalo = (horario) => {
+  // Verifica se o horário já está presente no array horarioDefinido
   if (horarioDefinido.includes(horario)) {
-    // Remove o horário da seleção
-    const novosIntervalos = horarioDefinido.filter(item => item !== horario);
-    setHorarioDefinido(novosIntervalos);
+      // Se estiver presente, remove-o da seleção
+      const novosIntervalos = horarioDefinido.filter(item => item !== horario);
+      setHorarioDefinido(novosIntervalos);
   } else {
-    // Adiciona o horário à seleção
-    setHorarioDefinido([...horarioDefinido, horario]);
+      // Se não estiver presente, adiciona-o à seleção
+      setHorarioDefinido([...horarioDefinido, horario]);
   }
 };
-const funtionTeste = () => {
-  horarioDefinido.unshift(diaSelecionado)
-  const uniqueArray = horarioDefinido.filter((value, index, self) => {
-    // Retorna verdadeiro se o índice do valor na matriz for igual ao índice da primeira ocorrência desse valor
+
+//Função para adicionar o dia selecionado e o horario definido a um novo array
+const diaSelecionadoFormat = () => {
+  //Adicionando o dia da semana selecionado no array de horários
+  horarioDefinido.unshift(diaSelecionado);
+  
+  // Filtra o array horarioDefinido para remover duplicatas e armazena o resultado em uniqueArray
+  let uniqueArray = horarioDefinido.filter((value, index, self) => {
     return self.indexOf(value) === index;
-});
-if(uniqueArray[0] != uniqueArray[1]){
-  uniqueArray.splice(1, 1);
-  uniqueArray[0] = uniqueArray[0].substring(0,3);
-  uniqueArray[0] = uniqueArray[0].charAt(0).toUpperCase() + uniqueArray[0].slice(1);
-}
-setAgendaDoDiaSelecionado(uniqueArray)
-}
+  });
 
-//Função para gerar o período de funcionamento
-const handleHorariosDefinidos = () => {
-  if(HorarioFuncionamento && tempoAtendimentoSelected.length > 0){
-    const tempAtendimento = parseInt(tempoAtendimentoSelected[0].split('min')[0]);
-    const horariosDefinido = generateHorarios(HorarioFuncionamento[0], HorarioFuncionamento[1], tempAtendimento);
-    return setHorarioDefinido(horariosDefinido)
+  //Função para formatar o nome do dia da semana
+  if(uniqueArray[0]){
+    uniqueArray[0] = uniqueArray[0].substring(0, 3); // Limita a string para três letras
+    uniqueArray[0] = uniqueArray[0].charAt(0).toUpperCase() + uniqueArray[0].slice(1); // Transforma a primeira letra em maiúscula
+    return setAgendaDoDiaSelecionado(uniqueArray);
   }
-}
-//Função para gerar automaticamente os horários de funcionamento
-useEffect(() => {
-  const timeout = setTimeout(() => {
-    handleHorariosDefinidos();
-  }, 1000);
-  return () => clearTimeout(timeout);
+};
 
-}, [HorarioFuncionamento, tempoAtendimentoSelected]);
+const configAgenda = () => {
+  if (agendaDoDiaSelecionado && agendaDoDiaSelecionado.length > 1) {
+    for (let i = 0; i < agendaDoDiaSelecionado.length; i++) {
+      if (agendaDoDiaSelecionado[i] && agendaDoDiaSelecionado[i].length > 5) {
+          let arrayClear = agendaDoDiaSelecionado.splice(agendaDoDiaSelecionado[i], 1);
+          return setAgendaDoDiaSelecionado(arrayClear);
+      }
+    }
+  }
+};
+
+
+
+// Função para gerar o período de funcionamento
+const handleHorariosDefinidos = () => {
+  // Verifica se os horários de funcionamento e o tempo de atendimento estão definidos
+  if (HorarioFuncionamento && tempoAtendimentoSelected.length > 0) {
+      // Extrai o tempo de atendimento do formato 'Xmin' e converte para um número inteiro
+      const tempAtendimento = parseInt(tempoAtendimentoSelected[0].split('min')[0]);
+      
+      // Gera os horários definidos com base no horário de funcionamento, tempo de atendimento e intervalo
+      const horariosDefinido = generateHorarios(HorarioFuncionamento[0], HorarioFuncionamento[1], tempAtendimento);
+      
+      // Define os horários definidos
+      return setHorarioDefinido(horariosDefinido);
+  }
+};
+
+// useEffect para gerar automaticamente os horários de funcionamento
 useEffect(() => {
-  funtionTeste();
-}, [horarioDefinido, diaSelecionado]); // Adicione todas as dependências necessárias aqui
+  // Configura um timeout para executar handleHorariosDefinidos após 1 segundo
+  const timeout = setTimeout(() => {
+      handleHorariosDefinidos();
+  }, 1000);
+  
+  // Retorna uma função de limpeza para limpar o timeout
+  return () => clearTimeout(timeout);
+}, [HorarioFuncionamento, tempoAtendimentoSelected]);
+
+// useEffect para configurar a agenda do dia selecionado
+useEffect(() => {
+  // Executa diaSelecionadoFormat sempre que horarioDefinido ou diaSelecionado mudarem
+  diaSelecionadoFormat();
+}, [horarioDefinido, diaSelecionado]);
+
+// useEffect para configurar a agenda do dia selecionado
+useEffect(() => {
+  // Executa diaSelecionadoFormat sempre que horarioDefinido ou diaSelecionado mudarem
+  configAgenda();
+}, [agendaDoDiaSelecionado]);
 console.log(agendaDoDiaSelecionado)
 /*-------------------------------------------*/
   return (
@@ -263,22 +325,22 @@ console.log(agendaDoDiaSelecionado)
                         
                       </div>
                       )}
-                      {diaSelecionado === day && horarioDefinido.length > 0 && agendaDoDiaSelecionado.length > 1 && (
+                      {diaSelecionado === day && agendaDoDiaSelecionado.length > 2 && (
                         <div>
                           <p className='information__span'>Deseja remover algum horário?</p>
                           <div className="inputs-horarios">
                               {agendaDoDiaSelecionado.map((value, index) => (
                               // Comece a partir do índice 1
-                              index > 0 && (
+                                index > 0 && (
                                   <div
                                       key={index}
-                                      className={`horario-item ${horarioDefinido.includes(value) ? 'Horario-selecionado' : ''}`}
+                                      className={`horario-item ${agendaDoDiaSelecionado.includes(value) ? 'Horario-selecionado' : ''}`}
                                       onClick={() => handleIntervalo(value)}
                                   >
                                       <p>{value}</p>
                                   </div>
-                              )
-                          ))}
+                                )
+                              ))}
                           </div>
                         </div>
                       )}
