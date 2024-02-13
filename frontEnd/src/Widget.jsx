@@ -285,7 +285,7 @@ useEffect(() => {
     console.log(arrayHorariosPadrao)
   }).catch(error => {
     console.error('Erro ao buscar informações da agenda da barbearia', error)
-  })
+  })//parei aquii
 }, [])
 
 //Função para salvar os horários definidos para todos os dias
