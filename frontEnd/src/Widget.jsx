@@ -120,6 +120,7 @@ const [HorarioFuncionamento, setHorarioFuncionamento] = useState([]);
 const [tempoAtendimentoSelected, setTempoAtendimentoSelected] = useState([]);
 const [horarioDefinido, setHorarioDefinido] = useState([]);
 const [agendaDoDiaSelecionado, setAgendaDoDiaSelecionado] = useState([]);
+const [agendaHorariosSalvos, setAgendaHorariosSalvos] = useState([]);
 const [messageAgendaHorarios, setMessageAgendaHorarios] = useState('');
 //Função para alternar o estado de 'mostrarHorario' (variável booleana), responsável por mostrar os horários a serem definidos
 const alternarHorario = () => {
@@ -207,6 +208,21 @@ const handleIntervalo = (horario) => {
   }
 };
 
+// Função para gerar o período de funcionamento
+const handleHorariosDefinidos = () => {
+  // Verifica se os horários de funcionamento e o tempo de atendimento estão definidos
+  if (HorarioFuncionamento && tempoAtendimentoSelected.length > 0) {
+      // Extrai o tempo de atendimento do formato 'Xmin' e converte para um número inteiro
+      const tempAtendimento = parseInt(tempoAtendimentoSelected[0].split('min')[0]);
+      
+      // Gera os horários definidos com base no horário de funcionamento, tempo de atendimento e intervalo
+      const horariosDefinido = generateHorarios(HorarioFuncionamento[0], HorarioFuncionamento[1], tempAtendimento);
+      
+      // Define os horários definidos
+      return setHorarioDefinido(horariosDefinido);
+  }
+};
+
 //Função para adicionar o dia selecionado e o horario definido a um novo array
 const diaSelecionadoFormat = () => {
   //Adicionando o dia da semana selecionado no array de horários
@@ -237,7 +253,8 @@ const configAgendaDiaSelecionado = () => {
   }
 };
 
-const salvarAgendaDiaSelecionado = () =>{
+//Função para salvar os horários definidos para o dia selecionado
+const salvarHorariosDiaSelecionado = () =>{
   const barbeariaId = 1;
   let strAgendaDiaSelecionado = agendaDoDiaSelecionado.join(',');
   
@@ -251,24 +268,53 @@ const salvarAgendaDiaSelecionado = () =>{
         }, 3000);
     }
   }).catch(error => {
-    console.log('Internal Server Error');
+    setMessageAgendaHorarios("Erro ao Salvar Horários, tente novamente mais tarde.")
+        // Limpar a mensagem após 3 segundos (3000 milissegundos)
+        setTimeout(() => {
+          setMessageAgendaHorarios('');
+        }, 3000);
   })
 }
 
-// Função para gerar o período de funcionamento
-const handleHorariosDefinidos = () => {
-  // Verifica se os horários de funcionamento e o tempo de atendimento estão definidos
-  if (HorarioFuncionamento && tempoAtendimentoSelected.length > 0) {
-      // Extrai o tempo de atendimento do formato 'Xmin' e converte para um número inteiro
-      const tempAtendimento = parseInt(tempoAtendimentoSelected[0].split('min')[0]);
-      
-      // Gera os horários definidos com base no horário de funcionamento, tempo de atendimento e intervalo
-      const horariosDefinido = generateHorarios(HorarioFuncionamento[0], HorarioFuncionamento[1], tempAtendimento);
-      
-      // Define os horários definidos
-      return setHorarioDefinido(horariosDefinido);
-  }
-};
+//Função para obter os horários definidos do dia selecionado
+useEffect(() => {
+  const barbeariaId = 1;
+  axios.get(`http://localhost:8000/api/agendaDiaSelecionado/${barbeariaId}`)
+  .then(res => {
+    let arrayHorariosPadrao = res.data.horariosDiaEspecifico;
+    console.log(arrayHorariosPadrao)
+  }).catch(error => {
+    console.error('Erro ao buscar informações da agenda da barbearia', error)
+  })
+}, [])
+
+//Função para salvar os horários definidos para todos os dias
+const salvarHorariosTodosOsDias = () =>{
+  const barbeariaId = 1;
+
+  let arrayEdited = agendaDoDiaSelecionado;
+  arrayEdited[0] = 'horarioPadrao';
+  console.log(arrayEdited)
+
+  let strHorariosTodosOsDias = arrayEdited.join(',');
+  
+  axios.post(`http://localhost:8000/api/update-horariosTodosOsDias/${barbeariaId}`, {StrAgenda: strHorariosTodosOsDias})
+  .then(res => {
+    if(res.data.Success === 'Success'){
+      setMessageAgendaHorarios("Horários Salvos com Sucesso!")
+        // Limpar a mensagem após 3 segundos (3000 milissegundos)
+        setTimeout(() => {
+          setMessageAgendaHorarios('');
+        }, 3000);
+    }
+  }).catch(error => {
+    setMessageAgendaHorarios("Erro ao Salvar Horários, tente novamente mais tarde.")
+        // Limpar a mensagem após 3 segundos (3000 milissegundos)
+        setTimeout(() => {
+          setMessageAgendaHorarios('');
+        }, 3000);
+  })
+}
 
 // useEffect para gerar automaticamente os horários de funcionamento
 useEffect(() => {
@@ -292,7 +338,6 @@ useEffect(() => {
   // Executa diaSelecionadoFormat sempre que horarioDefinido ou diaSelecionado mudarem
   configAgendaDiaSelecionado();
 }, [agendaDoDiaSelecionado]);
-
 /*-------------------------------------------*/
   return (
     <>
@@ -366,8 +411,8 @@ useEffect(() => {
                               <p className="mensagem-erro">{messageAgendaHorarios}</p>
                             }
                           <div className="container_button">
-                            <button className="add_Service" onClick={salvarAgendaDiaSelecionado}>Salvar para esse dia</button>
-                            <button className="add_Service">Salvar para todos os outros dias</button>
+                            <button className="add_Service" onClick={salvarHorariosDiaSelecionado}>Salvar</button>
+                            <button className="add_Service" onClick={salvarHorariosTodosOsDias}>Salvar para todos os outros dias</button>
                           </div>
                         </div>
                       )}

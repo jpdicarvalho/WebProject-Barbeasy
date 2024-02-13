@@ -403,7 +403,7 @@
     align-items: center;
     justify-content: center;
     margin-top: 5px;
-    width: 100%;
+    width: auto;
     color: #1AEE07;
     padding: 10px;
     background: transparent;
