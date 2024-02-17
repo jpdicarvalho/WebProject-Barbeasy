@@ -429,8 +429,9 @@ app.post('/api/update-agenda/:barbeariaId', (req, res) => {
           }
         })
       }else{
-        const sqlInsert = "INSERT INTO agenda (barbearia_id, dias, qnt_dias) VALUES (?, ?, ?)";
-        db.query(sqlInsert, [barbeariaId, daysWeekName, QntDaysSelected], (err, result) =>{
+        const HP = 'horarioPadronizado';
+        const sqlInsert = "INSERT INTO agenda (barbearia_id, dias, qnt_dias, horariosTdias, dom, seg, ter, qua, qui, sex, sab) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        db.query(sqlInsert, [barbeariaId, daysWeekName, QntDaysSelected, HP, HP, HP, HP, HP, HP, HP, HP], (err, result) =>{
           if(err){
             console.error("Erro ao cadastrar agenda da barbearia", err);
             return res.status(500).json({Error: "Internal Server Error"});
