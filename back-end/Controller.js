@@ -538,7 +538,6 @@ app.get('/api/agendaDiaSelecionado/:barbeariaId', (req, res) =>{
         //Verificação de valor sem horário
         if(arrayResult[i] === 'horarioPadronizado'){
           arrayResult = arrayResult.filter(item => item !== 'horarioPadronizado');//Adicionando os horários encontrados
-          console.log(arrayResult)
           return res.status(200).json({ Success: "Success", horariosDiaEspecifico: arrayResult});//Enviando o array com os horários
         }else{
           return res.status(200).json({ Success: "Success", horariosDiaEspecifico: arrayResult});//Enviando o array com os horários
