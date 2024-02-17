@@ -120,8 +120,19 @@ const [HorarioFuncionamento, setHorarioFuncionamento] = useState([]);
 const [tempoAtendimentoSelected, setTempoAtendimentoSelected] = useState([]);
 const [horarioDefinido, setHorarioDefinido] = useState([]);
 const [agendaDoDiaSelecionado, setAgendaDoDiaSelecionado] = useState([]);
-const [agendaHorariosSalvos, setAgendaHorariosSalvos] = useState([]);
+
+//Declaração dos array de horários padronizados e de cada dia da semana
+const [horariosPadronizados, setHorariosPadronizados] = useState([]);
+const [horariosDom, setHorariosDom] = useState([]);
+const [horariosSeg, setHorariosSeg] = useState([]);
+const [horariosTer, setHorariosTer] = useState([]);
+const [horariosQua, setHorariosQua] = useState([]);
+const [horariosQui, setHorariosQui] = useState([]);
+const [horariosSex, setHorariosSex] = useState([]);
+const [horariosSab, setHorariosSab] = useState([]);
+
 const [messageAgendaHorarios, setMessageAgendaHorarios] = useState('');
+
 //Função para alternar o estado de 'mostrarHorario' (variável booleana), responsável por mostrar os horários a serem definidos
 const alternarHorario = () => {
   setMostrarHorario(!mostrarHorario);
@@ -265,6 +276,7 @@ const salvarHorariosDiaSelecionado = () =>{
         // Limpar a mensagem após 3 segundos (3000 milissegundos)
         setTimeout(() => {
           setMessageAgendaHorarios('');
+          window.location.reload();
         }, 3000);
     }
   }).catch(error => {
@@ -272,6 +284,7 @@ const salvarHorariosDiaSelecionado = () =>{
         // Limpar a mensagem após 3 segundos (3000 milissegundos)
         setTimeout(() => {
           setMessageAgendaHorarios('');
+          window.location.reload();
         }, 3000);
   })
 }
@@ -282,10 +295,46 @@ useEffect(() => {
   axios.get(`http://localhost:8000/api/agendaDiaSelecionado/${barbeariaId}`)
   .then(res => {
     let arrayHorariosPadrao = res.data.horariosDiaEspecifico;
-    console.log(arrayHorariosPadrao)
+    let verifyIndexArray;
+
+    if(arrayHorariosPadrao.length > 0){
+      verifyIndexArray = arrayHorariosPadrao[0].split(',')
+      if(verifyIndexArray[0] === 'horarioPadrao'){
+        verifyIndexArray.shift();
+        setHorariosPadronizados(verifyIndexArray);
+      }
+      for(let i=0; i < arrayHorariosPadrao.length; i++){
+        verifyIndexArray = arrayHorariosPadrao[i].substring(0, 3)
+
+          if (verifyIndexArray === 'Dom'){
+            setHorariosDom (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Seg'){
+            setHorariosSeg (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Ter'){
+            setHorariosTer (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Qua'){
+            setHorariosQua (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Qui'){
+            setHorariosQui (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Sex'){
+            setHorariosSex (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Sáb'){
+            setHorariosSab (arrayHorariosPadrao[i].split(','));
+          }
+        
+      }
+      
+    }
+    
   }).catch(error => {
     console.error('Erro ao buscar informações da agenda da barbearia', error)
-  })//parei aquii
+  })
 }, [])
 
 //Função para salvar os horários definidos para todos os dias
@@ -305,6 +354,7 @@ const salvarHorariosTodosOsDias = () =>{
         // Limpar a mensagem após 3 segundos (3000 milissegundos)
         setTimeout(() => {
           setMessageAgendaHorarios('');
+          window.location.reload();
         }, 3000);
     }
   }).catch(error => {
@@ -338,6 +388,34 @@ useEffect(() => {
   // Executa diaSelecionadoFormat sempre que horarioDefinido ou diaSelecionado mudarem
   configAgendaDiaSelecionado();
 }, [agendaDoDiaSelecionado]);
+
+const getHorariosPorDia = (dia) => {
+  const horariosPorDia = {
+      'Domingo': horariosDom,
+      'Segunda-feira': horariosSeg,
+      'Terça-feira': horariosTer,
+      'Quarta-feira': horariosQua,
+      'Quinta-feira': horariosQui,
+      'Sexta-feira': horariosSex,
+      'Sábado': horariosSab
+  };
+
+  // Verificar se todos os arrays de horários estão vazios
+  const todosVazios = Object.values(horariosPorDia).every(horarios => horarios.length === 0);
+
+  if (todosVazios) {
+      return <p>Não há horários definidos para este dia.</p>;
+  }
+
+  const horariosParaRenderizar = horariosPorDia[dia].length > 0 ? horariosPorDia[dia] : horariosPadronizados;
+
+  return horariosParaRenderizar.map((horario, index) => (
+      <div className="horario-item" key={`${dia}-${index}`}>
+          <p>{horario}</p>
+      </div>
+  ));
+};
+
 /*-------------------------------------------*/
   return (
     <>
@@ -386,6 +464,15 @@ useEffect(() => {
                         </div>
                         
                       </div>
+                      )}
+                      {diaSelecionado === day && (
+                          <div>
+                              <p className='information__span'>Horários já definidos para esse dia:</p>
+                              <div className="inputs-horarios">
+                                  {/* Renderizar o array de horários correspondente */}
+                                  {getHorariosPorDia(day)}
+                              </div>
+                          </div>
                       )}
                       {diaSelecionado === day && agendaDoDiaSelecionado.length > 2 && (
                         <div>
@@ -464,7 +551,6 @@ useEffect(() => {
       </div>
       )}
 <hr />
-
     </>
   );
 };

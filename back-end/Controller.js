@@ -465,6 +465,7 @@ app.get('/api/agenda/:barbeariaId', (req, res) => {
     }
   })
 });
+
 // Rota para salvar a agenda de horários do dia selecionado
 app.post('/api/update-agendaDiaSelecionado/:barbeariaId', (req, res) => {
   const barbeariaId = req.params.barbeariaId;
@@ -530,12 +531,15 @@ app.get('/api/agendaDiaSelecionado/:barbeariaId', (req, res) =>{
       arrayResult.push(result[0].qui);
       arrayResult.push(result[0].sex);
       arrayResult.push(result[0].sab);
-      
+
       //Lógica para remover os valores sem horários
       for(let i=0; i < arrayResult.length; i++){
         //Verificação de valor sem horário
         if(arrayResult[i] === 'horarioPadronizado'){
           arrayResult = arrayResult.filter(item => item !== 'horarioPadronizado');//Adicionando os horários encontrados
+          console.log(arrayResult)
+          return res.status(200).json({ Success: "Success", horariosDiaEspecifico: arrayResult});//Enviando o array com os horários
+        }else{
           return res.status(200).json({ Success: "Success", horariosDiaEspecifico: arrayResult});//Enviando o array com os horários
         }
       }
