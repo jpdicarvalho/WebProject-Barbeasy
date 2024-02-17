@@ -297,7 +297,7 @@ useEffect(() => {
     let arrayHorariosPadrao = res.data.horariosDiaEspecifico;
     let verifyIndexArray;
 
-    if(arrayHorariosPadrao.length > 0){
+    if(arrayHorariosPadrao.length > 0 && arrayHorariosPadrao[0] != null || ''){
       verifyIndexArray = arrayHorariosPadrao[0].split(',')
       if(verifyIndexArray[0] === 'horarioPadrao'){
         verifyIndexArray.shift();
@@ -343,7 +343,6 @@ const salvarHorariosTodosOsDias = () =>{
 
   let arrayEdited = agendaDoDiaSelecionado;
   arrayEdited[0] = 'horarioPadrao';
-  console.log(arrayEdited)
 
   let strHorariosTodosOsDias = arrayEdited.join(',');
   
@@ -391,30 +390,35 @@ useEffect(() => {
 
 const getHorariosPorDia = (dia) => {
   const horariosPorDia = {
-      'Domingo': horariosDom,
-      'Segunda-feira': horariosSeg,
-      'Terça-feira': horariosTer,
-      'Quarta-feira': horariosQua,
-      'Quinta-feira': horariosQui,
-      'Sexta-feira': horariosSex,
-      'Sábado': horariosSab
+    'Domingo': horariosDom,
+    'Segunda-feira': horariosSeg,
+    'Terça-feira': horariosTer,
+    'Quarta-feira': horariosQua,
+    'Quinta-feira': horariosQui,
+    'Sexta-feira': horariosSex,
+    'Sábado': horariosSab
   };
 
-  // Verificar se todos os arrays de horários estão vazios
-  const todosVazios = Object.values(horariosPorDia).every(horarios => horarios.length === 0);
+  const horariosParaRenderizar = horariosPorDia[dia];
 
-  if (todosVazios) {
-      return <p>Não há horários definidos para este dia.</p>;
-  }
-
-  const horariosParaRenderizar = horariosPorDia[dia].length > 0 ? horariosPorDia[dia] : horariosPadronizados;
-
-  return horariosParaRenderizar.map((horario, index) => (
+  if (horariosParaRenderizar && horariosParaRenderizar.length > 0) {
+    return horariosParaRenderizar.map((horario, index) => (
       <div className="horario-item" key={`${dia}-${index}`}>
-          <p>{horario}</p>
+        <p>{horario}</p>
       </div>
-  ));
+    ));
+  } else if (horariosPadronizados.length > 0) {
+    return horariosPadronizados.map((horario, index) => (
+      <div className="horario-item" key={`padrao-${index}`}>
+        <p>{horario}</p>
+      </div>
+    ));
+  } else {
+    return <p>Não há horários definidos para este dia.</p>;
+  }
 };
+
+
 
 /*-------------------------------------------*/
   return (
