@@ -66,7 +66,7 @@ const Widget = () => {
 
               setTimeout(() => {
                 setMessageAddService(null);
-                setShowAddServico(false);
+                window.location.reload()
               }, 2000);
               
             }
@@ -143,9 +143,12 @@ const Widget = () => {
                         </div>
                       ))}
                     </div>
-                    {messageAddService}
-
-                    <button className="add_Service" onClick={adicionarServico}>
+                    {messageAddService === "Serviço adicionado com sucesso!" ? (
+                        <p className="mensagem-sucesso">{messageAddService}</p>
+                        ) : (
+                        <p className="mensagem-erro">{messageAddService}</p>
+                    )}
+                     <button className="add_Service" onClick={adicionarServico}>
                       Adicionar Serviço
                     </button>
               </div>

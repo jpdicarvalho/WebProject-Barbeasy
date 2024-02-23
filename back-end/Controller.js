@@ -571,7 +571,7 @@ app.post('/api/update-horariosTodosOsDias/:barbeariaId', (req, res) => {
   })
 });
 
-
+//Rota para cadastrar um novo serviço
 app.post('/api/add-service/:barbeariaId', (req, res) => {
   const barbearia_id = req.params.barbeariaId;
   const name = req.body.nameService;

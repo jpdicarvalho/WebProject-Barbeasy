@@ -419,13 +419,13 @@
   }
   .mensagem-sucesso {
     width: auto;
-    color: green;
+    color: #0f0;
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
   }
   .mensagem-erro {
-    color: red;
+    color: rgb(255, 0, 0);
     padding: 10px;
     border-radius: 5px;
   }
