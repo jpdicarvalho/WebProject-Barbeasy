@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import './widget.css';
 
 
@@ -7,44 +8,85 @@ const Widget = () => {
 
   const [mostrarServico, setMostrarServico] = useState(false);
   const [showAddServico, setShowAddServico] = useState(false);
+
   const [nomeServiço, setNomeServiço] = useState('');
   const [precoServiço, setPrecoServiço] = useState('');
+  const [tempoDuracao, setTempoDuracao] = useState([]);
   const [messageAddService, setMessageAddService] = useState('');
 
-
+  //Função para mostar o menu Serviço
   const alternarServico = () => {
     setMostrarServico(!mostrarServico);
   };
 
+  //Função para mostar o menu Adicionar Serviço
   const alternarAddServico = () => {
     setShowAddServico(true);
   };
 
+  //Função para formartar o preço do serviço
   const formatarPreco = (valor) => {
     const numero = valor.replace(/\D/g, ''); // Remove caracteres não numéricos
     const valorFormatado = (Number(numero) / 100).toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
     return `R$ ${valorFormatado}`;
   };
 
+  //Função para adicionar o valor do serviço a variável definida
   const handleChangePreco = (event) => {
     const valor = event.target.value;
     // Filtrar apenas os números
-    const numero = valor.replace(/\D/g, '');
+    const numero = valor.replace(/\D/g, '');//Regex para aceitar apenas números no input
     setPrecoServiço(formatarPreco(numero));
   };
 
-  const adicionarServico = () => {
-    setMessageAddService("SERVICE ADD SUCCESSFULLY");
-    setTimeout(() => {
-      setMessageAddService(null);
-      setShowAddServico(false);
-    }, 3000);
-    
-    // // Fechar a div input_Container
-  };
+  // Função responsável por adicionar ou remover o tempo de duração selecionado
+  const handleTempoDuracao = (tempo) => {
+    // Verifica se já existem dois tempos selecionados e se o tempo clicado não está entre eles
+    if (tempoDuracao.length === 1 && !tempoDuracao.includes(tempo)) {
+        // Caso positivo, não faz nada e retorna
+        return;
+      }
 
-  console.log(nomeServiço)
-  console.log(precoServiço)
+        // Verifica se o tempo já está selecionado
+      if (tempoDuracao.includes(tempo)) {
+        // Se o tempo já estiver selecionado, remove-o da seleção
+        setTempoDuracao(tempoDuracao.filter(item => item !== tempo));
+      } else {
+          // Se o tempo não estiver selecionado, adiciona-o à seleção
+          setTempoDuracao([...tempoDuracao, tempo]);
+      }
+  }
+
+  const adicionarServico = () => {
+    if(nomeServiço && precoServiço && tempoDuracao[0]){
+      axios.post(`http://localhost:8000/api/add-service/${barbeariaId}`, {nameService: nomeServiço, priceService: precoServiço, time: tempoDuracao[0]})
+          .then(res => {
+            if (res.data.Success === "Success") {
+              setMessageAddService("Serviço adicionado com sucesso!");
+
+              setTimeout(() => {
+                setMessageAddService(null);
+                setShowAddServico(false);
+              }, 2000);
+              
+            }
+          })
+          .catch(err => {
+            setMessageAddService("Erro ao adicionar serviço!");
+
+            setTimeout(() => {
+              setMessageAddService(null);
+              setShowAddServico(false);
+              }, 3000);
+            console.error(err);
+          });
+    }else{
+      setMessageAddService("Preencha todos os campos!");
+        setTimeout(() => {
+          setMessageAddService(null);
+        }, 3000);
+    }
+  };
 
   return (
     <>
@@ -91,12 +133,13 @@ const Widget = () => {
 
                     <p className='information__span'>Qual o tempo de duração?</p>
                     <div className="inputs-horarios">
-                      {['15min','30min','45min','60min','75min', '90min'].map((atendimento, index) => (
+                      {['15min','30min','45min','60min','75min', '90min'].map((tempo, index) => (
                         <div
                           key={index}
-                          className={`horario-item ${showAddServico ? 'Horario-selecionado' : ''}`}
+                          className={`horario-item ${tempoDuracao.includes(tempo) ? 'Horario-selecionado' : ''}`}
+                          onClick={() => handleTempoDuracao(tempo)}
                         >
-                          <p>{atendimento}</p>
+                          <p>{tempo}</p>
                         </div>
                       ))}
                     </div>
