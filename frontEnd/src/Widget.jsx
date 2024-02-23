@@ -20,8 +20,11 @@ const Widget = () => {
   };
 
   //Função para mostar o menu Adicionar Serviço
-  const alternarAddServico = () => {
+  const ShowAddService = () => {
     setShowAddServico(true);
+  };
+  const fecharExpandir = () => {
+    setShowAddServico(false);
   };
 
   //Função para formartar o preço do serviço
@@ -90,6 +93,7 @@ const Widget = () => {
 
   return (
     <>
+    <div className={` ${showAddServico ? 'background-desfocado' : ''}`}></div>
       <div className="menu__main" onClick={alternarServico}>
         <span className="material-symbols-outlined icon_menu"/>
         Definir Serviços
@@ -103,9 +107,10 @@ const Widget = () => {
             
           </div>
 
-          <div className={`add_Service ${showAddServico ? 'expandir' : ''}`} onClick={alternarAddServico}>
+          <div className={`add_Service ${showAddServico ? 'expandir' : ''}`} onClick={ShowAddService}>
             {showAddServico &&(
               <div className="input_Container">
+
                     <p className='information__span'>Qual o nome do serviço?</p>
 
                     <input
@@ -148,7 +153,7 @@ const Widget = () => {
                         ) : (
                         <p className="mensagem-erro">{messageAddService}</p>
                     )}
-                     <button className="add_Service" onClick={adicionarServico}>
+                     <button className="button__Salve__Service" onClick={adicionarServico}>
                       Adicionar Serviço
                     </button>
               </div>
