@@ -12,6 +12,9 @@ const Widget = () => {
   const [nomeServiço, setNomeServiço] = useState('');
   const [precoServiço, setPrecoServiço] = useState('');
   const [tempoDuracao, setTempoDuracao] = useState([]);
+  const [servicos, setServicos] = useState([]);
+
+
   const [messageAddService, setMessageAddService] = useState('');
 
   //Função para mostar o menu Serviço
@@ -22,9 +25,6 @@ const Widget = () => {
   //Função para mostar o menu Adicionar Serviço
   const ShowAddService = () => {
     setShowAddServico(true);
-  };
-  const fecharExpandir = () => {
-    setShowAddServico(false);
   };
 
   //Função para formartar o preço do serviço
@@ -91,6 +91,26 @@ const Widget = () => {
     }
   };
 
+  //Função para buscar os serviços cadastrados
+  useEffect(() => {
+    axios.get(`http://localhost:8000/api/get-service/${barbeariaId}`)
+    .then(res => {
+      if (res.data.Success === "Success") {
+        setServicos(res.data.result);
+      }
+    })
+    .catch(err => {
+      setMessageAddService("Erro ao adicionar serviço!");
+
+      setTimeout(() => {
+        setMessageAddService(null);
+        setShowAddServico(false);
+        }, 3000);
+      console.error(err);
+    });
+  }, []);
+console.log(servicos.length)
+
   return (
     <>
     <div className={` ${showAddServico ? 'background-desfocado' : ''}`}></div>
@@ -104,8 +124,19 @@ const Widget = () => {
         <div className="divSelected">
 
           <div className='container__servicos'>
-            
+            <div className='section__service'>
+            {servicos.length > 0 ?
+              servicos.map((servico, index) => (
+                <div key={index} className="box__service" 
+                >
+                  <p>{servico.name}</p>
+                </div>
+              )):
+              <p>Nenhum serviço cadastrado</p>
+            }
+            </div>
           </div>
+
 
           <div className={`add_Service ${showAddServico ? 'expandir' : ''}`} onClick={ShowAddService}>
             {showAddServico &&(
