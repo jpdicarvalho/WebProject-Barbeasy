@@ -15,13 +15,15 @@ const Widget = () => {
 
   const [newNomeServiço, setNewNomeServiço] = useState('');
   const [newPrecoServiço, setNewPrecoServiço] = useState('');
-  console.log(newNomeServiço, newPrecoServiço)
+  const [newTempoDuracao, setNewTempoDuracao] = useState([]);
+
   const [servicos, setServicos] = useState([]);
   const [servicoClicado, setServicoClicado] = useState(null);
 
   const [confirmDeleteServico, setConfirmDeleteServico] = useState(false);
 
   const [messageAddService, setMessageAddService] = useState('');
+  const [messageChangeService, setMessageChangeService] = useState('');
 
   //Função para mostar o menu Serviço
   const alternarServico = () => {
@@ -38,15 +40,15 @@ const Widget = () => {
     setServicoClicado(index);
   };  
 
-  
+  //Função para alterar o estado da variável que mostra o botão ConfirmDelete
   const showConfirmDeleteService = () => {
     setConfirmDeleteServico(!confirmDeleteServico);
   };
 
+//Função para alterar o estado da variável que oculta o botão ConfirmDelete
   const hideConfirmDeleteService = () => {
     setConfirmDeleteServico(!confirmDeleteServico);
   };
-
 
   //Função para formartar o preço do serviço
   const formatarPreco = (valor) => {
@@ -62,7 +64,7 @@ const Widget = () => {
     const numero = valor.replace(/\D/g, '');//Regex para aceitar apenas números no input
     setPrecoServiço(formatarPreco(numero));
     setNewPrecoServiço(formatarPreco(numero));
-  };//Alteração aqui
+  };
 
   // Função responsável por adicionar ou remover o tempo de duração selecionado
   const handleTempoDuracao = (tempo) => {
@@ -81,7 +83,7 @@ const Widget = () => {
           setTempoDuracao([...tempoDuracao, tempo]);
       }
   }
-
+  //Função para cadastrar um novo serviço
   const adicionarServico = () => {
     if(nomeServiço && precoServiço && tempoDuracao[0]){
       axios.post(`http://localhost:8000/api/add-service/${barbeariaId}`, {nameService: nomeServiço, priceService: precoServiço, time: tempoDuracao[0]})
@@ -113,6 +115,55 @@ const Widget = () => {
     }
   };
 
+  // Função responsável por adicionar ou remover o tempo de duração selecionado
+  const handleNewTempoDuracao = (tempo) => {
+    // Verifica se já existem dois tempos selecionados e se o tempo clicado não está entre eles
+    if (newTempoDuracao.length === 1 && !newTempoDuracao.includes(tempo)) {
+        // Caso positivo, não faz nada e retorna
+        return;
+      }
+
+        // Verifica se o tempo já está selecionado
+      if (newTempoDuracao.includes(tempo)) {
+        // Se o tempo já estiver selecionado, remove-o da seleção
+        setNewTempoDuracao(newTempoDuracao.filter(item => item !== tempo));
+      } else {
+          // Se o tempo não estiver selecionado, adiciona-o à seleção
+          setNewTempoDuracao([...newTempoDuracao, tempo]);
+      }
+  }
+  const alterarDadosServico = (servicoId) =>{
+
+    if(newNomeServiço.length > 0 || newPrecoServiço.length > 0 || newTempoDuracao.length > 0){
+
+      const newServico = {
+        newNomeServiço,
+        newPrecoServiço,
+        servico_Id: servicoId,
+        newTempoDuracao: newTempoDuracao[0]
+      }
+      axios.post(`http://localhost:8000/api/update-service/${barbeariaId}`, newServico)
+          .then(res => {
+            if (res.data.Success === "Success") {
+              setMessageChangeService("Serviço alterado com sucesso!");
+              setTimeout(() => {
+                setMessageChangeService(null);
+                window.location.reload()
+              }, 3000);
+              
+            }
+          })
+          .catch(err => {
+            console.log("Erro ao alterar informação do serviço.", err);
+          });
+    }else{
+      setMessageChangeService("Nenhuma alteração identificada.");
+      setTimeout(() => {
+         setMessageChangeService(null);
+      }, 2000);
+    }
+  }
+
   //Função para buscar os serviços cadastrados
   useEffect(() => {
     axios.get(`http://localhost:8000/api/get-service/${barbeariaId}`)
@@ -132,9 +183,12 @@ const Widget = () => {
     });
   }, []);
 
-  //Função para fechar o menu Adicionar Serviço
+//Função para fechar o menu Adicionar Serviço
 const fecharExpandir = () => {
   setShowAddServico(false);
+};
+//Função para fechar o menu Adicionar Serviço
+const fecharConfirmDeleteService = () => {
   setConfirmDeleteServico(false)
 };
 
@@ -144,9 +198,11 @@ useEffect(() => {
     const expandirDiv = document.querySelector('.expandir');
     const sectionServiceButton = document.querySelector('.section__service__button');
 
-    if (expandirDiv && !expandirDiv.contains(event.target) || 
-        sectionServiceButton && !sectionServiceButton.contains(event.target)) {
+    if (expandirDiv && !expandirDiv.contains(event.target)){
       fecharExpandir();
+    }
+    if(sectionServiceButton && !sectionServiceButton.contains(event.target)){
+      fecharConfirmDeleteService();
     }
   };
 
@@ -240,8 +296,8 @@ useEffect(() => {
                   <input
                   className="input_AddService"
                   type="text"
-                  id="serviceName"
-                  name="serviceName"
+                  id="AlterServiceName"
+                  name="AlterServiceName"
                   maxLength={30}
                   onChange={e => setNewNomeServiço(e.target.value)}
                   placeholder={servico.name}
@@ -251,21 +307,39 @@ useEffect(() => {
                   <input
                   className="input_AddService"
                   type="text"
-                  id="precoServico"
-                  name="precoServico"
+                  id="AlterPrecoServico"
+                  name="AlterPrecoServico"
                   value={precoServiço}
                   onChange={handleChangePreco}
                   maxLength={9}
                   placeholder={servico.preco}
-                  required
                 />
+
+                <p style={{marginTop: '10px'}}>Deseja alterar o tempo de duração?</p>
+                  <div className="inputs-horarios">
+                    {['15min','30min','45min','60min','75min', '90min'].map((tempo, index) => (
+                      <div
+                        key={index}
+                        className={`horario-item ${newTempoDuracao.includes(tempo) ? 'Horario-selecionado' : ''}`}
+                        onClick={() => handleNewTempoDuracao(tempo)}
+                      >
+                        <p>{tempo}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p style={{marginTop: '10px'}}>Duração Atual • {servico.duracao}</p>
+                  {messageChangeService === "Serviço alterado com sucesso!" ? (
+                      <p className="mensagem-sucesso">{messageChangeService}</p>
+                      ) : (
+                      <p className="mensagem-erro">{messageChangeService}</p>
+                  )}
                 
                   <div className="section__service__button">
                     <button className={`button_ocult ${confirmDeleteServico ? 'section__confirm__delete' : ''}`}>
                       Confirmar
                     </button>
 
-                        <button className={`buttonChange__service ${confirmDeleteServico ? 'button_ocult' : ''}`}>
+                    <button className={`buttonChange__service ${confirmDeleteServico ? 'button_ocult' : ''}`} onClick={() => alterarDadosServico(servico.id)}>
                       Alterar
                     </button>
 

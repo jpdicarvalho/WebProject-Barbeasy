@@ -592,5 +592,10 @@
     background-color: transparent;
     border: 1px solid #7849f4;
     color: #f6f6f6;
-    transition: opacity 0.5s ease;
+    transition: 0.5s;
+}
+.buttonChange__service:hover{
+    background: #7849f4;
+    border-radius: 8px;
+    transition: 0.5s;
 }
