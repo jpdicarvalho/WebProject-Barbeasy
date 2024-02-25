@@ -15,7 +15,7 @@ const Widget = () => {
 
   const [newNomeServiço, setNewNomeServiço] = useState('');
   const [newPrecoServiço, setNewPrecoServiço] = useState('');
-
+  console.log(newNomeServiço, newPrecoServiço)
   const [servicos, setServicos] = useState([]);
   const [servicoClicado, setServicoClicado] = useState(null);
 
