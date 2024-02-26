@@ -44,6 +44,7 @@ const Widget = () => {
   const showConfirmDeleteService = () => {
     setConfirmDeleteServico(!confirmDeleteServico);
   };
+  console.log(confirmDeleteServico)
 
 //Função para alterar o estado da variável que oculta o botão ConfirmDelete
   const hideConfirmDeleteService = () => {
@@ -208,22 +209,14 @@ const Widget = () => {
 const fecharExpandir = () => {
   setShowAddServico(false);
 };
-//Função para fechar o menu Adicionar Serviço
-const fecharConfirmDeleteService = () => {
-  setConfirmDeleteServico(false)
-};
 
 // Adiciona um event listener para detectar cliques fora da div expandir
 useEffect(() => {
   const handleOutsideClick = (event) => {
     const expandirDiv = document.querySelector('.expandir');
-    const sectionServiceButton = document.querySelector('.section__service__button');
 
     if (expandirDiv && !expandirDiv.contains(event.target)){
       fecharExpandir();
-    }
-    if(sectionServiceButton && !sectionServiceButton.contains(event.target)){
-      fecharConfirmDeleteService();
     }
   };
 
