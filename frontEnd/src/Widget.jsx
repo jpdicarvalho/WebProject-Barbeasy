@@ -164,6 +164,27 @@ const Widget = () => {
     }
   }
 
+  //Função para apagar um serviço
+  const deleteServico = (servicoId) => {
+    axios.delete(`http://localhost:8000/api/delete-service/${barbeariaId}/${servicoId}`)
+      .then(res => {
+        if (res.data.Success === "Success") {
+          setMessageChangeService("Serviço apagado com sucesso!");
+          setTimeout(() => {
+            setMessageChangeService(null);
+            window.location.reload()
+          }, 2000);
+
+        }
+      })
+      .catch(err => {
+        console.log("Erro ao apagar o serviço.", err);
+        setMessageChangeService("Erro ao apagar o serviço.");
+          setTimeout(() => {
+            setMessageChangeService(null);
+          }, 2000);
+      });
+  }
   //Função para buscar os serviços cadastrados
   useEffect(() => {
     axios.get(`http://localhost:8000/api/get-service/${barbeariaId}`)
@@ -335,7 +356,7 @@ useEffect(() => {
                   )}
                 
                   <div className="section__service__button">
-                    <button className={`button_ocult ${confirmDeleteServico ? 'section__confirm__delete' : ''}`}>
+                    <button className={`button_ocult ${confirmDeleteServico ? 'section__confirm__delete' : ''}`} onClick={() => deleteServico(servico.id)}>
                       Confirmar
                     </button>
 
