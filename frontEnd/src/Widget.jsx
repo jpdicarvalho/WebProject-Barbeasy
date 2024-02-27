@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { GiRazor } from "react-icons/gi";
+import { IoIosArrowDown } from "react-icons/io";
 import './widget.css';
 
 
@@ -44,7 +46,6 @@ const Widget = () => {
   const showConfirmDeleteService = () => {
     setConfirmDeleteServico(!confirmDeleteServico);
   };
-  console.log(confirmDeleteServico)
 
 //Função para alterar o estado da variável que oculta o botão ConfirmDelete
   const hideConfirmDeleteService = () => {
@@ -238,9 +239,10 @@ useEffect(() => {
       </div>
 
       <div className="menu__main" onClick={alternarServico}>
-        <span className="material-symbols-outlined icon_menu"/>
+        <span className="material-symbols-outlined icon_menu"/><GiRazor className="icon_menu"/>
         Definir Serviços
-        <span className={`material-symbols-outlined arrow ${mostrarServico ? 'girar' : ''}`} id='arrow'/>
+        <IoIosArrowDown className={`arrow ${mostrarServico ? 'girar' : ''}`} id="arrow"/>
+
       </div>
 
       {mostrarServico && (
