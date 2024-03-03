@@ -21,8 +21,8 @@ const alternarServico = () => {
 };
 
 //Função para buscar os serviços cadastrados
-useEffect(() => {
-  axios.get(`http://localhost:8000/api/get-service/${barbeariaId}`)
+  const obterServicos = () =>{
+    axios.get(`http://localhost:8000/api/get-service/${barbeariaId}`)
   .then(res => {
     if (res.data.Success === "Success") {
       setServicos(res.data.result);
@@ -31,7 +31,10 @@ useEffect(() => {
   .catch(err => {
     console.error("Erro ao buscar serviços!", err);
   });
-}, []);
+  }
+  useEffect(() => {
+    obterServicos()
+  }, []);
 
 //Função para formartar o preço do serviço
 const formatarPreco = (valor) => {
@@ -98,6 +101,7 @@ const formatarPreco = (valor) => {
           .then(res => {
             if (res.data.Success === "Success") {
               setMessageAddService("Serviço adicionado com sucesso!");
+              obterServicos()
               setTimeout(() => {
                 setMessageAddService(null);
                 fecharExpandir()
@@ -164,20 +168,20 @@ const formatarPreco = (valor) => {
   };
 
   // Função responsável por adicionar ou remover o tempo de duração selecionado, no menu de edição do serviço
-  const handleEditedServiceDuration = (tempo) => {
+  const handleEditedServiceDuration = (timeDurationEdited) => {
     // Verifica se já existem dois tempos selecionados e se o tempo clicado não está entre eles
-    if (editedServiceDuration.length === 1 && !editedServiceDuration.includes(tempo)) {
+    if (editedServiceDuration.length === 1 && !editedServiceDuration.includes(timeDurationEdited)) {
         // Caso positivo, não faz nada e retorna
         return;
       }
 
         // Verifica se o tempo já está selecionado
-      if (editedServiceDuration.includes(tempo)) {
+      if (editedServiceDuration.includes(timeDurationEdited)) {
         // Se o tempo já estiver selecionado, remove-o da seleção
-        setEditedServiceDuration(editedServiceDuration.filter(item => item !== tempo));
+        setEditedServiceDuration(editedServiceDuration.filter(item => item !== timeDurationEdited));
       } else {
           // Se o tempo não estiver selecionado, adiciona-o à seleção
-          setEditedServiceDuration([...editedServiceDuration, tempo]);
+          setEditedServiceDuration([...editedServiceDuration, timeDurationEdited]);
       }
   }
   //Função para enviar as informações do serviço alterado
@@ -195,8 +199,10 @@ const formatarPreco = (valor) => {
       .then(res => {
         if (res.data.Success === "Success") {
           setMessageEditedService("Serviço alterado com sucesso!");
+          obterServicos()
           setTimeout(() => {
             setMessageEditedService(null);
+            setSelectedService(null)
           }, 2000);
         }
       })
@@ -351,13 +357,13 @@ const hideConfirmDeleteService = () => {
 
                 <p style={{marginTop: '10px'}}>Deseja alterar o tempo de duração?</p>
                   <div className="inputs-horarios">
-                    {['15min','30min','45min','60min','75min', '90min'].map((tempo, index) => (
+                    {['15min','30min','45min','60min','75min', '90min'].map((timeDurationEdited, index) => (
                       <div
                         key={index}
-                        className={`horario-item ${editedServiceDuration.includes(tempo) ? 'Horario-selecionado' : ''}`}
-                        onClick={() => handleEditedServiceDuration(tempo)}
+                        className={`horario-item ${editedServiceDuration.includes(timeDurationEdited) ? 'Horario-selecionado' : ''}`}
+                        onClick={() => handleEditedServiceDuration(timeDurationEdited)}
                       >
-                        <p>{tempo}</p>
+                        <p>{timeDurationEdited}</p>
                       </div>
                     ))}
                   </div>
