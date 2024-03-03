@@ -507,7 +507,6 @@
 .section__service::-webkit-scrollbar-thumb:hover {
     background: #f6f6f6; 
 }
-
 .box__service{
     display: flex;
     padding: 5px;
@@ -520,7 +519,6 @@
     height: 35px;
     overflow: hidden;
 }
-
 /*-------------------*/
 .box__service.expandir__Service{
     width: 300px;
@@ -610,4 +608,25 @@
     overflow: hidden;
     width: 100%;
     height: 400px;
+}
+
+.header__box__service{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    padding-right: 10px;
+}
+.Btn__close{
+    border: none;
+    font-weight: bold;
+    font-size: 18px;
+    background: transparent;
+    color: #4a17d5;
+    height: 100%;
+    width: auto;
+    padding-bottom: 10px;
+}
+.Btn__close__hide{
+    opacity: 0;
 }

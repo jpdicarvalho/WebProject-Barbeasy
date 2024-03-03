@@ -104,6 +104,9 @@ const formatarPreco = (valor) => {
               obterServicos()
               setTimeout(() => {
                 setMessageAddService(null);
+                setNewNameService('')
+                setNewPriceService('')
+                setNewServiceDuration('')
                 fecharExpandir()
               }, 2000);
               
@@ -202,6 +205,9 @@ const formatarPreco = (valor) => {
           obterServicos()
           setTimeout(() => {
             setMessageEditedService(null);
+            setEditedServiceName('')
+            setEditedServicePrice('')
+            setEditedServiceDuration('')
             setSelectedService(null)
           }, 2000);
         }
@@ -219,15 +225,17 @@ const formatarPreco = (valor) => {
 
 /*===== Section to delete a current service ======*/
   const [confirmDeleteServico, setConfirmDeleteServico] = useState(false);
-//Função para alterar o estado da variável que mostra o botão ConfirmDelete
-const showConfirmDeleteService = () => {
-  setConfirmDeleteServico(!confirmDeleteServico);
-};
 
-//Função para alterar o estado da variável que oculta o botão ConfirmDelete
-const hideConfirmDeleteService = () => {
-  setConfirmDeleteServico(!confirmDeleteServico);
-};
+  //Função para alterar o estado da variável que mostra o botão ConfirmDelete
+  const showConfirmDeleteService = () => {
+    setConfirmDeleteServico(!confirmDeleteServico);
+  };
+
+  //Função para alterar o estado da variável que oculta o botão ConfirmDelete
+  const hideConfirmDeleteService = () => {
+    setConfirmDeleteServico(!confirmDeleteServico);
+  };
+
   //Função para apagar um serviço
   const deleteServico = (servicoId) => {
     axios.delete(`http://localhost:8000/api/delete-service/${barbeariaId}/${servicoId}`)
@@ -236,9 +244,9 @@ const hideConfirmDeleteService = () => {
           setMessageEditedService("Serviço apagado com sucesso!");
           setTimeout(() => {
             setMessageEditedService(null);
-            // Atualiza dinamicamente a lista de serviços após a exclusão
-            const updatedServicos = servicos.filter(servico => servico.id !== servicoId);
-            setServicos(updatedServicos);
+            obterServicos()
+            setConfirmDeleteServico(false);
+            setSelectedService(null)
           }, 2000);
         }
       })
@@ -330,8 +338,8 @@ const hideConfirmDeleteService = () => {
                   className={`box__service ${selectedService === index ? 'expandir__Service' : ''}`}
                   onClick={() => ShowServiceEditMenu(index)}
                 >
-                  <p style={{marginBottom: '10px'}}>{servico.name}</p>
-                  
+                  <p style={{marginBottom: '10px', width: '100%'}}>{servico.name}</p>
+
                   <p>Deseja alterar o nome do serviço?</p>
                   <input
                   className="input_AddService"
