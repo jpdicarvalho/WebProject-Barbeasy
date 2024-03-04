@@ -7,20 +7,18 @@ import './widget.css';
 
 const Widget = () => {
   const barbeariaId = 1;
-  
-  
 
 /*===== Functions for all functions ======*/
 //Função para mostar o menu Serviço
 const [mostrarServico, setMostrarServico] = useState(false);
 const [servicos, setServicos] = useState([]);
 
-//Função para mostra os serviços cadastrados
-const alternarServico = () => {
-  setMostrarServico(!mostrarServico);
-};
+  //Função para mostra os serviços cadastrados
+  const alternarServico = () => {
+    setMostrarServico(!mostrarServico);
+  };
 
-//Função para buscar os serviços cadastrados
+  //Função para buscar os serviços cadastrados
   const obterServicos = () =>{
     axios.get(`http://localhost:8000/api/get-service/${barbeariaId}`)
   .then(res => {
@@ -32,6 +30,8 @@ const alternarServico = () => {
     console.error("Erro ao buscar serviços!", err);
   });
   }
+
+  //hook para chamar a função de obtersServiço
   useEffect(() => {
     obterServicos()
   }, []);
