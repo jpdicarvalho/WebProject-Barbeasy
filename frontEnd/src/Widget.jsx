@@ -107,11 +107,11 @@ const formatarPreco = (valor) => {
               setMessageAddService("Serviço adicionado com sucesso.");
               obterServicos()
               setTimeout(() => {
-                setMessageAddService(null);
+                //setMessageAddService(null);
                 setNewNameService('')
                 setNewPriceService('')
                 setNewServiceDuration('')
-                fecharExpandir()
+                //fecharExpandir()
               }, 2000);
               
             }

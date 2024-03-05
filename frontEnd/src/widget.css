@@ -414,7 +414,7 @@
 .hide__message{
     opacity: 0;
 }
-.hide__message.mensagem-sucesso {
+.mensagem-sucesso {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -432,7 +432,9 @@
     font-size: 15px;
     font-weight: bold;
     color: #fff;
-    background: #0f0;
+    background: rgb(40, 164, 40);
+    width: 20px;
+    height: 20px;
 }
 .text__message{
     width: 100%;
