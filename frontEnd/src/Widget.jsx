@@ -107,11 +107,11 @@ const formatarPreco = (valor) => {
               setMessageAddService("Serviço adicionado com sucesso.");
               obterServicos()
               setTimeout(() => {
-                //setMessageAddService(null);
+                setMessageAddService(null);
                 setNewNameService('')
                 setNewPriceService('')
                 setNewServiceDuration('')
-                //fecharExpandir()
+                fecharExpandir()
               }, 2000);
               
             }
@@ -246,9 +246,9 @@ const formatarPreco = (valor) => {
       .then(res => {
         if (res.data.Success === "Success") {
           setMessageEditedService("Serviço apagado com sucesso.");
+          obterServicos()
           setTimeout(() => {
             setMessageEditedService(null);
-            obterServicos()
             setConfirmDeleteServico(false);
             setSelectedService(null)
           }, 2000);
