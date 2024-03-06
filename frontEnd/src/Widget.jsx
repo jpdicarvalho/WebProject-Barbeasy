@@ -105,15 +105,14 @@ const formatarPreco = (valor) => {
           .then(res => {
             if (res.data.Success === "Success") {
               setMessageAddService("Serviço adicionado com sucesso.");
-              obterServicos()
               setTimeout(() => {
                 setMessageAddService(null);
+                obterServicos()
                 setNewNameService('')
                 setNewPriceService('')
                 setNewServiceDuration('')
                 fecharExpandir()
               }, 2000);
-              
             }
           })
           .catch(err => {
@@ -206,9 +205,9 @@ const formatarPreco = (valor) => {
       .then(res => {
         if (res.data.Success === "Success") {
           setMessageEditedService("Serviço alterado com sucesso.");
-          obterServicos()
           setTimeout(() => {
             setMessageEditedService(null);
+            obterServicos()
             setEditedServiceName('')
             setEditedServicePrice('')
             setEditedServiceDuration('')
@@ -242,13 +241,17 @@ const formatarPreco = (valor) => {
 
   //Função para apagar um serviço
   const deleteServico = (servicoId) => {
+    let lastService = servicos.length;
     axios.delete(`http://localhost:8000/api/delete-service/${barbeariaId}/${servicoId}`)
       .then(res => {
         if (res.data.Success === "Success") {
           setMessageEditedService("Serviço apagado com sucesso.");
-          obterServicos()
           setTimeout(() => {
             setMessageEditedService(null);
+            if(lastService === 1){
+              window.location.reload()
+            }
+            obterServicos()
             setConfirmDeleteServico(false);
             setSelectedService(null)
           }, 2000);
