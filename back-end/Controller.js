@@ -172,11 +172,17 @@ app.post('/upload-banners', upload.array('images'), (req, res) => {
               for (let i = 0; i < bannerImages.length; i++) {
                 bannerImagesName.push(bannerImages[i].originalname);
               }
+
+              /*alteração aqui*/
+              //Obtém o nome da primeira imagem para defini-lá como principal
+              const bannerMain = bannerImagesName[0];
+
               // Converte o array de nomes em uma string separada por vírgulas
-              const bannerImagesNameString = bannerImagesName.join(','); 
+              const bannerImagesNameString = bannerImagesName.join(',');
+
               //Atualizando o nome das imagens banner no BD MySQL
-              const sql = "UPDATE barbearia SET banner_images = ? WHERE id = ?";
-              db.query(sql, [bannerImagesNameString, barbeariaId], (err, result) => {
+              const sql = "UPDATE barbearia SET banner__main = ?, banner_images = ? WHERE id = ?";
+              db.query(sql, [bannerMain, bannerImagesNameString, barbeariaId], (err, result) => {
                 if (err) {
                   console.error('Erro ao atualizar o nome das imagens no banco de dados:', err);
                   return res.status(500).json({ error: 'Internal Server Error' });
@@ -190,6 +196,7 @@ app.post('/upload-banners', upload.array('images'), (req, res) => {
       }
     })
 });
+
 app.get('/api/banner-images', (req, res) => {
   const barbeariaId = 1;
 
@@ -726,7 +733,6 @@ app.post("/SingUp", async (req, res) => {
 app.post('/SignIn', async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-
   // Buscar usuário pelo email
   db.query('SELECT * FROM user WHERE email = ? AND senha = ?', [email, password],
   (err, result) => {

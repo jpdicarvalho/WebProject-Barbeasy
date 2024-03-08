@@ -34,6 +34,21 @@ const userInformation = JSON.parse(userData);
 const userName = userInformation.user[0].name;
 const userId = userInformation.user[0].id;
 
+//pegando a hora para saudar o usuário
+useEffect(() => {
+  const obterSaudacao = () => {
+  const horaAtual = new Date().getHours();
+    if (horaAtual >= 5 && horaAtual < 12) {
+        setSaudacao('Bom dia!');
+    } else if (horaAtual >= 12 && horaAtual < 18) {
+        setSaudacao('Boa tarde!');
+    } else {
+        setSaudacao('Boa noite!');
+    }
+  }
+obterSaudacao();
+}, []);
+
 //listando as barbearias cadastradas
 useEffect(() => {
   const fetchData = async () => {
@@ -78,20 +93,7 @@ const logoutClick = () => {
   ['token', 'userData'].forEach(key => localStorage.removeItem(key));
   navigate("/SignIn");
 };
-//pegando a hora para saudar o usuário
-useEffect(() => {
-  const obterSaudacao = () => {
-  const horaAtual = new Date().getHours();
-    if (horaAtual >= 5 && horaAtual < 12) {
-        setSaudacao('Bom dia!');
-    } else if (horaAtual >= 12 && horaAtual < 18) {
-        setSaudacao('Boa tarde!');
-    } else {
-        setSaudacao('Boa noite!');
-    }
-  }
-obterSaudacao();
-}, []);
+
 
 /*pegando as cordenadas do usuário
 useEffect(() => {
@@ -147,13 +149,7 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
   return media.toFixed(1).replace('.', ',');
 };
 
-const handleMercadoPagoLogin = () => {
-  // Redireciona o usuário para a URL de autorização do Mercado Pago
-  window.location.href = `https://auth.mercadopago.com/authorization?client_id=7433076748534689&response_type=code&platform_id=mp&state=123&redirect_uri=`;
-};
-/*TESTUSER1064212823
-WMN2odtHIq*/
-console.log(userId)
+console.log(barbearias)
 return (
           <div className="containerHome">
 
@@ -172,11 +168,7 @@ return (
                   <h1>Barbeasy</h1>
                 </div>
                 <div className="containerSearch">
-                <button onClick={handleMercadoPagoLogin} className="mercadoPagoButton">
-                    Acessar com Mercado Pago
-                  </button>
                   <div className="inputBoxSearch">
-                  
                     <i className="fa-solid fa-magnifying-glass lupa"></i>
                     <input type="search" id="inputSearch" name="name" value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Encontrar Barbearia'/>
                   </div>
@@ -184,13 +176,15 @@ return (
               </div>
 
               {barbeariaSearch.map((barbearia) => (
-                <div key={barbearia.id} className="containerBarbearia">
-                      <div className="imgBoxSection">
-                        <img src={InteriorBarbearia} alt="frente da barbearia" />
-                      </div>
+                <div key={barbearia.id} className="containerBarbearia" onClick={() => handleBarbeariaClick(barbearia)}>
+                     
+                     <div className="imgBoxSection">
+                     <img src={`https://d15o6h0uxpz56g.cloudfront.net/${barbearia.banner__main}`} alt="" />
+                    </div>
+
                   <div className="section">
                   {barbearia.status === "Aberta" ? (
-                        <p className="aberto">{barbearia.status}</p>
+                        <p className="aberto"> {barbearia.status}</p>
                       ) : (
                         <p className="fechado">{barbearia.status}</p>
                       )}
@@ -206,12 +200,9 @@ return (
                       <p className="material-symbols-outlined location">location_on </p>
                       <p>{barbearia.endereco}</p>
                       </div>
-                      <button className="agendar"
-                        onClick={() => handleBarbeariaClick(barbearia)}>
-                        Agendar
-                      </button>
+                      
                   </div>
-                  
+                 
                 </div>
               ))}
             <ul className={`Navigation glassmorphism ${isMenuActive ? 'active' : ''}`}>
