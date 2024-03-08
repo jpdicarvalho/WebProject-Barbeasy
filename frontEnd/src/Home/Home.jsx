@@ -149,12 +149,25 @@ const avaliacoesDaBarbearia = AllAvaliation.filter(avaliacao => avaliacao.barbea
   return media.toFixed(1).replace('.', ',');
 };
 
-console.log(barbearias)
-return (
-          <div className="containerHome">
+const [scrollPosition, setScrollPosition] = useState(0);
 
-            <div className="header">
-                <div className="imgBoxSectionUser">
+  useEffect(() => {
+    const handleScroll = () => {
+      const position = window.scrollY;
+      setScrollPosition(position);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+return (
+  <>
+    <div className={`header ${scrollPosition > 200 ? 'scrolled' : ''}`}>
+                <div className={`imgBoxSectionUser ${scrollPosition > 200 ? 'hideDiv' : ''}`}>
                   <img src={imgUserDefault} alt="foto de perfil do usuário" />
                   <div className="spanUser">
                     <p>Olá, {userName}</p>
@@ -163,18 +176,19 @@ return (
                   </div>
                   
                 </div>
-                <div className="Barbeasy">
+                <div className={`Barbeasy ${scrollPosition > 200 ? 'hideDiv' : ''}`}>
                   <img id="logoBarbeasy" src={barberLogo} alt="lodo-Barbeasy"/>
                   <h1>Barbeasy</h1>
                 </div>
-                <div className="containerSearch">
+                <div className={`containerSearch ${scrollPosition > 200 ? 'header__Search' : ''}`}>
                   <div className="inputBoxSearch">
                     <i className="fa-solid fa-magnifying-glass lupa"></i>
-                    <input type="search" id="inputSearch" name="name" value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Encontrar Barbearia'/>
+                    <input type="search" id="inputSearch" name="name" value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Buscar Barbearia'/>
                   </div>
                 </div> 
               </div>
-
+              
+          <div className="containerHome">
               {barbeariaSearch.map((barbearia) => (
                 <div key={barbearia.id} className="containerBarbearia" onClick={() => handleBarbeariaClick(barbearia)}>
                      
@@ -212,6 +226,7 @@ return (
               <button onClick={handleMenuClick} className="toggleMenu glassmorphism"></button>
             </ul>
             </div>
+            </>
     )
 }
 export default Home  
