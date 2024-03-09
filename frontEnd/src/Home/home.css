@@ -371,7 +371,7 @@ transition: height 0.3s ease;
   width: auto;
 }
 .Navigation li button:hover{
-  color: #6D48D6;
+  color: #4a17d5;
   background: transparent;
 }
 .fa-solid, .fas{
