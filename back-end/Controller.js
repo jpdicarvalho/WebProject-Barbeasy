@@ -452,6 +452,7 @@ app.post('/api/update-agenda/:barbeariaId', (req, res) => {
     }
   })
 });
+
 //Rota para obter informações da agenda da barbearia
 app.get('/api/agenda/:barbeariaId', (req, res) => {
   const barbeariaId = req.params.barbeariaId;

@@ -1,6 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import axios from 'axios';
+
 import { motion } from 'framer-motion';
+import { CiLocationOn } from "react-icons/ci";
 
 import { register } from 'swiper/element/bundle';
 register();
@@ -21,8 +24,6 @@ import logoMercadoPago from './logoMercadoPago.png'
 import { Calendar } from '../Calendar/Calendar';
 import './BarbeariaDetails.css'
 
-import imgBarbearia from './img-barbearia.jpg'
-//import barbeLogo from './barber-logo.png'
 import logoBarbeariaTeste from './logo-barbearia-teste.png'
 
 function BarbeariaDetails() {
@@ -66,25 +67,177 @@ useEffect(() =>{
   setBanners(namesBanners)
 }, []);
 
-
-
-
 /*=========== Buscandos os serviço da Barbearia selecionada ===========*/
+// Alteração apartir daqui, não esquece de importar import axios from 'axios';
 const [servicos, setServicos] = useState([]);
 
-useEffect(() => {  
-  const getServiceBarbearia = async () => {
-          try {
-            const response = await fetch('http://localhost:8000/listServico');
-            const data = await response.json();
-            setServicos(data);
-          } catch (error) {
-            console.error('Erro ao obter os registros:', error);
-          }
-  };
-getServiceBarbearia();
-}, []);
+  //Função para buscar os serviços cadastrados
+  const barbeariaId = barbearia.id;
+  const obterServicos = () =>{
+    
+    axios.get(`http://localhost:8000/api/get-service/${barbeariaId}`)
+    .then(res => {
+      if (res.data.Success === "Success") {
+        setServicos(res.data.result);
+      }
+    })
+    .catch(err => {
+      console.error("Erro ao buscar serviços!", err);
+    });
+    }
+  //hook para chamar a função de obtersServiço
+  useEffect(() => {
+    obterServicos()
+  }, []);
 
+  const [daysWeekSelected, setDaysWeekSelected] = useState([]);
+  const [QntDaysSelected, setQntDaysSelected] = useState([]);
+  const [agenda, setAgenda] = useState([]);
+  const [daysFromAgenda, setDaysFromAgenda] = useState([]);
+
+  //Obtendo os dados da agenda da barbearia
+  const getAgenda = () =>{
+    axios.get(`http://localhost:8000/api/agenda/${barbeariaId}`)
+    .then(res => {
+      if(res.status === 200){
+        setAgenda(res.data.Agenda)
+      }
+    }).catch(error => {
+      console.error('Erro ao buscar informações da agenda da barbearia', error)
+    })
+  }
+  //Chamando a função para obter os dados da agenda da barbearia
+  useEffect(() => {
+    getAgenda()
+  }, [])
+
+  useEffect(() => {
+    if (Array.isArray(agenda) && agenda.length >= 2) {
+      setDaysFromAgenda(agenda[0].split(','));
+      setQntDaysSelected(agenda[1].toString());
+    }
+  }, [agenda]);
+  
+  useEffect(() => {
+    const threeLettersArray = daysFromAgenda.map(day => day.substring(0, 3));
+    setDaysWeekSelected(threeLettersArray);
+  }, [daysFromAgenda]);
+
+//Declaração dos array de horários padronizados e de cada dia da semana
+const [horariosPadronizados, setHorariosPadronizados] = useState([]);
+const [horariosDom, setHorariosDom] = useState([]);
+const [horariosSeg, setHorariosSeg] = useState([]);
+const [horariosTer, setHorariosTer] = useState([]);
+const [horariosQua, setHorariosQua] = useState([]);
+const [horariosQui, setHorariosQui] = useState([]);
+const [horariosSex, setHorariosSex] = useState([]);
+const [horariosSab, setHorariosSab] = useState([]);
+
+//Função para obter os horários definidos do dia selecionado
+const getHorariosDefinidos = () =>{
+  axios.get(`http://localhost:8000/api/agendaDiaSelecionado/${barbeariaId}`)
+  .then(res => {
+    let arrayHorariosPadrao = res.data.horariosDiaEspecifico;
+    let verifyIndexArray;
+
+    if(arrayHorariosPadrao.length > 0 && arrayHorariosPadrao[0] != null || '') {
+      verifyIndexArray = arrayHorariosPadrao[0].split(',')
+      if(verifyIndexArray[0] === 'horarioPadrao'){
+        verifyIndexArray.shift();
+        setHorariosPadronizados(verifyIndexArray);
+      }
+      for(let i=0; i < arrayHorariosPadrao.length; i++){
+        verifyIndexArray = arrayHorariosPadrao[i].substring(0, 3)
+
+          if (verifyIndexArray === 'Dom'){
+            setHorariosDom (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Seg'){
+            setHorariosSeg (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Ter'){
+            setHorariosTer (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Qua'){
+            setHorariosQua (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Qui'){
+            setHorariosQui (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Sex'){
+            setHorariosSex (arrayHorariosPadrao[i].split(','));
+          }
+          if (verifyIndexArray === 'Sáb'){
+            setHorariosSab (arrayHorariosPadrao[i].split(','));
+          }
+        
+      }
+      
+    }
+    
+  }).catch(error => {
+    console.error('Erro ao buscar informações da agenda da barbearia', error)
+  })
+}
+useEffect(() => {
+  getHorariosDefinidos()
+}, [])
+
+
+//Função para criar objeto com os dias e seus respectivos horários definidos
+const monthNames = [
+  'Jan', 'Fev', 'Mar', 'Abr', 'Maio', 'Jun', 'Jul', 'Aug', 'Set', 'Out', 'Nov', 'Dez'
+];
+
+const date = new Date();
+const year = date.getFullYear();
+const month = date.getMonth();
+const nameMonth = monthNames[month];
+
+const orderedMergedObject = {};
+const AgendaBarbearia = () => {
+
+  // Objeto contendo a ordem dos dias da semana
+  const orderedDaysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+  const horarios = {
+    Dom: horariosDom.filter((elemento, indice) => indice !== 0),
+    Seg: horariosSeg.filter((elemento, indice) => indice !== 0),
+    Ter: horariosTer.filter((elemento, indice) => indice !== 0),
+    Qua: horariosQua.filter((elemento, indice) => indice !== 0),
+    Qui: horariosQui.filter((elemento, indice) => indice !== 0),
+    Sex: horariosSex.filter((elemento, indice) => indice !== 0),
+    Sáb: horariosSab.filter((elemento, indice) => indice !== 0)
+  };
+
+  const horariosDiaEspecifico = Object.fromEntries(
+    Object.entries(horarios).filter(([_, horariosDia]) => horariosDia.length > 0)
+  );
+
+  const diasRemovidos = Object.keys(horariosDiaEspecifico);
+  const daysWeekFiltered = daysWeekSelected.filter(dia => !diasRemovidos.includes(dia));
+  const mergedObject = { ...horariosDiaEspecifico };
+
+  daysWeekFiltered.forEach(dia => {
+    mergedObject[dia] = [];
+  });
+
+  // Atribuir horários padronizados para dias sem horários definidos
+  Object.entries(mergedObject).forEach(([dia, horariosDia]) => {
+    if (horariosDia.length === 0) {
+      mergedObject[dia] = horariosPadronizados;
+    }
+  });
+
+  // Criar orderedMergedObject enquanto percorremos orderedDaysOfWeek
+  orderedDaysOfWeek.forEach(dia => {
+    if (mergedObject.hasOwnProperty(dia)) {
+      orderedMergedObject[dia] = mergedObject[dia];
+    }
+  });
+}
+
+AgendaBarbearia()
 /*--------------------------------------------------------*/
 const [selectedDate, setSelectedDate] = useState(null);
 const [selectedTime, setSelectedTime] = useState("");
@@ -243,7 +396,7 @@ useEffect(()=> {
   setWidth(reviewsWidth);
 }, [reviewsWidth])
 
-  return (
+return (
     <>
       <div className="Outdoor">
        
@@ -259,7 +412,7 @@ useEffect(()=> {
           {barbearia.status === "Aberta" ? <p className="abertoBarbDetails">{barbearia.status}</p> : <p className="fechadoBarbDetails">{barbearia.status}</p>}
           <h3 id="BarbeariaName">{barbearia.name} • {calcularMediaAvaliacoes()} <i className="fa-solid fa-star"/> ({totalAvaliacoes(barbearia.id)})</h3>
           <div className="location">
-            <p className="material-symbols-outlined location">location_on </p>
+          <CiLocationOn className="location_icon"/>
             <p>{barbearia.endereco}</p>
           </div>
       </div>
@@ -277,7 +430,8 @@ useEffect(()=> {
             .filter(servico => servico.barbearia_id === barbearia.id)
             .map(servico => (
               <div key={servico.id} onClick={() => handleServiceChange(servico.id)} className={`servicoDiv ${selectedService === servico.id ? 'selected' : ''}`}>
-                <p>{servico.name} - R$ {servico.preco},00</p> 
+                <p>{servico.name} • {servico.preco}</p>
+                <p style={{color: 'gray'}}>Duração • {servico.duracao}</p>
               </div>
           ))}
         </div>
@@ -287,8 +441,28 @@ useEffect(()=> {
       <div className="tittle">
         Escolha um dia de sua preferência
       </div>
-      <div className="EscolhaDia">
-        <Calendar onDateChange={handleDateChange}/>
+      <div className="Header__Calendar">
+          <h1 className="month">{nameMonth}</h1>
+          <h2 className="year">{year}</h2>
+        </div>
+      <div className="Container_dias_definidos">
+           
+        {Object.entries(orderedMergedObject).map(([dia, horarios]) => (
+          <div key={dia} className="Container__agenda">
+            <div className="Box__days">
+              {dia}
+            </div>
+            
+            {horarios.map(horario => (
+              <div key={horario} className="Box__horarios">
+                <div className="horarios">
+                <p>{horario}</p>
+                </div>
+                
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
 
       <hr />
