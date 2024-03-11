@@ -420,6 +420,10 @@ return (
       </div>
 
     <div className="ContainerMain">
+    <div className="tittle">
+        Escolha um dia de sua preferência
+      </div>
+            <Calendar onDateChange={handleDateChange} QntDaysSelected={QntDaysSelected} orderedMergedObject={orderedMergedObject}/>
       <hr />
 
       <div className="tittle">
@@ -435,35 +439,6 @@ return (
               </div>
           ))}
         </div>
-
-        <hr />
-
-      <div className="tittle">
-        Escolha um dia de sua preferência
-      </div>
-      <div className="Header__Calendar">
-          <h1 className="month">{nameMonth}</h1>
-          <h2 className="year">{year}</h2>
-        </div>
-      <div className="Container_dias_definidos">
-           
-        {Object.entries(orderedMergedObject).map(([dia, horarios]) => (
-          <div key={dia} className="Container__agenda">
-            <div className="Box__days">
-              {dia}
-            </div>
-            
-            {horarios.map(horario => (
-              <div key={horario} className="Box__horarios">
-                <div className="horarios">
-                <p>{horario}</p>
-                </div>
-                
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
 
       <hr />
       <div className="tittle">

@@ -146,31 +146,7 @@ h4{
     font-weight: 700;
 }
 /*======== Alteração apartir daqui ========*/
-.Container_dias_definidos{
-    display: flex;
-    flex-direction: column;
-    width: 385px;
-    overflow: hidden;
-}
-.Container__agenda {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    margin: 5px;
-}
-.Box__days{
-    width: 100%;
-    background: #354249;
-    color: #fff;
-}
-.Box__horarios{
-    
-    
-    border: 1px solid #4a17d5;
-    color: #fff;
-    width: calc(33% - 10px); /* Calcule a largura com base no número de elementos por linha */
-    margin-bottom: 10px;
-}
+
 /*----------------------------------------------*/
 /*seção dos horarios*/
 
