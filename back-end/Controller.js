@@ -515,12 +515,14 @@ app.post('/api/update-agendaDiaSelecionado/:barbeariaId', (req, res) => {
     return res.status(404).json({ Error: "Dia da semana desconhecido" });
 }
 });
+
+//===================================== alteração nesta rota =========================================//
 //Rota para obter os horarios definidos para cada dia em específico
 app.get('/api/agendaDiaSelecionado/:barbeariaId', (req, res) =>{
   const barbeariaId = req.params.barbeariaId;
 
   //Consultando as colunas que possuem os horários de trabalho da barbearia
-  const sql = "SELECT horariosTdias, dom, seg, ter, qua, qui, sex, sab FROM agenda WHERE barbearia_id = ?";
+  const sql = "SELECT dom, seg, ter, qua, qui, sex, sab FROM agenda WHERE barbearia_id = ?";
   db.query(sql, [barbeariaId], (err, result) => {
     //Verifição de erro na consulta
     if(err){
@@ -529,54 +531,34 @@ app.get('/api/agendaDiaSelecionado/:barbeariaId', (req, res) =>{
     }
     //Verificação de Sucesso na consulta
     if(result.length > 0){
-      let arrayResult = [];//Array para armazenar os dados resultantes
-
-      //Adicionando os dados obtidos no Array declado acima
-      arrayResult.push(result[0].horariosTdias);
-      arrayResult.push(result[0].dom);
-      arrayResult.push(result[0].seg);
-      arrayResult.push(result[0].ter);
-      arrayResult.push(result[0].qua);
-      arrayResult.push(result[0].qui);
-      arrayResult.push(result[0].sex);
-      arrayResult.push(result[0].sab);
-
-      //Lógica para remover os valores sem horários
-      for(let i=0; i < arrayResult.length; i++){
-        //Verificação de valor sem horário
-        if(arrayResult[i] === 'horarioPadronizado'){
-          arrayResult = arrayResult.filter(item => item !== 'horarioPadronizado');//Adicionando os horários encontrados
-          return res.status(200).json({ Success: "Success", horariosDiaEspecifico: arrayResult});//Enviando o array com os horários
-        }else{
-          return res.status(200).json({ Success: "Success", horariosDiaEspecifico: arrayResult});//Enviando o array com os horários
-        }
+      console.log(result)
+      const timesDays = {
+        Dom: result[0].dom,
+        Seg: result[0].seg,
+        Ter: result[0].ter,
+        Qua: result[0].qua,
+        Qui: result[0].qui,
+        Sex: result[0].sex,
+        Sáb: result[0].sab
       }
+      return res.status(200).json({ Success: "Success", TimesDays: timesDays});
     }
   })
 });
+//===================================== alteração nesta rota =========================================//
 //Rota para salvar a genda de horários para todos os dias definidos
 app.post('/api/update-horariosTodosOsDias/:barbeariaId', (req, res) => {
   const barbeariaId = req.params.barbeariaId;
-  const strHorariosTodosOsDias = req.body.StrAgenda;
-  const value = 'horarioPadronizado';
+  const strAllTimes = req.body.StrAgenda;
 
-  const sql = "UPDATE agenda SET horariosTdias = ? WHERE barbearia_id = ?";
-  db.query(sql, [strHorariosTodosOsDias, barbeariaId], (err, result) =>{
-    if(err){
-      console.error("Erro ao cadastrar agenda para todos os dias definidos da barbearia", err);
-      return res.status(500).json({ Error: "Internal Server Error" });
-    }
-    if(result){
       const sqlUpdate = "UPDATE agenda SET dom = ?, seg = ?, ter = ?, qua = ?, qui = ?, sex = ?, sab = ? WHERE barbearia_id = ?";
-      db.query(sqlUpdate, [value,value,value,value,value,value,value,barbeariaId], (error, resul) =>{
+      db.query(sqlUpdate, [strAllTimes,strAllTimes,strAllTimes,strAllTimes,strAllTimes,strAllTimes,strAllTimes,barbeariaId], (error, resul) =>{
         if(error){
           console.error("Erro ao padronizar os horários de trabalho da barbearia", error);
           return res.status(500).json({ Error: "Internal Server Error" });
         }
         return res.status(200).json({ Success: "Success" });
       })
-    }
-  })
 });
 
 //Rota para cadastrar um novo serviço
@@ -753,11 +735,12 @@ app.post('/SignIn', async (req, res) => {
     }
   });
 });
-
+//===================================== alteração nesta rota =========================================//
 //listando as barbearias cadastradas
 app.get('/listBarbearia', async (req, res) => {
   try {
-    db.query('SELECT * FROM barbearia', (err, rows) => {
+    const sql="SELECT b.id AS barbearia_id, b.name AS barbearia_name, b.endereco AS barbearia_endereco, s.id AS servico_id, s.name AS servico_name, s.preco AS servico_preco, s.duracao AS servico_duracao FROM barbearia b INNER JOIN servico s ON b.id = s.barbearia_id;";
+    db.query(sql, (err, rows) => {
       if (err) throw err;
       res.json(rows);
     });

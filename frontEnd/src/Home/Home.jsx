@@ -68,6 +68,7 @@ useEffect(() => {
 
   fetchData();
 },[]);
+console.log(barbearias)
 
 //Convertendo o value do search para minusculo
 const searchLowerCase = search.toLowerCase();
@@ -77,7 +78,7 @@ const barbeariaSearch = barbearias.filter((barbearia) =>
   barbearia.name.toLowerCase().includes(searchLowerCase) ||
   barbearia.status.toLowerCase().includes(searchLowerCase)
 );
-
+console.log(barbeariaSearch)
 //passando os dados da barbearia selecionada
 const handleBarbeariaClick = (barbearia) => {
   navigate("/BarbeariaDetails", { state: { barbearia } });
