@@ -67,7 +67,12 @@ export function Calendar({ onDateChange, QntDaysSelected, timesDays }) {
   const weekDays = getWeeks();
   const numberDays = getNumber();
 
-  
+  const handleDateClick = (dayOfWeek, day, month, year) => {
+    setSelectedDay(day);
+    setSelectedDateInfo(`${dayOfWeek}, ${day} de ${month} de ${year}`);
+    if (onDateChange) {
+      onDateChange(`${dayOfWeek}, ${day}, ${month}`);
+    }
   
     // Verifica se o dia selecionado está no objeto
     if (dayOfWeek in timesDays) {
