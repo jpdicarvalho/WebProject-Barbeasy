@@ -516,7 +516,6 @@ app.post('/api/update-agendaDiaSelecionado/:barbeariaId', (req, res) => {
 }
 });
 
-//===================================== alteração nesta rota =========================================//
 //Rota para obter os horarios definidos para cada dia em específico
 app.get('/api/agendaDiaSelecionado/:barbeariaId', (req, res) =>{
   const barbeariaId = req.params.barbeariaId;
@@ -545,7 +544,7 @@ app.get('/api/agendaDiaSelecionado/:barbeariaId', (req, res) =>{
     }
   })
 });
-//===================================== alteração nesta rota =========================================//
+
 //Rota para salvar a genda de horários para todos os dias definidos
 app.post('/api/update-horariosTodosOsDias/:barbeariaId', (req, res) => {
   const barbeariaId = req.params.barbeariaId;
@@ -739,10 +738,28 @@ app.post('/SignIn', async (req, res) => {
 //listando as barbearias cadastradas
 app.get('/listBarbearia', async (req, res) => {
   try {
-    const sql="SELECT b.id AS barbearia_id, b.name AS barbearia_name, b.endereco AS barbearia_endereco, s.id AS servico_id, s.name AS servico_name, s.preco AS servico_preco, s.duracao AS servico_duracao FROM barbearia b INNER JOIN servico s ON b.id = s.barbearia_id;";
+    const sql="SELECT id, name, banner__main, banner_images, status, endereco FROM barbearia";
     db.query(sql, (err, rows) => {
-      if (err) throw err;
-      res.json(rows);
+      if (err){
+        console.error("Erro ao buscar barbearias:", err);
+        return res.status(500).json({ Success: "Error", Message: "Erro ao buscar barbearias" });
+      }
+      if(rows.length > 0){
+        const sqlService="SELECT name, barbearia_id FROM servico";
+        db.query(sqlService, (error, result) =>{
+          if(error){
+            console.error("Erro ao buscar serviços:", err);
+            return res.status(500).json({ Success: "Error", Message: "Erro ao buscar serviços" });
+          }else{
+            
+            res.json({barbearias: rows, services: result});
+          //  console.log('MyObject',rows)
+            //const barbearias = {}
+            //console.log( barbearias)
+          }
+        })
+      }
+      
     });
   } catch (error) {
     console.error('Erro ao obter os registros:', error);

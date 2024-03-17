@@ -49,6 +49,7 @@ useEffect(() => {
 obterSaudacao();
 }, []);
 
+const [services, setServices] = useState('')
 //listando as barbearias cadastradas
 useEffect(() => {
   const fetchData = async () => {
@@ -60,7 +61,10 @@ useEffect(() => {
         });
         //Armazenando a resposta da requisição
         const data = await response.json();
-        setBarbearias(data);
+
+        setBarbearias(data.barbearias);
+        setServices(data.services);
+
     } catch (error) {
       console.error('Erro ao obter os registros:', error);
     }
@@ -68,17 +72,36 @@ useEffect(() => {
 
   fetchData();
 },[]);
-console.log(barbearias)
 
-//Convertendo o value do search para minusculo
+//hook para eecultar a função que junta a barbearia com seu respectivo serviço
+useEffect(() =>{
+  const barbeariaWithService = () =>{
+    if(barbearias && services){
+      // Percorra cada barbearia
+      for (const indexBarbearia of barbearias) {
+        // Filtrar os serviços que correspondem à barbearia atual
+        const servicosDaBarbearia = services
+            .filter(servico => servico.barbearia_id === indexBarbearia.id)
+            .map(servico => servico.name); // Pegar apenas o nome do serviço
+        
+        // Adicionar os nomes dos serviços à barbearia atual
+        indexBarbearia.servicos = servicosDaBarbearia;
+      }
+    }
+  };
+  barbeariaWithService()
+}, [barbearias])
+
+// Convertendo o valor do search para minúsculo
 const searchLowerCase = search.toLowerCase();
 
-//Buscando Barbearia pelo input Search
+// Buscando Barbearia pelo input Search
 const barbeariaSearch = barbearias.filter((barbearia) =>
   barbearia.name.toLowerCase().includes(searchLowerCase) ||
-  barbearia.status.toLowerCase().includes(searchLowerCase)
+  barbearia.status.toLowerCase().includes(searchLowerCase) ||
+  barbearia.servicos.some((servico) => servico.toLowerCase().includes(searchLowerCase))
 );
-console.log(barbeariaSearch)
+
 //passando os dados da barbearia selecionada
 const handleBarbeariaClick = (barbearia) => {
   navigate("/BarbeariaDetails", { state: { barbearia } });
