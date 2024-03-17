@@ -71,7 +71,7 @@ export function Calendar({ onDateChange, QntDaysSelected, timesDays }) {
     setSelectedDay(day);
     setSelectedDateInfo(`${dayOfWeek}, ${day} de ${month} de ${year}`);
     if (onDateChange) {
-      onDateChange(`${dayOfWeek}, ${day}, ${month}`);
+      onDateChange(`${dayOfWeek}, ${day} de ${month} de ${year}`);
     }
   
     // Verifica se o dia selecionado está no objeto

@@ -142,7 +142,6 @@ useEffect(() => {
 
 /*--------------------------------------------------------*/
 const [selectedDate, setSelectedDate] = useState(null);
-const [selectedTime, setSelectedTime] = useState("");
 const [selectedService, setSelectedService] = useState("")
 const [isAgendamentoConfirmed, setAgendamentoConfirmed] = useState(false);
 
@@ -151,11 +150,7 @@ const handleDateChange = (date) => {
   //console.log('dia do agendamento', date);
   setSelectedDate(date);
 };
-
-//Função para selecionar a hora escolhida pelo usuário
-const handleTimeChange = (horario) => {
-    setSelectedTime(horario);
-};
+console.log(selectedDate)
 
 //Função para selecionar o serviço escolhida pelo usuário
 const handleServiceChange = (servicoId) => {
@@ -342,7 +337,7 @@ return (
             <Calendar onDateChange={handleDateChange} QntDaysSelected={QntDaysSelected} timesDays={timesDays} />
       <hr />
 
-        {selectedService && selectedDate && selectedTime && !isAgendamentoConfirmed && (
+        {selectedService && selectedDate && !isAgendamentoConfirmed && (
           <button
             id="AgendamentoButton"
             onClick={pagamento}
