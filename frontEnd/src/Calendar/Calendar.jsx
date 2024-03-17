@@ -116,7 +116,7 @@ export function Calendar({ onDateChange, QntDaysSelected, timesDays }) {
               >
                 <p className='Box__day'>{dayOfWeek}</p>
                 <p className='Box__NumDay'>{numberDays[index].number}</p>
-                <p className='Box__month'>{numberDays[index].month}</p> {/* Renderiza o nome do mês */}
+                <p className='Box__month'>{numberDays[index].month}</p>
               </div>
             </div>
           ))}
