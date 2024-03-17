@@ -408,162 +408,576 @@ const getHorariosPorDia = (dia) => {
 };
 
 /*=================================================*/
+/*===== Functions for all functions ======*/
+//Função para mostar o menu Serviço
+const [mostrarServico, setMostrarServico] = useState(false);
+const [servicos, setServicos] = useState([]);
 
+  //Função para mostra os serviços cadastrados
+  const alternarServico = () => {
+    setMostrarServico(!mostrarServico);
+  };
+
+  //Função para buscar os serviços cadastrados
+  const obterServicos = () =>{
+    axios.get(`https://api-user-barbeasy.up.railway.app/api/get-service/${barbeariaId}`)
+  .then(res => {
+    if (res.data.Success === "Success") {
+      setServicos(res.data.result);
+    }
+  })
+  .catch(err => {
+    console.error("Erro ao buscar serviços!", err);
+  });
+  }
+
+  //hook para chamar a função de obtersServiço
+  useEffect(() => {
+    obterServicos()
+  }, []);
+
+//Função para formartar o preço do serviço
+const formatarPreco = (valor) => {
+  const numero = valor.replace(/\D/g, ''); // Remove caracteres não numéricos
+  const valorFormatado = (Number(numero) / 100).toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+  return `R$ ${valorFormatado}`;
+};
+/*===== Section to add a new service ======*/
+  const [showAddServico, setShowAddServico] = useState(false);
+
+  const [newNameService, setNewNameService] = useState('');
+  const [newPriceService, setNewPriceService] = useState('');
+  
+  const [newServiceDuration, setNewServiceDuration] = useState([]);
+
+  const [messageAddService, setMessageAddService] = useState('');
+
+  //Função para mostar o menu Adicionar Serviço
+  
+  const ShowAddService = () => {
+    setShowAddServico(true);
+  };
+  //Função para fechar o menu Adicionar Serviço
+  const fecharExpandir = () => {
+    setShowAddServico(false);
+  };
+
+  //Função para adicionar o valor do serviço a variável definida
+  const AddNewPriceService = (event) => {
+    const valor = event.target.value;
+    // Filtrar apenas os números
+    const numero = valor.replace(/\D/g, '');//Regex para aceitar apenas números no input
+    setNewPriceService(formatarPreco(numero));
+  };
+
+  // Função responsável por adicionar ou remover o novo tempo de duração do serviço a ser cadastrado
+  const handleNewServiceDuration = (tempo) => {
+  // Verifica se já existem dois tempos selecionados e se o tempo clicado não está entre eles
+  if (newServiceDuration.length === 1 && !newServiceDuration.includes(tempo)) {
+      // Caso positivo, não faz nada e retorna
+      return;
+    }
+
+      // Verifica se o tempo já está selecionado
+    if (newServiceDuration.includes(tempo)) {
+      // Se o tempo já estiver selecionado, remove-o da seleção
+      setNewServiceDuration(newServiceDuration.filter(item => item !== tempo));
+    } else {
+        // Se o tempo não estiver selecionado, adiciona-o à seleção
+        setNewServiceDuration([...newServiceDuration, tempo]);
+    }
+  }
+
+  //Função para cadastrar um novo serviço
+  const addNewService = () => {
+    // Verifica se os campos obrigatórios estão preenchidos
+    if(newNameService && newPriceService && newServiceDuration[0]){
+      // Cria um objeto com os dados do serviço a serem enviados
+      const newServiceData = {
+        newNameService,
+        newPriceService,
+        newDuration: newServiceDuration[0]
+      };
+      let firstService = servicos.length;
+      axios.post(`https://api-user-barbeasy.up.railway.app/api/add-service/${barbeariaId}`, newServiceData)
+          .then(res => {
+            if (res.data.Success === "Success") {
+              setMessageAddService("Serviço adicionado com sucesso.");
+              obterServicos()
+              setTimeout(() => {
+                setMessageAddService(null);
+                if(firstService === 0){
+                  window.location.reload()
+                }
+                setNewNameService('')
+                setNewPriceService('')
+                setNewServiceDuration('')
+                fecharExpandir()
+              }, 2000);
+              
+            }
+          })
+          .catch(err => {
+            setMessageAddService("Erro ao adicionar serviço!");
+
+            setTimeout(() => {
+              setMessageAddService(null);
+              setShowAddServico(false);
+              }, 3000);
+            console.error(err);
+          });
+    }else{
+      setMessageAddService("Preencha todos os campos.");
+        setTimeout(() => {
+          setMessageAddService(null);
+        }, 3000);
+    }
+  };
+
+  // Adiciona um event listener para detectar cliques fora da div expandir
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      const expandirDiv = document.querySelector('.expandir');
+
+      if (expandirDiv && !expandirDiv.contains(event.target)){
+        fecharExpandir();
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    // Remove o event listener quando o componente é desmontado
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
+
+/*===== Section to edit a current service ======*/
+//Função para mostar o menu de edição de um serviço
+  const [selectedService, setSelectedService] = useState(null);
+
+  const [editedServiceName, setEditedServiceName] = useState('');
+  const [editedServicePrice, setEditedServicePrice] = useState('');
+  const [editedServiceDuration, setEditedServiceDuration] = useState([]);
+
+  const [messageEditedService, setMessageEditedService] = useState('');
+
+  //Função para mostrar o menu de edição de um serviço selecionado
+  const ShowServiceEditMenu = (index) => {
+    setSelectedService(index);
+  }; 
+
+  //Função para adicionar o preço editado do serviço, a variável definida
+  const handleEditedServicePrice = (event) => {
+    const valor = event.target.value;
+    // Filtrar apenas os números
+    const numero = valor.replace(/\D/g, '');//Regex para aceitar apenas números no input
+    setEditedServicePrice(formatarPreco(numero));
+  };
+
+  // Função responsável por adicionar ou remover o tempo de duração selecionado, no menu de edição do serviço
+  const handleEditedServiceDuration = (timeDurationEdited) => {
+    // Verifica se já existem dois tempos selecionados e se o tempo clicado não está entre eles
+    if (editedServiceDuration.length === 1 && !editedServiceDuration.includes(timeDurationEdited)) {
+        // Caso positivo, não faz nada e retorna
+        return;
+      }
+
+        // Verifica se o tempo já está selecionado
+      if (editedServiceDuration.includes(timeDurationEdited)) {
+        // Se o tempo já estiver selecionado, remove-o da seleção
+        setEditedServiceDuration(editedServiceDuration.filter(item => item !== timeDurationEdited));
+      } else {
+          // Se o tempo não estiver selecionado, adiciona-o à seleção
+          setEditedServiceDuration([...editedServiceDuration, timeDurationEdited]);
+      }
+  }
+  //Função para enviar as informações do serviço alterado
+  const changeServiceData = (servicoId) => {
+    // Verifica se os campos obrigatórios estão preenchidos
+    if (editedServiceName || editedServicePrice || editedServiceDuration[0]) {
+      // Cria um objeto com os dados do serviço a serem enviados
+      const editedService = {
+        editedServiceName,
+        editedServicePrice,
+        servico_Id: servicoId,
+        editedDuration: editedServiceDuration[0]
+      };
+      axios.post(`https://api-user-barbeasy.up.railway.app/api/update-service/${barbeariaId}`, editedService)
+      .then(res => {
+        if (res.data.Success === "Success") {
+          setMessageEditedService("Serviço alterado com sucesso.");
+          obterServicos()
+          setTimeout(() => {
+            setMessageEditedService(null);
+            setEditedServiceName('')
+            setEditedServicePrice('')
+            setEditedServiceDuration('')
+            setSelectedService(null)
+          }, 2000);
+        }
+      })
+      .catch(err => {
+        console.log("Erro ao alterar informação do serviço.", err);
+      });
+  } else {
+    setMessageEditedService("Nenhuma alteração identificada.");
+    setTimeout(() => {
+       setMessageEditedService(null);
+    }, 2000);
+  }
+  }
+
+/*===== Section to delete a current service ======*/
+  const [confirmDeleteServico, setConfirmDeleteServico] = useState(false);
+
+  //Função para alterar o estado da variável que mostra o botão ConfirmDelete
+  const showConfirmDeleteService = () => {
+    setConfirmDeleteServico(!confirmDeleteServico);
+  };
+
+  //Função para alterar o estado da variável que oculta o botão ConfirmDelete
+  const hideConfirmDeleteService = () => {
+    setConfirmDeleteServico(!confirmDeleteServico);
+  };
+
+  //Função para apagar um serviço
+  const deleteServico = (servicoId) => {
+    let lastService = servicos.length;
+    axios.delete(`https://api-user-barbeasy.up.railway.app/api/delete-service/${barbeariaId}/${servicoId}`)
+      .then(res => {
+        if (res.data.Success === "Success") {
+          setMessageEditedService("Serviço apagado com sucesso.");
+          setTimeout(() => {
+            setMessageEditedService(null);
+            if(lastService === 1){
+              window.location.reload()
+            }
+            obterServicos()
+            setConfirmDeleteServico(false);
+            setSelectedService(null)
+          }, 2000);
+        }
+      })
+      .catch(err => {
+        console.log("Erro ao apagar o serviço.", err);
+        setMessageEditedService("Erro ao apagar o serviço.");
+        setTimeout(() => {
+          setMessageEditedService(null);
+        }, 2000);
+      });
+  }
   return (
     <>
+      <div className="container__menu">
 
-<div className="container__menu">
+      <div className="menu__main" onClick={alternarDiasTrabalho}>
+        <BsCalendar2Day className='icon_menu'/>
+          Definir Dias de Trabalho
+          <IoIosArrowDown className={`arrow ${mostrarDiasSemana ? 'girar' : ''}`} id='arrow'/>
+      </div>
+        
+      {mostrarDiasSemana && (
+      <div className="divSelected">
+        {messageAgenda === 'Agenda Atualizada com Sucesso!' ?(
+          <div className="mensagem-sucesso">
+            <MdOutlineDone className="icon__success"/>
+            <p className="text__message">{messageAgenda}</p>
+          </div>
+          ) : (
+          <div className={` ${messageAgenda ? 'mensagem-erro' : ''}`}>
+            <VscError className={`hide_icon__error ${messageAgenda ? 'icon__error' : ''}`}/>
+            <p className="text__message">{messageAgenda}</p>
+          </div>
+          )}
 
-<div className="menu__main" onClick={alternarDiasTrabalho}>
-  <BsCalendar2Day className='icon_menu'/>
-    Definir Dias de Trabalho
-    <IoIosArrowDown className={`arrow ${mostrarDiasSemana ? 'girar' : ''}`} id='arrow'/>
-</div>
-  
-{mostrarDiasSemana && (
-<div className="divSelected">
-  {messageAgenda === 'Agenda Atualizada com Sucesso!' ?(
-    <div className="mensagem-sucesso">
-      <MdOutlineDone className="icon__success"/>
-      <p className="text__message">{messageAgenda}</p>
-    </div>
-    ) : (
-    <div className={` ${messageAgenda ? 'mensagem-erro' : ''}`}>
-      <VscError className={`hide_icon__error ${messageAgenda ? 'icon__error' : ''}`}/>
-      <p className="text__message">{messageAgenda}</p>
-    </div>
-    )}
+      <p className='information__span'>Selecione os dias da semana em que deseja trabalhar:</p>
+      {diasSemana.map((dia, index) => (
+        <div className="container__checkBox" key={index}>
+          <span className={daysWeekSelected.includes(dia) ? 'defined__day' : ''}>{dia}</span>
+          <Checkbox dia={dia} />
+        </div>
+      ))}
 
-<p className='information__span'>Selecione os dias da semana em que deseja trabalhar:</p>
-{diasSemana.map((dia, index) => (
-  <div className="container__checkBox" key={index}>
-    <span className={daysWeekSelected.includes(dia) ? 'defined__day' : ''}>{dia}</span>
-    <Checkbox dia={dia} />
-  </div>
-))}
+      <p className='information__span'>Escolha a quantidade de dias a serem disponibilizados para agendamento:</p>
+      <div className="container__checkBox">
+        <span className={QntDaysSelected === '7' ? 'selectedOption' : ''}>Próximos 7 dias</span>
+        <CheckboxQntDias value="7" />
+      </div>
+      <div className="container__checkBox">
+        <span className={QntDaysSelected === '15' ? 'selectedOption' : ''}>Próximos 15 dias</span>
+        <CheckboxQntDias value="15" />
+      </div>
+      <div className="container__checkBox">
+        <span className={QntDaysSelected === '30' ? 'selectedOption' : ''}>Próximos 30 dias</span>
+        <CheckboxQntDias value="30" />
+      </div>
+      <button className={`button__change ${QntDaysSelected.length > 0 && daysWeekSelected.length > 0 ? 'show' : ''}`} onClick={updateAgenda}>
+        Alterar
+      </button>
 
-<p className='information__span'>Escolha a quantidade de dias a serem disponibilizados para agendamento:</p>
-<div className="container__checkBox">
-  <span className={QntDaysSelected === '7' ? 'selectedOption' : ''}>Próximos 7 dias</span>
-  <CheckboxQntDias value="7" />
-</div>
-<div className="container__checkBox">
-  <span className={QntDaysSelected === '15' ? 'selectedOption' : ''}>Próximos 15 dias</span>
-  <CheckboxQntDias value="15" />
-</div>
-<div className="container__checkBox">
-  <span className={QntDaysSelected === '30' ? 'selectedOption' : ''}>Próximos 30 dias</span>
-  <CheckboxQntDias value="30" />
-</div>
-<button className={`button__change ${QntDaysSelected.length > 0 && daysWeekSelected.length > 0 ? 'show' : ''}`} onClick={updateAgenda}>
-  Alterar
-</button>
+      </div>
+      )}
 
-</div>
-)}
+      <hr className='hr_menu'/>
 
-<hr className='hr_menu'/>
+      <div className="menu__main" onClick={alternarHorario}>
+        <TbClockHour4 className='icon_menu'/>
+          Definir Horários de Trabalho
+        <IoIosArrowDown className={`arrow ${mostrarHorario ? 'girar' : ''}`} id='arrow'/>
+      </div>
 
-<div className="menu__main" onClick={alternarHorario}>
-  <TbClockHour4 className='icon_menu'/>
-    Definir Horários de Trabalho
-  <IoIosArrowDown className={`arrow ${mostrarHorario ? 'girar' : ''}`} id='arrow'/>
-</div>
-
-{mostrarHorario && (
-    <div className="divSelected">
-      <p className='information__span'>Defina seus horários de funcionamento para cada dia definido anteriormente:</p>
-      {daysFromAgenda.length === 0 ? (
-        <p style={{textAlign: 'center', marginTop: '10px'}}>Nenhum dia selecionado</p>
-      ) : (
-        daysFromAgenda.map(day => (
-          <div key={day} className='Dias_Trabalho_Rapido'>
-            <div className='Dias_Semana' onClick={() => handleDiaClick(day)}>{day}
-              {diaSelecionado === day && (
-                <div><p className='information__span'>Defina o seu horário de funcionamento:</p>
-                  <div className="inputs-horarios">
-                    {horarios.map((horario, index) => (
-                        <div
-                            key={index}
-                            className={`horario-item ${HorarioFuncionamento.includes(horario) ? 'Horario-selecionado' : ''}`}
-                            onClick={() => handleHorarioFuncionamento(horario)}
-                        >
-                            <p>{horario}</p>
+      {mostrarHorario && (
+          <div className="divSelected">
+            <p className='information__span'>Defina seus horários de funcionamento para cada dia definido anteriormente:</p>
+            {daysFromAgenda.length === 0 ? (
+              <p style={{textAlign: 'center', marginTop: '10px'}}>Nenhum dia selecionado</p>
+            ) : (
+              daysFromAgenda.map(day => (
+                <div key={day} className='Dias_Trabalho_Rapido'>
+                  <div className='Dias_Semana' onClick={() => handleDiaClick(day)}>{day}
+                    {diaSelecionado === day && (
+                      <div><p className='information__span'>Defina o seu horário de funcionamento:</p>
+                        <div className="inputs-horarios">
+                          {horarios.map((horario, index) => (
+                              <div
+                                  key={index}
+                                  className={`horario-item ${HorarioFuncionamento.includes(horario) ? 'Horario-selecionado' : ''}`}
+                                  onClick={() => handleHorarioFuncionamento(horario)}
+                              >
+                                  <p>{horario}</p>
+                              </div>
+                          ))}
                         </div>
+                      </div>
+                    )}
+                    {diaSelecionado === day && (
+                    <div><p className='information__span'>Defina o tempo de atendimento:</p>
+                      <div className="inputs-horarios">
+                        {['15min','30min','45min','60min','75min', '90min'].map((atendimento, index) => (
+                            <div
+                                key={index}
+                                className={`horario-item ${tempoAtendimentoSelected.includes(atendimento) ? 'Horario-selecionado' : ''}`}
+                                onClick={() => handleAtendimento(atendimento)}
+                            >
+                                <p>{atendimento}</p>
+                            </div>
+                        ))}
+                      </div>
+                      
+                    </div>
+                    )}
+                    {diaSelecionado === day && (
+                        <div>
+                            <p className='information__span'>Horários já definidos para esse dia:</p>
+                            <div className="inputs-horarios">
+                                {/* Renderizar o array de horários correspondente */}
+                                {getHorariosPorDia(day)}
+                            </div>
+                        </div>
+                    )}
+                    {diaSelecionado === day && agendaDoDiaSelecionado.length > 2 && (
+                      <div>
+                        <p className='information__span'>Deseja remover algum horário?</p>
+                        <div className="inputs-horarios">
+                            {agendaDoDiaSelecionado.map((value, index) => (
+                            // Comece a partir do índice 1
+                              index > 0 && (
+                                <div
+                                    key={index}
+                                    className={`horario-item ${agendaDoDiaSelecionado.includes(value) ? 'Horario-selecionado' : ''}`}
+                                    onClick={() => handleIntervalo(value)}
+                                >
+                                    <p>{value}</p>
+                                    
+                                </div>
+                              )
+                            ))}
+                        </div>
+
+                        {messageAgendaHorarios === 'Horários Salvos com Sucesso.' ?(
+                          <div className="mensagem-sucesso">
+                            <MdOutlineDone className="icon__success"/>
+                            <p className="text__message">{messageAgendaHorarios}</p>
+                          </div>
+                          ) : (
+                          <div className={` ${messageAgendaHorarios ? 'mensagem-erro' : ''}`}>
+                            <VscError className={`hide_icon__error ${messageAgendaHorarios ? 'icon__error' : ''}`}/>
+                            <p className="text__message">{messageAgendaHorarios}</p>
+                          </div>
+                        )}
+        
+                        <div className="container_button">
+                          <button className="add_Service" onClick={salvarHorariosDiaSelecionado}>Salvar</button>
+                          <button className="add_Service" onClick={salvarHorariosTodosOsDias}>Salvar para todos os outros dias</button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+      )}
+        <hr className='hr_menu'/>
+
+          <div className="menu__main" onClick={alternarServico}>
+            <GiRazor className='icon_menu'/>
+              Profissional
+            <IoIosArrowDown className={`arrow ${mostrarServico ? 'girar' : ''}`} id='arrow'/>
+          </div>
+
+          {mostrarServico && (
+         <div className={`${showAddServico ? 'expandir' : ''}`}>
+          {showAddServico &&(
+            <div className="input_Container">
+
+                  <p>Qual o nome do serviço?</p>
+                  <input
+                  className="input_AddService"
+                  type="text"
+                  id="serviceName"
+                  name="serviceName"
+                  maxLength={30}
+                  onChange={e => setNewNameService(e.target.value)}
+                  placeholder='Ex. Corte Social'
+                  />
+
+                  <p>Quanto vai custar?</p>
+                  <input
+                  className="input_AddService"
+                  type="text"
+                  id="precoServico"
+                  name="precoServico"
+                  value={newPriceService}
+                  onChange={AddNewPriceService}
+                  maxLength={9}
+                  placeholder="R$ 00,00"
+                  required
+                />
+
+                  <p style={{marginTop: '10px'}}>Qual o tempo de duração?</p>
+                  <div className="inputs-horarios">
+                    {['15min','30min','45min','60min','75min', '90min'].map((tempo, index) => (
+                      <div
+                        key={index}
+                        className={`horario-item ${newServiceDuration.includes(tempo) ? 'Horario-selecionado' : ''}`}
+                        onClick={() => handleNewServiceDuration(tempo)}
+                      >
+                        <p>{tempo}</p>
+                      </div>
                     ))}
                   </div>
-                </div>
-              )}
-              {diaSelecionado === day && (
-              <div><p className='information__span'>Defina o tempo de atendimento:</p>
-                <div className="inputs-horarios">
-                  {['15min','30min','45min','60min','75min', '90min'].map((atendimento, index) => (
-                      <div
-                          key={index}
-                          className={`horario-item ${tempoAtendimentoSelected.includes(atendimento) ? 'Horario-selecionado' : ''}`}
-                          onClick={() => handleAtendimento(atendimento)}
-                      >
-                          <p>{atendimento}</p>
-                      </div>
-                  ))}
-                </div>
-                
-              </div>
-              )}
-              {diaSelecionado === day && (
-                  <div>
-                      <p className='information__span'>Horários já definidos para esse dia:</p>
-                      <div className="inputs-horarios">
-                          {/* Renderizar o array de horários correspondente */}
-                          {getHorariosPorDia(day)}
-                      </div>
-                  </div>
-              )}
-              {diaSelecionado === day && agendaDoDiaSelecionado.length > 2 && (
-                <div>
-                  <p className='information__span'>Deseja remover algum horário?</p>
-                  <div className="inputs-horarios">
-                      {agendaDoDiaSelecionado.map((value, index) => (
-                      // Comece a partir do índice 1
-                        index > 0 && (
-                          <div
-                              key={index}
-                              className={`horario-item ${agendaDoDiaSelecionado.includes(value) ? 'Horario-selecionado' : ''}`}
-                              onClick={() => handleIntervalo(value)}
-                          >
-                              <p>{value}</p>
-                              
-                          </div>
-                        )
-                      ))}
-                  </div>
-
-                  {messageAgendaHorarios === 'Horários Salvos com Sucesso.' ?(
+                  {messageAddService === "Serviço adicionado com sucesso." ? (
                     <div className="mensagem-sucesso">
                       <MdOutlineDone className="icon__success"/>
-                      <p className="text__message">{messageAgendaHorarios}</p>
+                      <p className="text__message">{messageAddService}</p>
                     </div>
-                    ) : (
-                    <div className={` ${messageAgendaHorarios ? 'mensagem-erro' : ''}`}>
-                      <VscError className={`hide_icon__error ${messageAgendaHorarios ? 'icon__error' : ''}`}/>
-                      <p className="text__message">{messageAgendaHorarios}</p>
+                      ) : (
+                      <div className={` ${messageAddService ? 'mensagem-erro' : ''}`}>
+                        <VscError className={`hide_icon__error ${messageAddService ? 'icon__error' : ''}`}/>
+                        <p className="text__message">{messageAddService}</p>
                     </div>
                   )}
-  
-                  <div className="container_button">
-                    <button className="add_Service" onClick={salvarHorariosDiaSelecionado}>Salvar</button>
-                    <button className="add_Service" onClick={salvarHorariosTodosOsDias}>Salvar para todos os outros dias</button>
-                  </div>
-                </div>
-              )}
+                    <button className="button__Salve__Service" onClick={addNewService}>
+                    Adicionar Serviço
+                  </button>
             </div>
+          )}
+
+          <div className="divSelected">
+            <div className='container__servicos'>
+              <div className='section__service'>
+              {servicos.length > 0 ?
+                servicos.map((servico, index) => (
+                  <div 
+                  key={index}
+                  className={`box__service ${selectedService === index ? 'expandir__Service' : ''}`}
+                  onClick={() => ShowServiceEditMenu(index)}
+                >
+                  <p style={{marginBottom: '10px', width: '100%'}}>{servico.name}</p>
+
+                  <p>Deseja alterar o nome do serviço?</p>
+                  <input
+                  className="input_AddService"
+                  type="text"
+                  id="EditedServiceName"
+                  name="EditedServiceName"
+                  maxLength={30}
+                  onChange={e => setEditedServiceName(e.target.value)}
+                  placeholder={servico.name}
+                  />
+
+                  <p>Deseja alterar o preço do serviço?</p>
+                  <input
+                  className="input_AddService"
+                  type="text"
+                  id="EditedServicePrice"
+                  name="EditedServicePrice"
+                  value={editedServicePrice}
+                  onChange={handleEditedServicePrice}
+                  maxLength={9}
+                  placeholder={servico.preco}
+                />
+
+                <p style={{marginTop: '10px'}}>Deseja alterar o tempo de duração?</p>
+                  <div className="inputs-horarios">
+                    {['15min','30min','45min','60min','75min', '90min'].map((timeDurationEdited, index) => (
+                      <div
+                        key={index}
+                        className={`horario-item ${editedServiceDuration.includes(timeDurationEdited) ? 'Horario-selecionado' : ''}`}
+                        onClick={() => handleEditedServiceDuration(timeDurationEdited)}
+                      >
+                        <p>{timeDurationEdited}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p style={{marginTop: '10px'}}>Duração Atual • {servico.duracao}</p>
+                  {messageEditedService === "Nenhuma alteração identificada." ? (
+                    <div className={` ${messageEditedService ? 'mensagem-erro' : ''}`}>
+                      <VscError className={`hide_icon__error ${messageEditedService ? 'icon__error' : ''}`}/>
+                      <p className="text__message">{messageEditedService}</p>
+                    </div>
+                      ) : (
+                      <div className={`hide__message ${messageEditedService ? 'mensagem-sucesso' : ''}`}>
+                        <MdOutlineDone className="icon__success"/>
+                        <p className="text__message">{messageEditedService}</p>
+                      </div>
+                  )}
+                
+                  <div className="section__service__button">
+                    <button className={`button_ocult ${confirmDeleteServico ? 'section__confirm__delete' : ''}`} onClick={() => deleteServico(servico.id)}>
+                      Confirmar
+                    </button>
+
+                    <button className={`buttonChange__service ${confirmDeleteServico ? 'button_ocult' : ''}`} onClick={() => changeServiceData(servico.id)}>
+                      Alterar
+                    </button>
+
+                    <button className={`delete__Service ${confirmDeleteServico ? 'button_ocult' : ''}`} onClick={showConfirmDeleteService}>
+                      <RiDeleteBin6Line/>
+                    </button>
+
+                    <button className={`button_ocult ${confirmDeleteServico ? 'section__cancel' : ''}`} onClick={hideConfirmDeleteService}>
+                      Cancelar
+                    </button>
+
+                  </div>
+
+                </div>
+                )):
+                <p>Nenhum serviço cadastrado</p>
+              }
+              </div>
+            </div>
+
+            <button className="button__Salve__Service" onClick={ShowAddService}>
+                    Adicionar Serviço
+            </button>
           </div>
-        ))
-      )}
-    </div>
-)}
-  <hr className='hr_menu'/>
-</div>
+        </div>
+          )}
+      </div>
     </>
   );
 };

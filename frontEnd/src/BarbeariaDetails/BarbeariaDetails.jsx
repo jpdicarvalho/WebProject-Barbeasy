@@ -38,9 +38,10 @@ const userData = localStorage.getItem('userData');
 //trasnformando os dados para JSON
 const userInformation = JSON.parse(userData);
 //Buscando os dados do usuário
-//const userId = userInformation.user[0].id;
 const userEmail = userInformation.user[0].email;
 const userName = userInformation.user[0].name;
+const userId = userInformation.user[0].id;
+
 
 const [isMenuActive, setMenuActive] = useState(false);
 
@@ -66,8 +67,8 @@ useEffect(() =>{
   setBanners(namesBanners)
 }, []);
 
-/*=========== Buscandos os serviço da Barbearia selecionada ===========*/
-// Alteração apartir daqui, não esquece de importar import axios from 'axios';
+/*=========== Buscandos os serviço, horários e profissionais da Barbearia selecionada ===========*/
+//Declaração do array para armazenar os serviços
 const [servicos, setServicos] = useState([]);
 
   //Função para buscar os serviços cadastrados
@@ -89,6 +90,7 @@ const [servicos, setServicos] = useState([]);
     obterServicos()
   }, []);
 
+  //Declaração dos arrays para armazenar a quantidade de dias da agenda
   const [QntDaysSelected, setQntDaysSelected] = useState([]);
   const [agenda, setAgenda] = useState([]);
 
@@ -103,6 +105,7 @@ const [servicos, setServicos] = useState([]);
       console.error('Erro ao buscar informações da agenda da barbearia', error)
     })
   }
+
   //Chamando a função para obter os dados da agenda da barbearia
   useEffect(() => {
     getAgenda()
@@ -133,10 +136,29 @@ useEffect(() => {
   getHorariosDefinidos()
 }, [])
 
+// ============= Alteração aqui ==================
+//Função para obter os profissionais da barbearia
+const [professional, setProfessional] = useState([]);
+const getProfessional = () =>{
+  axios.get(`http://localhost:8000/api/professional/${barbeariaId}`)
+  .then(res => {
+    //Armazenando o objeto com todos os horários definidos
+    setProfessional(res.data.professional)
+
+  }).catch(error => {
+    console.error('Erro ao buscar os profissionais da barbearia', error)
+  })
+}
+useEffect(() => {
+  getProfessional()
+}, [])
+
 /*============================= Section getElements to appointmants ======================== */
 const [selectedService, setSelectedService] = useState("")
 const [selectedDate, setSelectedDate] = useState("");
 const [timeSelected, setTimeSelected] = useState("");
+const [messageConfirmedBooking, setMessageConfirmedBooking] = useState('');
+
 const [isAgendamentoConfirmed, setAgendamentoConfirmed] = useState(false);
 
 //Função para selecionar o serviço escolhida pelo usuário
@@ -153,33 +175,50 @@ const handleDateChange = (date) => {
 const handleTimeSelected = (time) => {
   setTimeSelected(time);
 };
+// =============== Alteração aqui (não esquece do id do usuário, tem que pegar do localStorage e mudar atabela agendamentos) ================
+const [professionalSelected, setProfessionalSelected] = useState("");
+
+//Função para obter o profissional selecionado pelo usuário
+const handleProfessionalChange = (professional_id) => {
+  setProfessionalSelected(professional_id);
+};
 
 //Requisição para realizar a gendamento
-/*
-const Agendar = async () => {
-    try {
-      const response = await fetch('http://localhost:8000/agendamento', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          selectedDate,
-          selectedTime,
-          selectedService,
-          barbeariaId: barbearia.id,
-          userId
-        }),
-        
-      });
-      
-      const data = await response.json();
-      alert(data.message);
-      //window.location.href = 'http://localhost:5173/Checkout';
-    } catch (error) {
-      console.error('Erro ao enviar os dados:', error);
+const makeBooking = () =>{
+  if(barbeariaId && userId && selectedService && selectedDate && timeSelected && professionalSelected){
+
+    //Object with elements to make the booking
+    const newAgendamento = {
+      userId: userId,
+      selectedService: selectedService,
+      selectedDate: selectedDate,
+      timeSelected: timeSelected,
+      professionalSelected
     }
-  };*/
+
+    axios.post(`http://localhost:8000/api/agendamento/${barbeariaId}`, newAgendamento)
+    .then(res => {
+      if (res.data.Success === "Success") {
+        console.log(res.data.resultado)
+        setMessageConfirmedBooking("Agendamento relalizado com sucesso.");
+        setTimeout(() => {
+          setMessageConfirmedBooking(null);
+        }, 2000);
+        
+      }
+    })
+    .catch(err => {
+      setMessageConfirmedBooking("Erro ao relaizar o agendamento!");
+      setTimeout(() => {
+        setMessageConfirmedBooking('')
+        }, 3000);
+      console.error(err);
+    });
+  }
+}
+//console.log(barbeariaId, userId, selectedService, selectedDate, timeSelected, professionalSelected)
+
+//================================================================================================================================
 
   const [url, setUrl] = useState(null);
 //Mandan a requisição para a rota de Pagamento
@@ -290,7 +329,6 @@ useEffect(()=> {
   setWidth(reviewsWidth);
 }, [reviewsWidth])
 
-console.log(selectedService, selectedDate,timeSelected)
 return (
     <>
       <div className="Outdoor">
@@ -335,13 +373,27 @@ return (
             <Calendar onDateChange={handleDateChange} timeSelected={handleTimeSelected} QntDaysSelected={QntDaysSelected} timesDays={timesDays} />
       <hr />
 
-        {selectedService && selectedDate && !isAgendamentoConfirmed && (
+      <div className="tittle">
+        Profissional
+      </div>
+      <div className="cantainer__professional">
+        {professional.map(professional => (
+          <div key={professional.id} className="horarios" onClick={() => handleProfessionalChange(professional.id)}>
+            {professional.name}
+          </div>
+        ))}
+      </div>
+
+        {barbeariaId && userId && selectedService && selectedDate && timeSelected && professionalSelected && (
+          <>
           <button
-            id="AgendamentoButton"
-            onClick={pagamento}
+            className="Btn__booking"
+            onClick={makeBooking}
           >
-            Continuar
+            Finalizar Agendamento
           </button>
+          <div>{messageConfirmedBooking}</div>
+          </>
         )}
        
        {isAgendamentoConfirmed && (

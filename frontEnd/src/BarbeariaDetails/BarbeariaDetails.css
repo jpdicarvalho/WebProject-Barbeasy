@@ -325,7 +325,7 @@ span{
     text-align: center;
 }
 /* =-=-= Fim da estilização do calendario =-=-=*/
-#AgendamentoButton{
+.Btn__booking{
     border: none;
     background: transparent;
     padding: 10px;
@@ -334,7 +334,7 @@ span{
     color: #4a17d5;
     transition: 0.5s;
 }
-#AgendamentoButton:hover{
+.Btn__booking:hover{
     background:#4a17d5;
     color: white;
     transition: 0.5s;

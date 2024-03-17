@@ -663,6 +663,67 @@ app.delete('/api/delete-service/:barbeariaId/:servicoId', (req, res) => {
   })
 });
 
+// ================== alteração aqui =====================
+//Rota para obter os profissionais da barbearia
+app.get('/api/professional/:barbeariaId', (req, res) => {
+  const barbeariaId = req.params.barbeariaId;
+
+  const sql="SELECT professional.id, professional.name, professional.cell_phone, professional.user_image FROM professional INNER JOIN barb_professional ON barbearia_id = ? AND professional.id = professional_id;"
+  db.query(sql, [barbeariaId], (err, result) =>{
+    if(err){
+      console.error('Erro ao buscar profissionais da barbearia:', err);
+      return res.status(500).json({ Error: 'Erro ao buscar profissionais da barbearia:' });
+    }
+    if(result){
+      return res.status(200).json({ Success: "Success", professional: result});//Enviando o array com os profissionais
+    }
+  })
+});
+
+//Rota para realizar o agendamento
+app.post('/api/agendamento/:barbeariaId', (req, res) => {
+  //obs: verificar a ordem das variáveis com as colunas do DB
+  const barbeariaId = req.params.barbeariaId;
+  const userId = req.body.userId;
+  const selectedService = req.body.selectedService;
+  const selectedDate = req.body.selectedDate;
+  const timeSelected = req.body.timeSelected;
+  const professionalSelected = req.body.professionalSelected;
+
+  const token =  `${selectedDate}-${timeSelected}-${userId}-${barbeariaId}-${selectedService}-${professionalSelected}`;
+  
+  const sqlSelect="SELECT token FROM agendamentos WHERE barbearia_id = ?";
+  db.query(sqlSelect, [barbeariaId], (err, res) =>{
+    if(err){
+      console.error('Erro ao verificar disponibilidade da barbearia:', err);
+      return res.status(500).json({ Error: 'Erro ao verificar disponibilidade da barbearia.' });
+    }
+
+    if(res){
+      let tokenBooking = '';
+
+      for(let i=0; i< res.length; i++){
+       if(res[i].token === token){
+        tokenBooking = res[i].token;
+       }
+      }
+      
+      console.log(token, tokenBooking)
+    }
+  })
+
+  /*const sqlInsert="INSERT INTO agendamentos (date_booking, time, user_id, barbearia_id, servico_id, profissional_id, token) VALUES (?, ?, ?, ?, ?, ?, ?);";
+  db.query(sqlInsert, [selectedDate, timeSelected, userId, barbeariaId, selectedService, professionalSelected, token], (error, result) =>{
+    if(error){
+      console.error('Erro ao realizar agendamento:', error);
+      return res.status(500).json({ Error: 'Erro ao realizar agendamento.' });
+    }
+    if(result){
+      return res.status(200).json({ Success: "Success"});
+    }
+  })*/
+  
+});
 
 
 
@@ -733,7 +794,7 @@ app.post('/SignIn', async (req, res) => {
     }
   });
 });
-//===================================== alteração nesta rota =========================================//
+
 //listando as barbearias cadastradas
 app.get('/listBarbearia', async (req, res) => {
   try {
@@ -805,20 +866,6 @@ app.get('/SearchAvaliation', async(req, res)=>{
     }
 });
 
-//Salvando o agendamento feito pelo cliente
-app.post('/agendamento', (req, res) => {
-  const { selectedDate, selectedTime, selectedService, barbeariaId, userId} = req.body;
-  db.query('INSERT INTO agendamentos (dia_agendamento, horario, user_id, barbearia_id, servico_id) VALUES (?, ?, ?, ?, ?)', 
-    [selectedDate, selectedTime, userId, barbeariaId, selectedService], 
-    (err, results) => {
-      if (err) {
-        console.error('Erro ao inserir os dados:', err);
-        res.status(500).json({ message: 'Erro ao inserir os dados' });
-        return;
-      }
-      res.json({ message: 'Agendamento criado com sucesso' });
-  });
-});
 
 //RoutesPayment
 app.post('/Checkout', async (req, res) => {
