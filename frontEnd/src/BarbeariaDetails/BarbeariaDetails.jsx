@@ -89,10 +89,8 @@ const [servicos, setServicos] = useState([]);
     obterServicos()
   }, []);
 
-  const [daysWeekSelected, setDaysWeekSelected] = useState([]);
   const [QntDaysSelected, setQntDaysSelected] = useState([]);
   const [agenda, setAgenda] = useState([]);
-  const [daysFromAgenda, setDaysFromAgenda] = useState([]);
 
   //Obtendo os dados da agenda da barbearia
   const getAgenda = () =>{
@@ -112,16 +110,11 @@ const [servicos, setServicos] = useState([]);
 
   useEffect(() => {
     if (Array.isArray(agenda) && agenda.length >= 2) {
-      setDaysFromAgenda(agenda[0].split(','));
       setQntDaysSelected(agenda[1].toString());
     }
   }, [agenda]);
   
-  useEffect(() => {
-    const threeLettersArray = daysFromAgenda.map(day => day.substring(0, 3));
-    setDaysWeekSelected(threeLettersArray);
-  }, [daysFromAgenda]);
-
+ 
   //Declaração do array com os horários de cada dia
   const [timesDays, setTimesDays] = useState('');
 

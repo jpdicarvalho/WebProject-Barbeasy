@@ -135,8 +135,6 @@ const obterLocalizacao = async () => {
   obterLocalizacao();
 }, []);*/
 
-// Modificando o trecho abaixo para incluir as latitudes e longitudes das barbearias na URL da API do Google
-
 
 //Buscar as avaliações da barbearia em especifico
 useEffect(() => {
