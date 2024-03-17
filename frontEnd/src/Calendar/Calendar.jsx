@@ -1,5 +1,5 @@
 import './Calendar.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const monthNames = [
