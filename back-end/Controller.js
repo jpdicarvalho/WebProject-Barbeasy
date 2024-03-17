@@ -530,7 +530,6 @@ app.get('/api/agendaDiaSelecionado/:barbeariaId', (req, res) =>{
     }
     //Verificação de Sucesso na consulta
     if(result.length > 0){
-      console.log(result)
       const timesDays = {
         Dom: result[0].dom,
         Seg: result[0].seg,
@@ -751,11 +750,7 @@ app.get('/listBarbearia', async (req, res) => {
             console.error("Erro ao buscar serviços:", err);
             return res.status(500).json({ Success: "Error", Message: "Erro ao buscar serviços" });
           }else{
-            
             res.json({barbearias: rows, services: result});
-          //  console.log('MyObject',rows)
-            //const barbearias = {}
-            //console.log( barbearias)
           }
         })
       }

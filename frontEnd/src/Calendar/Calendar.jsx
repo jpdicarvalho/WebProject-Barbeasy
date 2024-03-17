@@ -78,7 +78,8 @@ export function Calendar({ onDateChange, timeSelected, QntDaysSelected, timesDay
     if (dayOfWeek in timesDays) {
       let timesOfDaySelected = timesDays[dayOfWeek];
       timesOfDaySelected = timesOfDaySelected.split(',');
-      setHorariosDiaSelecionado(timesOfDaySelected);
+      let arrayfiltered = timesOfDaySelected.filter(nameDay => nameDay.length != 3)
+      setHorariosDiaSelecionado(arrayfiltered);
     } else {
       setHorariosDiaSelecionado(null); // Define como null se o dia selecionado não estiver no objeto
     }
@@ -130,9 +131,9 @@ export function Calendar({ onDateChange, timeSelected, QntDaysSelected, timesDay
       </div>
     </div>
     {selectedDateInfo &&(
-    <div>
+    <div className="tittle">
        <hr />
-       <div className="tittle">
+       <div >
         Horários Disponíveis
       </div>
     </div>

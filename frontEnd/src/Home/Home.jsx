@@ -22,9 +22,6 @@ const [saudacao, setSaudacao] = useState('');
 const [AllAvaliation, setAllAvaliation] = useState([]);
 const [search, setSearch] = useState('');
 
-/*componente API GOOGLE
-const [DistanciaBarbearias, setDistanciaBarbearias] = useState([]);*/
-//const [UserLocation, setUserLocation] = useState([]);
 
 //buscando informações do usuário logado
 const userData = localStorage.getItem('userData');
