@@ -83,25 +83,3 @@
     background: #f6f6f6; 
 }
 /*================================= Alteração aqui =================================*/
-.Box__day{
-    letter-spacing: 1px;
-    font-size: 12px;
-}
-.Box__NumDay{
-    font-weight: bold;
-    font-size: 18px;
-}
-.Box__month{
-    letter-spacing: 1px;
-    font-size: 12px;
-}
-.sectionCalendar::-webkit-scrollbar {
-    height: 5px;
-}
-.sectionCalendar::-webkit-scrollbar-thumb {
-    background: #4a17d5; 
-    border-radius: 5px;
-}
-.sectionCalendar::-webkit-scrollbar-thumb:hover {
-    background: #f6f6f6; 
-}
