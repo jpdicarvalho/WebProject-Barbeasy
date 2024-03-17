@@ -140,21 +140,25 @@ useEffect(() => {
   getHorariosDefinidos()
 }, [])
 
-/*--------------------------------------------------------*/
-const [selectedDate, setSelectedDate] = useState(null);
+/*============================= Section getElements to appointmants ======================== */
 const [selectedService, setSelectedService] = useState("")
+const [selectedDate, setSelectedDate] = useState("");
+const [timeSelected, setTimeSelected] = useState("");
 const [isAgendamentoConfirmed, setAgendamentoConfirmed] = useState(false);
-
-//Função para selecionar a data escolhida pelo usuário
-const handleDateChange = (date) => {
-  //console.log('dia do agendamento', date);
-  setSelectedDate(date);
-};
-console.log(selectedDate)
 
 //Função para selecionar o serviço escolhida pelo usuário
 const handleServiceChange = (servicoId) => {
-    setSelectedService(servicoId);
+  setSelectedService(servicoId);
+};
+
+//Função para selecionar a data escolhida pelo usuário
+const handleDateChange = (date) => {
+  setSelectedDate(date);
+};
+
+//Função para obter o horário de preferência do usuário
+const handleTimeSelected = (time) => {
+  setTimeSelected(time);
 };
 
 //Requisição para realizar a gendamento
@@ -293,6 +297,7 @@ useEffect(()=> {
   setWidth(reviewsWidth);
 }, [reviewsWidth])
 
+console.log(selectedService, selectedDate,timeSelected)
 return (
     <>
       <div className="Outdoor">
@@ -334,7 +339,7 @@ return (
     <div className="tittle">
         Escolha um dia de sua preferência
       </div>
-            <Calendar onDateChange={handleDateChange} QntDaysSelected={QntDaysSelected} timesDays={timesDays} />
+            <Calendar onDateChange={handleDateChange} timeSelected={handleTimeSelected} QntDaysSelected={QntDaysSelected} timesDays={timesDays} />
       <hr />
 
         {selectedService && selectedDate && !isAgendamentoConfirmed && (

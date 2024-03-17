@@ -10,8 +10,8 @@ const weekNames = [
   'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'
 ];
 
-export function Calendar({ onDateChange, QntDaysSelected, timesDays }) {
-  const [selectedDay, setSelectedDay] = useState(null);
+export function Calendar({ onDateChange, timeSelected, QntDaysSelected, timesDays }) {
+  const [timeclicked, setTimeclicked] = useState(null);
   const [selectedDateInfo, setSelectedDateInfo] = useState('');
   const [horariosDiaSelecionado, setHorariosDiaSelecionado] = useState([]); // Estado para os horários do dia selecionado
 
@@ -67,8 +67,8 @@ export function Calendar({ onDateChange, QntDaysSelected, timesDays }) {
   const weekDays = getWeeks();
   const numberDays = getNumber();
 
+  //Function to get and format selected day from user
   const handleDateClick = (dayOfWeek, day, month, year) => {
-    setSelectedDay(day);
     setSelectedDateInfo(`${dayOfWeek}, ${day} de ${month} de ${year}`);
     if (onDateChange) {
       onDateChange(`${dayOfWeek}, ${day} de ${month} de ${year}`);
@@ -84,13 +84,19 @@ export function Calendar({ onDateChange, QntDaysSelected, timesDays }) {
     }
   };
 
+  const hendleTimeClick = (time) => {
+    if (timeSelected) {
+      timeSelected(time);
+      setTimeclicked(time)
+    }
+  }
   const renderHorariosDiaSelecionado = () => {
     return (
       <>
         {horariosDiaSelecionado && (
-          horariosDiaSelecionado.map(item => (
-            <div key={item} className="horarios">
-              <p>{item}</p>
+          horariosDiaSelecionado.map(index => (
+            <div key={index} className={`horarios ${timeclicked === index ? 'selectedDay':''}`} onClick={() => hendleTimeClick(index)}>
+              <p>{index}</p>
             </div>
           ))
         )}
