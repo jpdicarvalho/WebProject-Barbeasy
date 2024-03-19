@@ -675,7 +675,8 @@ app.get('/api/professional/:barbeariaId', (req, res) => {
       return res.status(500).json({ Error: 'Erro ao buscar profissionais da barbearia:' });
     }
     if(result){
-      return res.status(200).json({ Success: "Success", professional: result});//Enviando o array com os profissionais
+      console.log(result)
+      return res.status(200).json({ Success: "Success", Professional: result});//Enviando o array com os profissionais
     }
   })
 });
@@ -708,7 +709,7 @@ app.post('/api/agendamento/:barbeariaId', (req, res) => {
        }
       }
       
-      console.log(token, tokenBooking)
+      //console.log(token, tokenBooking)
     }
   })
 
