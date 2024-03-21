@@ -25,11 +25,14 @@ app.use(express.static('public'));
 app.use('/api-docs', serveSwaggerUI, setupSwaggerUI);
 
 //Create conection with BD MySQL
-const db = mysql.createConnection({
-  host: process.env.database_Host,
-  user: process.env.database_User,
-  password: process.env.database_Password,
-  database: process.env.database_Name
+const db = mysql.createConnection(process.env.DATABASE_URL)
+// Verify connection to the database
+db.connect((error) => {
+  if (error) {
+    console.error('Erro ao conectar ao banco de dados:', error.message);
+  } else {
+    console.log('Conexão bem-sucedida ao banco de dados!');
+  }
 });
 
 const storage = multer.memoryStorage()
@@ -507,7 +510,8 @@ app.post('/api/update-agendaDiaSelecionado/:barbeariaId/:professionalId', (req, 
   if (diaAbreviado) {
     // Construir a consulta SQL dinamicamente
     const sql = `UPDATE agenda SET ${diaAbreviado} = ? WHERE barbearia_id = ? AND professional_id = ?`;
-    db.query(sql, [agendaDiaSelecionado, barbeariaId, professionalId], (err, result) => {
+    let strFormated = agendaDiaSelecionado.substring(4);
+    db.query(sql, [strFormated, barbeariaId, professionalId], (err, result) => {
         if (err) {
             console.error("Erro ao cadastrar agenda do dia selecionado da barbearia", err);
             return res.status(500).json({ Error: "Internal Server Error" });
@@ -728,34 +732,38 @@ app.get('/api/professional/:barbeariaId', (req, res) => {
 });
 
 //Rota para realizar o agendamento
-app.post('/api/agendamento/:barbeariaId', (req, res) => {
-  //obs: verificar a ordem das variáveis com as colunas do DB
-  const barbeariaId = req.params.barbeariaId;
-  const userId = req.body.userId;
-  const selectedService = req.body.selectedService;
-  const selectedDate = req.body.selectedDate;
-  const timeSelected = req.body.timeSelected;
-  const professionalSelected = req.body.professionalSelected;
+app.post('/api/create-booking/', (req, res) => {
+  //Create object to make a toke for booking
+  const values = [
+    req.body.userId,
+    req.body.barbeariaId,
+    req.body.professionalId,
+    req.body.serviceId,
+    req.body.selectedDate,
+    req.body.timeSelected];
+    const formatDate = req.body.formattedDate;
 
-  const token =  `${selectedDate}-${timeSelected}-${userId}-${barbeariaId}-${selectedService}-${professionalSelected}`;
+  const token = values.join('-')
+
   
-  const sqlSelect="SELECT token FROM agendamentos WHERE barbearia_id = ?";
-  db.query(sqlSelect, [barbeariaId], (err, res) =>{
+  const sqlSelect="SELECT token FROM booking WHERE token = ?";
+  db.query(sqlSelect, [token], (err, resut) =>{
     if(err){
       console.error('Erro ao verificar disponibilidade da barbearia:', err);
       return res.status(500).json({ Error: 'Erro ao verificar disponibilidade da barbearia.' });
     }
-
-    if(res){
-      let tokenBooking = '';
-
-      for(let i=0; i< res.length; i++){
-       if(res[i].token === token){
-        tokenBooking = res[i].token;
-       }
-      }
-      
-      //console.log(token, tokenBooking)
+    if(resut.length > 0){
+      return res.status(401).json({ Unauthorized: 'Unauthorized' });
+    }else{
+      const sqlInsert = "INSERT INTO booking (user_id, barbearia_id, professional_id, service_id, booking_date, booking_time, date, token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+      db.query(sqlInsert, [...values, formatDate, token], (erro, results) => {
+        if(erro){
+          console.error('Erro ao realizar agendamento:', erro);
+          return res.status(500).json({ Error: ' Internal Server Error' });
+        }if(results){
+          return res.status(200).json({ Success: "Success"});
+        }
+      })
     }
   })
 
