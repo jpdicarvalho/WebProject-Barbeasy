@@ -18,8 +18,6 @@ Bem-vindo ao Barbeasy, um sistema eficiente e fácil de usar para agendamento de
   - [ ] Defição e Gestão de Serviços; e
   - [ ] Definição e Gestão de Profissionais.
 
-- [ ] **Dashboard:** Tenha uma visão geral do desenpenho da sua barbearia, por meio de uma Dashboard detalhada com os dados de agendamentos realizados
-
 ## Como Começar?
 Tanto para os clientes das barbearias quando para as proprias barbearias, basta acessar o site da platafoma [Barbeasy](https://www.barbeasy.com.br) e realize seu cadastro!
 
@@ -37,12 +35,8 @@ O sistema Barbeasy é um sistema distribuído, composto por três APIs, sendo du
 - Back-End: JavaScript e Node.js.
 - Banco de Dados: MySQL e Xampp como servidor de Banco de Dados.
 
-### APIs usadas
-- Distance Matrix - Google.
-- OAuth - Google (API não implementada nesta versão do sistema)
+### APIs usada
 - Gateway de Pagamento do Mercado Pago.
-  
- **Obs: Para que a API do Google e do Mercado Pago funcionem, é preciso das credências de acesso. Você pode obter suas credências de acesso do google criando uma conta de desenvolvedor em: (https://developers.google.com/) e a do Mercado Pago em: (https://www.mercadopago.com.br/developers/pt). Além disso, lembre-se de cadastrar a latitude e longitude da barbearia no BD para que a API do google não retorne null.**
 
 ## Modelo Entidade-Relacionamento
 ![MER](https://github.com/jpdicarvalho/WebProject-Barbeasy/assets/114435447/d6812ca4-4e72-45bd-ac9d-ca5704f3536a)
