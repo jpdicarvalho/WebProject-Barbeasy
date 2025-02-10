@@ -35,7 +35,7 @@ O sistema Barbeasy é um sistema distribuído, composto por três APIs, sendo du
 - Back-End: JavaScript e Node.js.
 - Banco de Dados: MySQL e Xampp como servidor de Banco de Dados.
 
-### APIs usada
+### APIs integradas
 - Gateway de Pagamento do Mercado Pago.
 
 ## Modelo Entidade-Relacionamento
