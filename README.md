@@ -1,4 +1,4 @@
-# Quando o Barbeasy tomou sua primeira forma
+# Quando o Barbeasy tomou sua primeira forma para web
 
 Bem-vindo ao Barbeasy, um sistema eficiente e fácil de usar para agendamento de serviços e processamento de pagamentos em barbearias. Esta aplicação foi desenvolvida para simplificar a gestão de agendamentos e transações financeiras, proporcionando uma experiência fluida tanto para os clientes quanto para os profissionais da barbearia.
 
